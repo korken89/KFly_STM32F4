@@ -1,0 +1,10 @@
+This is the code for the new KFly PCB.
+
+Specs:
+* ARM Cortex-M4F STM32F405 CPU w/ FPU and DSP @ 168MHz
+* MPU-6050 accelerometer/gyro
+* HMC5883L magnetometer
+* USB Bootloader (comming on PCB rev 2.1)
+* 8 PWM outputs (50/400Hz)
+* 3 expansion headers (UART)
+* 6 slot RC input header with support for (C)PPM in and signal strength
