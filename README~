@@ -11,5 +11,5 @@ HW Specs:
 SW Specs:
 * USB Bootloader (comming to PCB rev 2.1)
 * Motor-mixing for different types of frames
-* Flight control: Rate mode, Stability mode and Axis-Lock
+* Flight control: Rate mode, Stability mode and Axis-Locsk
 
