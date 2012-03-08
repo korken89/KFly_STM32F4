@@ -1,13 +1,34 @@
 #include "main.h"
 
+USB_OTG_CORE_HANDLE USB_OTG_dev;
+
 void main(void)
 {
-	volatile float a = 1.0f;
-	volatile float b = 0.0f;
+	STM32F4_Discovery_LEDInit(LED3);
+	STM32F4_Discovery_LEDInit(LED4);
+	STM32F4_Discovery_LEDInit(LED5);
+	STM32F4_Discovery_LEDInit(LED6);
+	STM32F4_Discovery_PBInit(BUTTON_USER, BUTTON_MODE_EXTI);
 
-	while(1)
+	STM32F4_Discovery_LEDOn(LED3);
+
+	for(volatile unsigned int i = 0; i < 0xFFFFF; i++);
+
+	USBD_Init(&USB_OTG_dev,
+		#ifdef USE_USB_OTG_HS
+		  USB_OTG_HS_CORE_ID,
+		#else
+		  USB_OTG_FS_CORE_ID,
+		#endif
+		  &USR_desc,
+		  &USBD_CDC_cb,
+		  &USR_cb);
+
+	while (1)
 	{
-		b += a;
+		for(volatile unsigned int i = 0; i < 0xFFFFF; i++);
+
+		STM32F4_Discovery_LEDToggle(LED4);
 	}
 }
 

@@ -69,7 +69,7 @@ LoopFillZerobss:
 ; str     r1,[r0]
 
 /* Call the clock system intitialization function.*/
-  bl  SystemInit   
+  bl  SystemInit
 /* Call the application's entry point.*/
   bl  main
   bx  lr    
