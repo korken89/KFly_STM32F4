@@ -22,11 +22,11 @@ CSTD += $(STDLIBDIR)misc.c
 
 # Include different source files depending on USE_STD_LIBS
 ifeq ($(USE_STD_LIBS),1)
-	CSRCS   = $(wildcard CMSIS/*.c) $(wildcard source/*.c) 
-	CSRCS 	+= $(CSTD)
+	CSRCS = $(wildcard CMSIS/*.c) $(wildcard source/*.c) 
+	CSRCS += $(CSTD)
 	COMMON = $(MCU) --no-builtin-memset --no-builtin-memcpy -DHSE_VALUE=$(F_HSE) -DUSE_STDPERIPH_DRIVER -DUSE_USB_OTG_FS	
 else
-	CSRCS   = $(wildcard CMSIS/*.c) $(wildcard source/*.c)
+	CSRCS = $(wildcard CMSIS/*.c) $(wildcard source/*.c)
 	COMMON = $(MCU) --no-builtin-memset --no-builtin-memcpy -DHSE_VALUE=$(F_HSE)
 endif
 INCLUDE = -I./include -I./CMSIS -I./Libraries/STM32F4xx_StdPeriph_Driver/inc
@@ -36,30 +36,30 @@ USBLIB = $(wildcard Libraries/STM32_USB_Device_Library/Class/cdc/src/*.c)
 USBLIB += $(wildcard Libraries/STM32_USB_Device_Library/Core/src/*.c)
 USBLIB += $(wildcard Libraries/STM32_USB_OTG_Driver/src/*.c)
 
-
-
 INCLUDE += -I./Libraries/STM32_USB_Device_Library/Class/cdc/inc
 INCLUDE += -I./Libraries/STM32_USB_Device_Library/Core/inc
 INCLUDE += -I./Libraries/STM32_USB_OTG_Driver/inc
-CSRCS += $(USBLIB)
+CSRCS   += $(USBLIB)
 
 ASRCS   = $(wildcard CMSIS/*.s)
 OBJECTS = $(CSRCS:.c=.o) $(ASRCS:.s=.o)
 
-MCU = -mcpu=cortex-m4 -mthumb -g -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -fsingle-precision-constant
-CFLAGS = $(COMMON) -std=gnu99 -O$(OPTIMIZATION) $(INCLUDE)
-AFLAGS = $(COMMON) $(INCLUDE)
+MCU     = -mcpu=cortex-m4 -mthumb -g -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -fsingle-precision-constant
+CFLAGS  = $(COMMON) -std=gnu99 -O$(OPTIMIZATION) $(INCLUDE)
+AFLAGS  = $(COMMON) $(INCLUDE)
 LDFLAGS = $(COMMON) -nostdlib -Tstm32f4x_flash.ld -Wl,--build-id=none
 
-GCC = arm-none-eabi-gcc
-SIZE = arm-none-eabi-size
+GCC     = arm-none-eabi-gcc
+SIZE    = arm-none-eabi-size
 OBJDUMP = arm-none-eabi-objdump
 OBJCOPY = arm-none-eabi-objcopy
+
 test:
 	@echo $(USBLIB)
+	@echo $(CSRCS)
 
 dump: main.elf
-	$(OBJDUMP) -D main.elf
+	$(OBJDUMP) -D main.elf > main.dump
 
 bin: main.elf
 	$(OBJCOPY) -O binary main.elf main.bin
@@ -74,7 +74,7 @@ main.elf: $(OBJECTS)
 	echo $(CSRCS)
 	
 clean:
-	rm -f $(OBJECTS) main.*
+	rm -f $(OBJECTS) *.elf *.bin
 
 .c.o:
 	$(GCC) $(CFLAGS) -c $< -o $(<:.c=.o)
