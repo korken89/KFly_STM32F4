@@ -4,13 +4,13 @@
 #-------------------------------------------
 
 # External high speed crystal frequency
-F_HSE = 8000000
+F_HSE = 12000000
 
 # Use Standard Pherial Librarys (true = 1)
 USE_STD_LIBS = 1
 
 # Optimization
-OPTIMIZATION = 2
+OPTIMIZATION = 1
 
 # StdLibs to use if wanted
 STDLIBDIR = Libraries/STM32F4xx_StdPeriph_Driver/src/
@@ -24,7 +24,7 @@ CSTD += $(STDLIBDIR)misc.c
 ifeq ($(USE_STD_LIBS),1)
 	CSRCS = $(wildcard CMSIS/*.c) $(wildcard source/*.c) 
 	CSRCS += $(CSTD)
-	COMMON = $(MCU) --no-builtin-memset --no-builtin-memcpy -DHSE_VALUE=$(F_HSE) -DUSE_STDPERIPH_DRIVER -DUSE_USB_OTG_FS	
+	COMMON = $(MCU) --no-builtin-memset --no-builtin-memcpy -DHSE_VALUE=$(F_HSE) -DUSE_STDPERIPH_DRIVER -DUSE_USB_OTG_FS
 else
 	CSRCS = $(wildcard CMSIS/*.c) $(wildcard source/*.c)
 	COMMON = $(MCU) --no-builtin-memset --no-builtin-memcpy -DHSE_VALUE=$(F_HSE)
@@ -39,6 +39,7 @@ USBLIB += $(wildcard Libraries/STM32_USB_OTG_Driver/src/*.c)
 INCLUDE += -I./Libraries/STM32_USB_Device_Library/Class/cdc/inc
 INCLUDE += -I./Libraries/STM32_USB_Device_Library/Core/inc
 INCLUDE += -I./Libraries/STM32_USB_OTG_Driver/inc
+INCLUDE += -I/usr/local/CodeBench_1802_EABI/arm-none-eabi/include
 CSRCS   += $(USBLIB)
 
 ASRCS   = $(wildcard CMSIS/*.s)
@@ -71,13 +72,15 @@ all: main.elf
 
 main.elf: $(OBJECTS)
 	$(GCC) $(LDFLAGS) $(OBJECTS) -o main.elf
-	echo $(CSRCS)
 	
 clean:
-	rm -f $(OBJECTS) *.elf *.bin
-
+	rm -f $(OBJECTS) *.elf *.bin main.dump
+	@echo
+	
 .c.o:
 	$(GCC) $(CFLAGS) -c $< -o $(<:.c=.o)
+	@echo
 
 .s.o:
 	$(GCC) -c $(AFLAGS) -o $(<:.s=.o) $<
+	@echo

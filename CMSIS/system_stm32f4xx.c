@@ -146,7 +146,7 @@
 
 /************************* PLL Parameters *************************************/
 /* PLL_VCO = (HSE_VALUE or HSI_VALUE / PLL_M) * PLL_N */
-#define PLL_M      8
+#define PLL_M      12
 #define PLL_N      336
 
 /* SYSCLK = PLL_VCO / PLL_P */
@@ -173,7 +173,7 @@
   * @{
   */
 
-  uint32_t SystemCoreClock = 168000000;
+  volatile uint32_t SystemCoreClock = 0;
 
   __I uint8_t AHBPrescTable[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
 
@@ -208,7 +208,7 @@ static void SetSysClock(void);
 void SystemInit(void)
 {
   /* FPU settings ------------------------------------------------------------*/
-  SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));  /* set CP10 and CP11 Full Access */
+  SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));  /* set CP10 and CP11 Full Access to Start the FPU */
 
   /* Reset the RCC clock configuration to the default reset state ------------*/
   /* Set HSION bit */
@@ -243,6 +243,7 @@ void SystemInit(void)
 #else
   SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
 #endif
+  SystemCoreClockUpdate();
 }
 
 /**
@@ -352,7 +353,7 @@ static void SetSysClock(void)
   {
     HSEStatus = RCC->CR & RCC_CR_HSERDY;
     StartUpCounter++;
-  } while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
+  } while((HSEStatus == 0)/* && (StartUpCounter != HSE_STARTUP_TIMEOUT) */);
 
   if ((RCC->CR & RCC_CR_HSERDY) != RESET)
   {
@@ -405,7 +406,9 @@ static void SetSysClock(void)
   else
   { /* If HSE fails to start-up, the application will have wrong clock
          configuration. User can add here some code to deal with this error */
-	  while(1);
+
+	  while(1)
+		  for(volatile unsigned int i = 0; i < 0xFFFFF; i++);
   }
 
 }

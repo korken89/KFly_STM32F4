@@ -5,11 +5,11 @@ HW Specs:
 * MPU-6050 accelerometer/gyro
 * HMC5883L magnetometer
 * 8 PWM outputs (50/400Hz)
-* 3 expansion headers (UART)
+* 4 expansion headers (UART/CAN)
 * 6 slot RC input header with support for (C)PPM in and signal strength
 
 SW Specs:
-* USB Bootloader (comming to PCB rev 2.1)
+* USB Bootloader
 * Motor-mixing for different types of frames
 * Flight control: Rate mode, Stability mode and Axis-Lock
 
