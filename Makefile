@@ -22,14 +22,14 @@ CSTD += $(STDLIBDIR)misc.c
 
 # Include different source files depending on USE_STD_LIBS
 ifeq ($(USE_STD_LIBS),1)
-	CSRCS = $(wildcard CMSIS/*.c) $(wildcard source/*.c) 
+	CSRCS = $(wildcard CMSIS/*.c) $(wildcard source/*.c) $(wildcard source/drivers/*.c) 
 	CSRCS += $(CSTD)
 	COMMON = $(MCU) -DHSE_VALUE=$(F_HSE) -DUSE_STDPERIPH_DRIVER -DUSE_USB_OTG_FS
 else
 	CSRCS = $(wildcard CMSIS/*.c) $(wildcard source/*.c)
 	COMMON = $(MCU) -DHSE_VALUE=$(F_HSE)
 endif
-INCLUDE = -I./include -I./CMSIS -I./Libraries/STM32F4xx_StdPeriph_Driver/inc
+INCLUDE = -I./include -I./include/drivers -I./CMSIS -I./Libraries/STM32F4xx_StdPeriph_Driver/inc
 
 # USB Libraries
 USBLIB = $(wildcard Libraries/STM32_USB_Device_Library/Class/cdc/src/*.c)
