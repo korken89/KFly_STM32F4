@@ -10,7 +10,7 @@
 **  Environment : Atollic TrueSTUDIO(R)
 **                STMicroelectronics STM32F4xx Standard Peripherals Library
 **
-**  Distribution: The file is distributed “as is,” without any warranty
+**  Distribution: The file is distributed ï¿½as is,ï¿½ without any warranty
 **                of any kind.
 **
 **  (c)Copyright Atollic AB.
@@ -29,7 +29,6 @@
 #include "stm32f4xx_it.h"
 #include "usb_core.h"
 #include "usbd_core.h"
-#include "stm32f4_discovery.h"
 #include "usbd_cdc_core.h"
 
 /* Private typedef -----------------------------------------------------------*/
@@ -39,7 +38,6 @@
 /* Private function prototypes -----------------------------------------------*/
 extern USB_OTG_CORE_HANDLE           USB_OTG_dev;
 extern uint32_t USBD_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev);
-extern void DISCOVERY_EXTI_IRQHandler(void);
 
 #ifdef USB_OTG_HS_DEDICATED_EP1_ENABLED
 extern uint32_t USBD_OTG_EP1IN_ISR_Handler (USB_OTG_CORE_HANDLE *pdev);
@@ -238,9 +236,5 @@ void OTG_HS_EP1_OUT_IRQHandler(void)
 }*/
 void EXTI0_IRQHandler(void)
 {
-	DISCOVERY_EXTI_IRQHandler();
-	/* Clear the EXTI line pending bit */
-	EXTI_ClearITPendingBit(USER_BUTTON_EXTI_LINE);
-
 }
 

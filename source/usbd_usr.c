@@ -22,7 +22,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_usr.h"
 #include "usbd_ioreq.h"
-#include "stm32f4_discovery.h"
+#include "led.h"
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
 * @{
@@ -109,7 +109,6 @@ USBD_Usr_cb_TypeDef USR_cb =
 void USBD_USR_Init(void)
 {  
   /* Initialize LEDs */
-  STM32F4_Discovery_LEDInit(LED5); /* cervena */
   
 }
 
@@ -148,7 +147,7 @@ void USBD_USR_DeviceReset(uint8_t speed )
 void USBD_USR_DeviceConfigured (void)
 {
 	/* LCD_UsrLog("> VCP Interface configured.\n"); */
-	STM32F4_Discovery_LEDOn(LED5); /* cervena */
+	LEDOn(GREEN); /* cervena */
 }
 
 /**
@@ -160,7 +159,7 @@ void USBD_USR_DeviceConfigured (void)
 void USBD_USR_DeviceSuspended(void)
 {
 	/*   LCD_UsrLog("> USB Device in Suspend Mode.\n"); */
-	STM32F4_Discovery_LEDOff(LED5); /* cervena */
+	LEDOff(GREEN); /* cervena */
 	/* Users can do their application actions here for the USB-Reset */
 }
 
@@ -173,7 +172,7 @@ void USBD_USR_DeviceSuspended(void)
 */
 void USBD_USR_DeviceResumed(void)
 {
-	STM32F4_Discovery_LEDOn(LED5);
+	LEDOn(GREEN);
     /* LCD_UsrLog("> USB Device in Idle Mode.\n"); */
     /* Users can do their application actions here for the USB-Reset */
 }

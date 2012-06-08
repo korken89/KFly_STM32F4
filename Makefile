@@ -24,10 +24,10 @@ CSTD += $(STDLIBDIR)misc.c
 ifeq ($(USE_STD_LIBS),1)
 	CSRCS = $(wildcard CMSIS/*.c) $(wildcard source/*.c) 
 	CSRCS += $(CSTD)
-	COMMON = $(MCU) --no-builtin-memset --no-builtin-memcpy -DHSE_VALUE=$(F_HSE) -DUSE_STDPERIPH_DRIVER -DUSE_USB_OTG_FS
+	COMMON = $(MCU) -DHSE_VALUE=$(F_HSE) -DUSE_STDPERIPH_DRIVER -DUSE_USB_OTG_FS
 else
 	CSRCS = $(wildcard CMSIS/*.c) $(wildcard source/*.c)
-	COMMON = $(MCU) --no-builtin-memset --no-builtin-memcpy -DHSE_VALUE=$(F_HSE)
+	COMMON = $(MCU) -DHSE_VALUE=$(F_HSE)
 endif
 INCLUDE = -I./include -I./CMSIS -I./Libraries/STM32F4xx_StdPeriph_Driver/inc
 
@@ -39,7 +39,6 @@ USBLIB += $(wildcard Libraries/STM32_USB_OTG_Driver/src/*.c)
 INCLUDE += -I./Libraries/STM32_USB_Device_Library/Class/cdc/inc
 INCLUDE += -I./Libraries/STM32_USB_Device_Library/Core/inc
 INCLUDE += -I./Libraries/STM32_USB_OTG_Driver/inc
-INCLUDE += -I/usr/local/CodeBench_1802_EABI/arm-none-eabi/include
 CSRCS   += $(USBLIB)
 
 ASRCS   = $(wildcard CMSIS/*.s)

@@ -24,7 +24,7 @@
 #define __USBD_CONF__H__
 
 /* Includes ------------------------------------------------------------------*/
-#include   "stm32f4_discovery.h"
+#include   "led.h"
 
 /** @defgroup USB_CONF_Exported_Defines
   * @{

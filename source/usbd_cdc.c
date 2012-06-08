@@ -25,7 +25,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc.h"
-#include "stm32f4_discovery.h"
+#include "led.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -34,7 +34,7 @@
 
 /* These are external variables imported from CDC core to be used for IN 
    transfer management. */
-extern uint8_t  APP_Rx_Buffer []; /* Write CDC received data in this buffer.
+extern uint8_t  APP_Rx_Buffer[]; /* Write CDC received data in this buffer.
                                      These data will be sent over USB IN endpoint
                                      in the CDC core functions. */
 extern uint32_t APP_Rx_ptr_in;    /* Increment this pointer or roll it back to
@@ -43,11 +43,11 @@ extern uint32_t APP_Rx_ptr_in;    /* Increment this pointer or roll it back to
 
 /* Private function prototypes -----------------------------------------------*/
 
-static uint16_t cdc_Init     (void);
-static uint16_t cdc_DeInit   (void);
-static uint16_t cdc_Ctrl     (uint32_t Cmd, uint8_t* Buf, uint32_t Len);
-static uint16_t cdc_DataTx   (uint8_t* Buf, uint32_t Len);
-static uint16_t cdc_DataRx   (uint8_t* Buf, uint32_t Len);
+static uint16_t cdc_Init(void);
+static uint16_t cdc_DeInit(void);
+static uint16_t cdc_Ctrl(uint32_t Cmd, uint8_t* Buf, uint32_t Len);
+static uint16_t cdc_DataTx(uint8_t* Buf, uint32_t Len);
+static uint16_t cdc_DataRx(uint8_t* Buf, uint32_t Len);
 
 
 CDC_IF_Prop_TypeDef cdc_fops =
@@ -168,8 +168,6 @@ static uint16_t cdc_DataTx (uint8_t* Buf, uint32_t Len)
   * @brief  cdc_DataRx
   *         Data received over USB OUT endpoint are sent over CDC interface 
   *         through this function.
-  *           
-  *         For this example we are just going to send received data right back to sender.
   *
   *         @note
   *         This function will block any OUT packet reception on USB endpoint 
@@ -183,36 +181,26 @@ static uint16_t cdc_DataTx (uint8_t* Buf, uint32_t Len)
   */
 static uint16_t cdc_DataRx (uint8_t* Buf, uint32_t Len)
 {
-	uint32_t i;
-	//loop through buffer
-	for (i = 0; i < Len; i++)
+	// Loop through USB input buffer (frame)
+	for (uint32_t i = 0; i < Len; i++)
 	{
+		/* TODO:
+		 * Put the code to handle incomming data here!
+		 * To write on the port: cdc_DataTx (buffer[], size);
+		 * */
+
 		//if there is an 'a' in buffer
-		if (*(Buf + i) == 'a' || *(Buf + i) == 'A' )
-		{
-			//turn on the blue led
-			STM32F4_Discovery_LEDOn(LED6);
-		}
+		if (*(Buf + i) == 'a' || *(Buf + i) == 'A')
+			LEDOn(RED);
+
 		//if there is an 's' in buffer
-		else if (*(Buf + i) == 's' || *(Buf + i) == 'S' )
-		{
-			//turn off the blue led
-			STM32F4_Discovery_LEDOff(LED6);
-		}
+		else if (*(Buf + i) == 's' || *(Buf + i) == 'S')
+			LEDOff(RED);
+
 	}
-	//send received data back to sender
-	cdc_DataTx( Buf, Len );
+
 	return USBD_OK;
 }
-
-
-//this function is run when the user button is pushed
-void DISCOVERY_EXTI_IRQHandler(void)
-{
-	uint8_t buffer[] = "terve";
-	cdc_DataTx (buffer, (uint32_t) 5);
-}
-
 
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

@@ -25,7 +25,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usb_core.h"
-#include "stm32f4_discovery.h"
+#include "led.h"
 
 /** @addtogroup USB_OTG_DRIVER
   * @{

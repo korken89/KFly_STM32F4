@@ -1,0 +1,24 @@
+Data transfers. System design.
+
+Functions:
+void vProcessData(void) // vProcessData() is a medium priority task
+
+
+* On incomming data:
+if issuspended(vProcessData) then
+	resume(vProcessData)
+end if
+
+
+* On processing complete:
+suspend(vProcessData)
+
+
+* On resume (OS stuff):
+if no_higher_priority_tasks then
+	vProcessData()
+else
+	run_other_task()
+end if
+	
+
