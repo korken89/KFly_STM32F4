@@ -28,7 +28,7 @@ void main(void)
 	 * 	USB init.
 	 * 	Running USB Full speed - 12Mbps as Virtual COM Port via the CDC interface
 	 * 	Shows as ttyACM0 in Ubuntu and COMxx in Windows.
-	 * 	Linux version does not need a driver but Windows version uses STM serial driver.
+	 * 	Linux version does not need a driver but Windows version uses ST serial driver.
 	 *
 	 * */
 	USBD_Init(	&USB_OTG_dev,
@@ -53,6 +53,9 @@ void main(void)
 		for(volatile unsigned int i = 0; i < 8000000; i++);
 
 		cdc_DataTx(&text, 1);
+
+		if (text == 'm')
+			cdc_DataTx("\t", 1);
 
 		if (text >= 'z')
 		{

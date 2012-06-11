@@ -58,15 +58,17 @@ test:
 	@echo $(CSRCS)
 
 dump: main.elf
-	$(OBJDUMP) -D main.elf > main.dump
-
+	@$(OBJDUMP) -D main.elf > main.dump
+	@echo "main.dump created"
+	
 bin: main.elf
-	$(OBJCOPY) -O binary main.elf main.bin
+	@$(OBJCOPY) -O binary main.elf main.bin
+	@echo "main.bin created"
 
 all: main.elf
 	@echo
 	@echo "Size:"
-	@$(SIZE) *.elf		
+	@$(SIZE) main.elf		
 
 main.elf: $(OBJECTS)
 	$(GCC) $(LDFLAGS) $(OBJECTS) -o main.elf
