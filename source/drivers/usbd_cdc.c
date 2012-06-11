@@ -46,7 +46,7 @@ extern uint32_t APP_Rx_ptr_in;    /* Increment this pointer or roll it back to
 static uint16_t cdc_Init(void);
 static uint16_t cdc_DeInit(void);
 static uint16_t cdc_Ctrl(uint32_t Cmd, uint8_t* Buf, uint32_t Len);
-static uint16_t cdc_DataTx(uint8_t* Buf, uint32_t Len);
+uint16_t cdc_DataTx(uint8_t* Buf, uint32_t Len);
 static uint16_t cdc_DataRx(uint8_t* Buf, uint32_t Len);
 
 
@@ -143,7 +143,7 @@ static uint16_t cdc_Ctrl (uint32_t Cmd, uint8_t* Buf, uint32_t Len)
   * @param  Len: Number of data to be sent (in bytes)
   * @retval Result of the opeartion: USBD_OK
   */
-static uint16_t cdc_DataTx (uint8_t* Buf, uint32_t Len)
+uint16_t cdc_DataTx (uint8_t* Buf, uint32_t Len)
 {
 
 	uint32_t i;
@@ -186,7 +186,7 @@ static uint16_t cdc_DataRx (uint8_t* Buf, uint32_t Len)
 	{
 		/* TODO:
 		 * Put the code to handle incomming data here!
-		 * To write on the port: cdc_DataTx (buffer[], size);
+		 * To write on the port:
 		 * */
 
 		//if there is an 'a' in buffer

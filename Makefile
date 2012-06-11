@@ -10,7 +10,7 @@ F_HSE = 12000000
 USE_STD_LIBS = 1
 
 # Optimization
-OPTIMIZATION = 1
+OPTIMIZATION = 2
 
 # StdLibs to use if wanted
 STDLIBDIR = Libraries/STM32F4xx_StdPeriph_Driver/src/
@@ -41,7 +41,7 @@ INCLUDE += -I./Libraries/STM32_USB_OTG_Driver/inc
 CSRCS   += $(USBLIB)
 
 ASRCS   = $(wildcard CMSIS/*.s) $(wildcard source/*.s) $(wildcard source/drivers/*.s) 
-OBJECTS = $(CSRCS:.c=.o) $(ASRCS:.s=.o)
+OBJECTS = $(ASRCS:.s=.o) $(CSRCS:.c=.o)
 
 MCU     = -mcpu=cortex-m4 -mthumb -g -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -fsingle-precision-constant
 CFLAGS  = $(COMMON) -std=gnu99 -O$(OPTIMIZATION) $(INCLUDE)
