@@ -14,7 +14,7 @@ void LEDInit(void)
   RCC_AHB1PeriphClockCmd(LED1_GPIO_CLK, ENABLE);
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 
   /* Configure the GPIO_LED pins */
