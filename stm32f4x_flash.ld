@@ -106,7 +106,9 @@ SECTIONS
     _ebss = .;         /* define a global symbol at bss end */
     __bss_end__ = _ebss;
   } >RAM
-
+  
+  PROVIDE(__HEAP_START = __bss_end__);
+  
   /* User_heap_stack section, used to check that there is enough RAM left */
   ._user_heap_stack :
   {
@@ -117,7 +119,14 @@ SECTIONS
     . = . + _Min_Stack_Size;
     . = ALIGN(4);
   } >RAM
-
+  
+  .rtos_heap :
+  {
+    . = ALIGN(4);
+	*(.rtos_heap)
+    . = ALIGN(4);
+  } >RAM2
+	
   /* MEMORY_bank1 section, code must be located here explicitly            */
   /* Example: extern int foo(void) __attribute__ ((section (".mb1text"))); */
   .memory_b1_text :

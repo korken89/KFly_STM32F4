@@ -9,7 +9,7 @@ HW Specs:
 * 6 slot RC input header with support for (C)PPM up to 8 channels in and signal strength
 
 SW Specs:
+* Runs FreeRTOS (with FPU support) with a Hardware Abstraction Layer on top for fast application development
 * USB Bootloader
 * Motor-mixing for different types of frames
-* Flight control: Rate mode, Stability mode, Axis-Lock and more to come
-
+* Flight control: Rate mode, Attitude mode and more to come

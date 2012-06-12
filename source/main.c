@@ -37,21 +37,26 @@ void main(void)
 				&USBD_CDC_cb,
 				&USR_cb);
 
+	xTaskCreate(vTaskCode,
+				"NAME1",
+				256,
+				NULL,
+				tskIDLE_PRIORITY+1,
+		        NULL);
 
-	/* *
-	 *
-	 *
-	 *
-	 *
-	 * */
+	/*xTaskCreate(vTaskCode1,
+				"NAME2",
+				256,
+				NULL,
+				tskIDLE_PRIORITY+1,
+	            NULL);*/
 
+	vTaskStartScheduler();
 
 	char text = 'a';
 
 	while (1)
 	{
-		for(volatile unsigned int i = 0; i < 8000000; i++);
-
 		cdc_DataTx(&text, 1);
 
 		if (text == 'm')
@@ -64,5 +69,32 @@ void main(void)
 		}
 		else
 			text++;
+
+		for(volatile unsigned int i = 0; i < 8000000; i++);
+	}
+}
+
+void vTaskCode(void *pvParameters)
+{
+	for( ;; )
+	{
+		vTaskDelay(250 / portTICK_RATE_MS);
+		LEDOn(RED);
+
+		vTaskDelay(250 / portTICK_RATE_MS);
+		LEDOff(RED);
+	}
+}
+
+
+void vTaskCode1(void *pvParameters)
+{
+	for( ;; )
+	{
+		vTaskDelay(250 / portTICK_RATE_MS);
+		LEDOff(GREEN);
+
+		vTaskDelay(250 / portTICK_RATE_MS);
+		LEDOn(GREEN);
 	}
 }

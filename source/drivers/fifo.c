@@ -18,15 +18,13 @@
  **********************************************/
 
 
-ErrorStatus fifo_write(FIFO_TypeDef *fifoblock, uint8_t *data, uint16_t size)
+ErrorStatus fifo_write(FIFO_TypeDef *fifoblock, uint8_t *data)
 {
-	for (uint16_t i = 0; i <= size; i++)
-	{
-		*(fifoblock->base_addr + fifoblock->write_offset++) = *(data + i);
+	*(fifoblock->base_addr + fifoblock->write_offset++) = *data;
 
-		if (fifoblock->write_offset >= fifoblock->size)
-			fifoblock->write_offset = 0;
-	}
+	if (fifoblock->write_offset >= fifoblock->size)
+		fifoblock->write_offset = 0;
+
 
 	return SUCCESS;
 }
