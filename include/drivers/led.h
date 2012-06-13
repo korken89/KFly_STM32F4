@@ -1,7 +1,17 @@
 #ifndef __LED_H
 #define __LED_H
 
+/* Standard includes */
 #include "stm32f4xx.h"
+
+/* System includes */
+
+/* Scheduler includes. */
+
+/* KFly includes */
+
+/* Includes */
+
 
 #define LEDn				2
 

@@ -1,8 +1,7 @@
 #include "main.h"
 
-USB_OTG_CORE_HANDLE USB_OTG_dev;
 
-extern uint16_t cdc_DataTx (uint8_t* Buf, uint32_t Len);
+USB_OTG_CORE_HANDLE USB_OTG_dev;
 
 void main(void)
 {
@@ -40,61 +39,22 @@ void main(void)
 	xTaskCreate(vTaskCode,
 				"NAME1",
 				256,
-				NULL,
+				0,
 				tskIDLE_PRIORITY+1,
-		        NULL);
-
-	/*xTaskCreate(vTaskCode1,
-				"NAME2",
-				256,
-				NULL,
-				tskIDLE_PRIORITY+1,
-	            NULL);*/
+		        0);
 
 	vTaskStartScheduler();
 
-	char text = 'a';
+	/* We only get here if there was insuficient memory to start the Scheduler */
 
-	while (1)
-	{
-		cdc_DataTx(&text, 1);
-
-		if (text == 'm')
-			cdc_DataTx("\t", 1);
-
-		if (text >= 'z')
-		{
-			text = 'a';
-			cdc_DataTx("\n\r", 2);
-		}
-		else
-			text++;
-
-		for(volatile unsigned int i = 0; i < 8000000; i++);
-	}
+	while (1);
 }
 
 void vTaskCode(void *pvParameters)
 {
-	for( ;; )
+	while(1)
 	{
 		vTaskDelay(250 / portTICK_RATE_MS);
-		LEDOn(RED);
-
-		vTaskDelay(250 / portTICK_RATE_MS);
-		LEDOff(RED);
-	}
-}
-
-
-void vTaskCode1(void *pvParameters)
-{
-	for( ;; )
-	{
-		vTaskDelay(250 / portTICK_RATE_MS);
-		LEDOff(GREEN);
-
-		vTaskDelay(250 / portTICK_RATE_MS);
-		LEDOn(GREEN);
+		LEDToggle(RED);
 	}
 }

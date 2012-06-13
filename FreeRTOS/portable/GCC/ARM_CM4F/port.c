@@ -263,7 +263,7 @@ void xPortPendSVHandler( void )
 	(
 	"	mrs r0, psp							\n"
 	"										\n"
-	"	ldr	r3, pxCurrentTCBConst				\n" /* Get the location of the current TCB. */
+	"	ldr	r3, pxCurrentTCBConst			\n" /* Get the location of the current TCB. */
 	"	ldr	r2, [r3]						\n"
 	"										\n"
 	"	tst r14, #0x10						\n" /* Is the task using the FPU context?  If so, push high vfp registers. */

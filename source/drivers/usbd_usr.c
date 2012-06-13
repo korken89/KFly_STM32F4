@@ -146,8 +146,16 @@ void USBD_USR_DeviceReset(uint8_t speed )
 */
 void USBD_USR_DeviceConfigured (void)
 {
-	/* LCD_UsrLog("> VCP Interface configured.\n"); */
-	LEDOn(GREEN); /* cervena */
+	/* *
+	 *
+	 * TODO:
+	 * Add code to tell the OS that the USB is Configured or Suspended.
+	 * This so the OS won't write to the USB if is it Suspended.
+	 *
+	 * */
+
+	// Debug LED
+	LEDOn(GREEN);
 }
 
 /**
@@ -158,8 +166,16 @@ void USBD_USR_DeviceConfigured (void)
 */
 void USBD_USR_DeviceSuspended(void)
 {
-	/*   LCD_UsrLog("> USB Device in Suspend Mode.\n"); */
-	LEDOff(GREEN); /* cervena */
+	/* *
+	 *
+	 * TODO:
+	 * Add code to tell the OS that the USB is Configured or Suspended.
+	 * This so the OS won't write to the USB if is it Suspended.
+	 *
+	 * */
+
+	// Debug LED
+	LEDOff(GREEN);
 	/* Users can do their application actions here for the USB-Reset */
 }
 
@@ -172,8 +188,16 @@ void USBD_USR_DeviceSuspended(void)
 */
 void USBD_USR_DeviceResumed(void)
 {
+	/* *
+	 *
+	 * TODO:
+	 * Add code to tell the OS that the USB is Configured or Suspended.
+	 * This so the OS won't write to the USB if is it Suspended.
+	 *
+	 * */
+
+	// Debug LED
 	LEDOn(GREEN);
-    /* LCD_UsrLog("> USB Device in Idle Mode.\n"); */
     /* Users can do their application actions here for the USB-Reset */
 }
 

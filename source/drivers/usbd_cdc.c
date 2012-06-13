@@ -148,7 +148,7 @@ uint16_t cdc_DataTx (uint8_t* Buf, uint32_t Len)
 
 	uint32_t i;
 	//loop through buffer
-	for( i = 0; i < Len; i++ )
+	for(i = 0; i < Len; i++)
 	{
 		//push data into transfer buffer
 		APP_Rx_Buffer[APP_Rx_ptr_in] = Buf[i] ;
