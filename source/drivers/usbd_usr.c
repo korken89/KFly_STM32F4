@@ -23,43 +23,8 @@
 #include "usbd_usr.h"
 #include "usbd_ioreq.h"
 #include "led.h"
-
-/** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
-* @{
-*/
-
-/** @defgroup USBD_USR 
-* @brief    This file includes the user application layer
-* @{
-*/ 
-
-/** @defgroup USBD_USR_Private_TypesDefinitions
-* @{
-*/ 
-/**
-* @}
-*/ 
-
-
-/** @defgroup USBD_USR_Private_Defines
-* @{
-*/ 
-/**
-* @}
-*/ 
-
-
-/** @defgroup USBD_USR_Private_Macros
-* @{
-*/ 
-/**
-* @}
-*/ 
-
-
-/** @defgroup USBD_USR_Private_Variables
-* @{
-*/ 
+#include "comlink.h"
+extern volatile Bool bUSBAvalible;
 
 USBD_Usr_cb_TypeDef USR_cb =
 {
@@ -74,35 +39,9 @@ USBD_Usr_cb_TypeDef USR_cb =
   */
 };
 
-/**
-* @}
-*/
-
-/** @defgroup USBD_USR_Private_Constants
-* @{
-*/ 
-
-/**
-* @}
-*/
-
-
-
-/** @defgroup USBD_USR_Private_FunctionPrototypes
-* @{
-*/ 
-/**
-* @}
-*/ 
-
-
-/** @defgroup USBD_USR_Private_Functions
-* @{
-*/ 
 
 /**
 * @brief  USBD_USR_Init 
-*         Displays the message on LCD for host lib initialization
 * @param  None
 * @retval None
 */
@@ -114,45 +53,24 @@ void USBD_USR_Init(void)
 
 /**
 * @brief  USBD_USR_DeviceReset 
-*         Displays the message on LCD on device Reset Event
 * @param  speed : device speed
 * @retval None
 */
 void USBD_USR_DeviceReset(uint8_t speed )
 {
-	/*
- switch (speed)
- {
-   case USB_OTG_SPEED_HIGH: 
-     LCD_LOG_SetFooter ("     USB Device Library v1.0.0 [HS]" );
-     break;
-
-  case USB_OTG_SPEED_FULL: 
-     LCD_LOG_SetFooter ("     USB Device Library v1.0.0 [FS]" );
-     break;
- default:
-     LCD_LOG_SetFooter ("     USB Device Library v1.0.0 [??]" );
- }
- */
 
 }
 
 
 /**
 * @brief  USBD_USR_DeviceConfigured
-*         Displays the message on LCD on device configuration Event
 * @param  None
 * @retval Staus
 */
 void USBD_USR_DeviceConfigured (void)
 {
-	/* *
-	 *
-	 * TODO:
-	 * Add code to tell the OS that the USB is Configured or Suspended.
-	 * This so the OS won't write to the USB if is it Suspended.
-	 *
-	 * */
+	/* USB status change, tell the system */
+	bUSBAvalible = TRUE;
 
 	// Debug LED
 	LEDOn(GREEN);
@@ -160,19 +78,13 @@ void USBD_USR_DeviceConfigured (void)
 
 /**
 * @brief  USBD_USR_DeviceSuspended 
-*         Displays the message on LCD on device suspend Event
 * @param  None
 * @retval None
 */
 void USBD_USR_DeviceSuspended(void)
 {
-	/* *
-	 *
-	 * TODO:
-	 * Add code to tell the OS that the USB is Configured or Suspended.
-	 * This so the OS won't write to the USB if is it Suspended.
-	 *
-	 * */
+	/* USB status change, tell the system */
+	bUSBAvalible = FALSE;
 
 	// Debug LED
 	LEDOff(GREEN);
@@ -182,31 +94,17 @@ void USBD_USR_DeviceSuspended(void)
 
 /**
 * @brief  USBD_USR_DeviceResumed 
-*         Displays the message on LCD on device resume Event
 * @param  None
 * @retval None
 */
 void USBD_USR_DeviceResumed(void)
 {
-	/* *
-	 *
-	 * TODO:
-	 * Add code to tell the OS that the USB is Configured or Suspended.
-	 * This so the OS won't write to the USB if is it Suspended.
-	 *
-	 * */
+	/* USB status change, tell the system */
+	bUSBAvalible = TRUE;
 
 	// Debug LED
 	LEDOn(GREEN);
     /* Users can do their application actions here for the USB-Reset */
 }
-
-/**
-* @}
-*/ 
-
-/**
-* @}
-*/ 
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

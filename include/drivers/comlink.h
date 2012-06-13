@@ -4,6 +4,9 @@
 /* Standard includes */
 #include "stm32f4xx.h"
 
+/* System includes */
+#include "usbd_cdc.h"
+
 /* Scheduler includes. */
 #include "FreeRTOS.h"
 #include "task.h"
@@ -14,18 +17,13 @@
 /* Includes */
 
 /* Defines */
-#define USBQueueSize		256
+#define USBQueueSize	256
 
 /* Global variable defines */
-extern volatile xQueueHandle xUSBQueue;
+extern volatile xQueueHandle xUSBQueueHandle;
 
 /* Global function defines */
-
-/* *
- * TODO:
- * Temporary send function. Will in the future check if the USB is avalible.
- * */
-#define xUSBSendData(data, size) cdc_DataTx(data, size)
 void vUSBQueueInit(void);
+ErrorStatus xUSBSendData(uint8_t *, uint32_t);
 
 #endif

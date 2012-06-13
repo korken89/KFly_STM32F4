@@ -26,6 +26,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc.h"
 #include "led.h"
+#include "comlink.h"
+
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -181,23 +183,20 @@ uint16_t cdc_DataTx (uint8_t* Buf, uint32_t Len)
   */
 static uint16_t cdc_DataRx (uint8_t* Buf, uint32_t Len)
 {
+	portBASE_TYPE xHigherPriorityTaskWoken;
+
+	/* We have not woken a task at the start of the ISR. */
+	xHigherPriorityTaskWoken = pdFALSE;
+
 	// Loop through USB input buffer (frame)
 	for (uint32_t i = 0; i < Len; i++)
 	{
-		/* TODO:
-		 * Put the code to handle incomming data here!
-		 * To write on the port:
-		 * */
-
-		//if there is an 'a' in buffer
-		if (*(Buf + i) == 'a' || *(Buf + i) == 'A')
-			LEDOn(RED);
-
-		//if there is an 's' in buffer
-		else if (*(Buf + i) == 's' || *(Buf + i) == 'S')
-			LEDOff(RED);
-
+		/* Send incomming data to RTOS queue for processing */
+		xQueueSendToBackFromISR(xUSBQueueHandle, (Buf + i), &xHigherPriorityTaskWoken);
 	}
+
+	if (xHigherPriorityTaskWoken)
+		taskYIELD();
 
 	return USBD_OK;
 }

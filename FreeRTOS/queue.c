@@ -897,8 +897,8 @@ xTimeOutType xTimeOut;
 
 signed portBASE_TYPE xQueueGenericSendFromISR( xQueueHandle pxQueue, const void * const pvItemToQueue, signed portBASE_TYPE *pxHigherPriorityTaskWoken, portBASE_TYPE xCopyPosition )
 {
-signed portBASE_TYPE xReturn;
-unsigned portBASE_TYPE uxSavedInterruptStatus;
+	signed portBASE_TYPE xReturn;
+	unsigned portBASE_TYPE uxSavedInterruptStatus;
 
 	configASSERT( pxQueue );
 	configASSERT( pxHigherPriorityTaskWoken );

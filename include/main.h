@@ -17,6 +17,9 @@
 
 /* KFly includes */
 
+/* Driver Incudes */
+#include "comlink.h"
+
 /* Includes */
 #include "led.h"
 

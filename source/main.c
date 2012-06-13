@@ -21,7 +21,7 @@ void main(void)
 	 *
 	 * */
 	LEDInit();
-
+	vUSBQueueInit();
 	/* *
 	 *
 	 * 	USB init.
@@ -52,9 +52,26 @@ void main(void)
 
 void vTaskCode(void *pvParameters)
 {
+	char text;
+
 	while(1)
 	{
-		vTaskDelay(250 / portTICK_RATE_MS);
-		LEDToggle(RED);
+		xQueueReceive(xUSBQueueHandle, &text, portMAX_DELAY);
+
+		if (text == 'a' || text == 'A')
+		{
+			xUSBSendData("LED On\n\r", 9);
+			LEDOn(RED);
+		}
+
+		//if there is an 's' in buffer
+		else if (text == 's' || text == 'S')
+		{
+			xUSBSendData("LED Off\n\r", 10);
+			LEDOff(RED);
+		}
+
+		//vTaskDelay(250 / portTICK_RATE_MS);
+		//LEDToggle(RED);
 	}
 }
