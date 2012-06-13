@@ -18,6 +18,7 @@ CSTD = $(STDLIBDIR)stm32f4xx_gpio.c
 CSTD += $(STDLIBDIR)stm32f4xx_exti.c
 CSTD += $(STDLIBDIR)stm32f4xx_rcc.c
 CSTD += $(STDLIBDIR)stm32f4xx_syscfg.c
+CSTD += $(STDLIBDIR)stm32f4xx_tim.c
 CSTD += $(STDLIBDIR)misc.c
 
 # Sources

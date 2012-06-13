@@ -19,11 +19,13 @@
 
 /* Driver Incudes */
 #include "comlink.h"
+#include "timer.h"
 
 /* Includes */
 #include "led.h"
 
 void main(void);
 void vTaskCode(void *);
+void vTaskPrintTimer(void *);
 
 #endif

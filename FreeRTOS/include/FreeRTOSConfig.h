@@ -82,6 +82,7 @@
 
 /* Ensure stdint is only used by the compiler, and not the assembler. */
 #include <stdint.h>
+#include "timer.h"
 extern uint32_t SystemCoreClock;
 
 
@@ -104,7 +105,10 @@ extern uint32_t SystemCoreClock;
 #define configUSE_MALLOC_FAILED_HOOK		0
 #define configUSE_APPLICATION_TASK_TAG		0
 #define configUSE_COUNTING_SEMAPHORES		0
-#define configGENERATE_RUN_TIME_STATS		0
+
+#define configGENERATE_RUN_TIME_STATS			0
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS InitFastCounter
+#define portGET_RUN_TIME_COUNTER_VALUE 			GetFastCounterValue
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES 				0

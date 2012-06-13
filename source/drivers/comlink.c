@@ -37,18 +37,18 @@ void vUSBQueueInit(void)
  * */
 ErrorStatus xUSBSendData(uint8_t *data, uint32_t size)
 {
-	vTaskSuspendAll();
-
+	/*  if USB is not avalible, signal with error. */
 	if (bUSBAvalible == FALSE)
-	{
-		/* USB is not avalible, signal with error. */
-		xTaskResumeAll();
 		return ERROR;
-	}
+
 	else
 	{
+		vTaskSuspendAll();
+
 		cdc_DataTx(data, size);
+
 		xTaskResumeAll();
+
 		return SUCCESS;
 	}
 }
