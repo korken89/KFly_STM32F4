@@ -13,12 +13,17 @@
 /* Private external functions */
 
 
+/* *
+ *
+ * Fast Counter
+ * Initializes and sets up the TIM2 as a 1MHz counter.
+ *
+ * */
 void InitFastCounter(void)
 {
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-	uint16_t PrescalerValue = 0;
+	uint16_t PrescalerValue = ((SystemCoreClock /2) / 1000000) - 1;
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-    PrescalerValue = ((SystemCoreClock /2) / 1000000) - 1;
 
     /* Time base configuration */
     TIM_TimeBaseStructure.TIM_Period = 0xFFFFFFFF;

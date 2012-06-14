@@ -183,10 +183,8 @@ uint16_t cdc_DataTx (uint8_t* Buf, uint32_t Len)
   */
 static uint16_t cdc_DataRx (uint8_t* Buf, uint32_t Len)
 {
-	portBASE_TYPE xHigherPriorityTaskWoken;
-
 	/* We have not woken a task at the start of the ISR. */
-	xHigherPriorityTaskWoken = pdFALSE;
+	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
 	// Loop through USB input buffer (frame)
 	for (uint32_t i = 0; i < Len; i++)

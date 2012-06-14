@@ -1,28 +1,117 @@
 #include "main.h"
+#include <stdlib.h>
 
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 
-char* itoa(int val, int base)
+uint32_t itoa(int num, char *buf)
 {
-	static char buf[31] = {0};
-	if (val == 0)
+	if (num == 0)
 	{
-		buf[0] = '0';
-		return buf;
+		buf[10] = '0';
+		return 10;
 	}
 
 	int i;
-	for(i = 30; (val && i); --i, val /= base)
-		buf[i] = "0123456789abcdef"[val % base];
+	for(i = 10; (num && i); i--)
+	{
+		buf[i] = "0123456789"[num % 10];
+		num /= 10;
+	}
 
-	return &buf[i+1];
+	return (i+1);
+}
+
+void ftoa(float num)
+{
+
+	const float log2_of_10 = 3.321928094887362f;
+	char text[11] = {0};
+	char buff[15] = {0};
+	uint32_t id = 0;
+	int exp;
+	int flag1 = 0, flag2 = 0;
+
+	if (num == 0.0f)
+	{
+		xUSBSendData("0.000000e0", 10);
+		return;
+	}
+
+	if (num < 0.0f)
+	{
+		num = -num;
+		flag1 = 1;
+	}
+
+	uint32_t i = *(uint32_t *)&num;
+	exp = (int)(i >> 23);
+	exp = (int)(exp) - 127;
+	int mantissa = (i & 0xFFFFFF) | 0x800000;
+
+	float f_exp = (float)exp;
+	f_exp /= log2_of_10;	// To log10
+	exp = (int)f_exp;
+
+	float mul;
+
+	if (exp > 0)
+	{
+		mul = 0.1f;
+	}
+	else if (exp< 0)
+	{
+		mul = 10.0f;
+		flag2 = 1;
+	}
+
+	int cnt = abs(exp)+1;
+	// Normalize
+	while (cnt--)
+	{
+		num *= mul;
+	}
+
+
+
+
+	int whole = (int)num;
+	float whole_f = (float)whole;
+	num -= whole_f;
+	num *= 1000000.0f; // 6 decimals of precision
+	int dec = (int)num;
+
+	if (flag1)
+		xUSBSendData("-", 1);
+
+	id = itoa((uint32_t)whole, text);
+	xUSBSendData(&text[id], 11-id);
+
+	xUSBSendData(".", 1);
+
+	id = itoa((uint32_t)dec, text);
+
+	if (11-id < 6)
+		for (int i = 0; i < 6+id-11; i++)
+			xUSBSendData("0", 1);
+
+	xUSBSendData(&text[id], 11-id);
+
+	xUSBSendData("e", 1);
+
+	if (flag2)
+	{
+		xUSBSendData("-", 1);
+	}
+
+	id = itoa((uint32_t)abs(exp)+1, text);
+	xUSBSendData(&text[id], 11-id);
 }
 
 void main(void)
 {
 	/* *
 	 *
-	 * Initialization of pherials and I/O-ports
+	 * Initialization of peripherals and I/O-ports
 	 *
 	 * */
 
@@ -31,8 +120,6 @@ void main(void)
 	 *
 	 * LED init.
 	 * Initializes and sets up the port for the LEDs as outputs.
-	 * Red LED on Port B, Pin 0
-	 * Green LED on Port B, Pin 1
 	 *
 	 * */
 	LEDInit();
@@ -47,7 +134,7 @@ void main(void)
 	/* *
 	 *
 	 * FastCounter init.
-	 * Initializes and sets up the TIM2 as a 1MHz counter for timing.
+	 * Initializes and sets up a timer as a 1MHz counter for timing.
 	 *
 	 * */
 	InitFastCounter();
@@ -55,8 +142,8 @@ void main(void)
 	/* *
 	 *
 	 * 	USB init.
-	 * 	Running USB Full speed - 12Mbps as Virtual COM Port via the CDC interface
-	 * 	Shows as ttyACM0 in Ubuntu and COMxx in Windows.
+	 * 	Running USB Full Speed as Virtual COM Port via the CDC interface
+	 * 	Shows as ttyACMxx in Linux and COMxx in Windows.
 	 * 	Linux version does not need a driver but Windows version uses STM serial driver.
 	 *
 	 * */
@@ -67,24 +154,24 @@ void main(void)
 				&USR_cb);
 
 	xTaskCreate(vTaskCode,
-				"NAME1",
+				"MISC",
 				256,
 				0,
 				tskIDLE_PRIORITY+1,
-		        0);
+		    	0);
 
 	xTaskCreate(vTaskPrintTimer,
 				"TIMER",
 				256,
 				0,
 				tskIDLE_PRIORITY+1,
-			    0);
+				0);
 
 	vTaskStartScheduler();
 
 	/* We only get here if there was insuficient memory to start the Scheduler */
 
-	while (1);
+	while(1);
 }
 
 void vTaskCode(void *pvParameters)
@@ -97,13 +184,13 @@ void vTaskCode(void *pvParameters)
 
 		if (text == 'a')
 		{
-			xUSBSendData("LED On\n\r", 9);
+			xUSBSendData("LED On\n\r", 8);
 			LEDOn(RED);
 		}
 
 		else if (text == 's')
 		{
-			xUSBSendData("LED Off\n\r", 10);
+			xUSBSendData("LED Off\n\r", 9);
 			LEDOff(RED);
 		}
 	}
@@ -111,9 +198,20 @@ void vTaskCode(void *pvParameters)
 
 void vTaskPrintTimer(void *pvParameters)
 {
+
+
 	while(1)
 	{
-		xUSBSendData(itoa(GetFastCounterValue(), 12), 10);
+		ftoa(12345.67f);
+		xUSBSendData("\n\r", 2);
+		ftoa(-12345.67f);
+		xUSBSendData("\n\r", 2);
+		ftoa(0.0067f);
+		xUSBSendData("\n\r", 2);
+		ftoa(-0.0067f);
+		xUSBSendData("\n\r", 2);
+		ftoa(0.0f);
+		xUSBSendData("\n\r", 2);
 		xUSBSendData("\n\r", 2);
 		vTaskDelay(1000);
 	}

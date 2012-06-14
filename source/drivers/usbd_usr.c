@@ -24,6 +24,8 @@
 #include "usbd_ioreq.h"
 #include "led.h"
 #include "comlink.h"
+
+// This variable is privet to this file and comlink.c
 extern volatile Bool bUSBAvalible;
 
 USBD_Usr_cb_TypeDef USR_cb =

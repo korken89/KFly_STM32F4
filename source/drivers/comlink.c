@@ -33,6 +33,7 @@ void vUSBQueueInit(void)
  * Function for sending data over USB.
  * Theoretical max speed is 1.6Mbaud however a much slower rate is
  * recommened because the in and out endpoints uses the same buffer.
+ * 115.2kbuad is normal operating conditions. (Higher can be used)
  *
  * */
 ErrorStatus xUSBSendData(uint8_t *data, uint32_t size)

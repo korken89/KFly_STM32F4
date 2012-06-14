@@ -12,6 +12,18 @@ USE_STD_LIBS = 1
 # Optimization
 OPTIMIZATION = 2
 
+# Build tools
+GCC     = arm-none-eabi-gcc
+SIZE    = arm-none-eabi-size
+OBJDUMP = arm-none-eabi-objdump
+OBJCOPY = arm-none-eabi-objcopy
+
+# Flags
+MCU     = -mcpu=cortex-m4 -mthumb -g -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -fsingle-precision-constant
+CFLAGS  = $(COMMON) -std=gnu99 -O$(OPTIMIZATION) $(INCLUDE)
+AFLAGS  = $(COMMON) $(INCLUDE)
+LDFLAGS = $(COMMON) -Tstm32f4x_flash.ld -Wl,--build-id=none,-Map=main.map -lc -lm
+
 # StdLibs to use if wanted
 STDLIBDIR = Libraries/STM32F4xx_StdPeriph_Driver/src/
 CSTD = $(STDLIBDIR)stm32f4xx_gpio.c
@@ -55,16 +67,6 @@ endif
 
 ASRCS   = $(wildcard CMSIS/*.s) $(wildcard source/*.s) $(wildcard source/drivers/*.s) 
 OBJECTS = $(ASRCS:.s=.o) $(CSRCS:.c=.o)
-
-MCU     = -mcpu=cortex-m4 -mthumb -g -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -fsingle-precision-constant
-CFLAGS  = $(COMMON) -std=gnu99 -O$(OPTIMIZATION) $(INCLUDE)
-AFLAGS  = $(COMMON) $(INCLUDE)
-LDFLAGS = $(COMMON) -nostdlib -Tstm32f4x_flash.ld -Wl,--build-id=none,-Map=main.map
-
-GCC     = arm-none-eabi-gcc
-SIZE    = arm-none-eabi-size
-OBJDUMP = arm-none-eabi-objdump
-OBJCOPY = arm-none-eabi-objcopy
 
 test:
 	@echo $(USBLIB)

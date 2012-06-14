@@ -353,7 +353,7 @@ static void SetSysClock(void)
   {
     HSEStatus = RCC->CR & RCC_CR_HSERDY;
     StartUpCounter++;
-  } while((HSEStatus == 0)/* && (StartUpCounter != HSE_STARTUP_TIMEOUT) */);
+  } while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
 
   if ((RCC->CR & RCC_CR_HSERDY) != RESET)
   {
@@ -387,9 +387,7 @@ static void SetSysClock(void)
     RCC->CR |= RCC_CR_PLLON;
 
     /* Wait till the main PLL is ready */
-    while((RCC->CR & RCC_CR_PLLRDY) == 0)
-    {
-    }
+    while((RCC->CR & RCC_CR_PLLRDY) == 0);
    
     /* Configure Flash prefetch, Instruction cache, Data cache and wait state */
     FLASH->ACR = FLASH_ACR_ICEN |FLASH_ACR_DCEN |FLASH_ACR_LATENCY_5WS;
@@ -400,8 +398,6 @@ static void SetSysClock(void)
 
     /* Wait till the main PLL is used as system clock source */
     while ((RCC->CFGR & (uint32_t)RCC_CFGR_SWS ) != RCC_CFGR_SWS_PLL);
-    {
-    }
   }
   else
   { /* If HSE fails to start-up, the application will have wrong clock
