@@ -193,9 +193,7 @@ static uint16_t cdc_DataRx (uint8_t* Buf, uint32_t Len)
 		xQueueSendToBackFromISR(xUSBQueueHandle, (Buf + i), &xHigherPriorityTaskWoken);
 	}
 
-	if (xHigherPriorityTaskWoken)
-		taskYIELD();
-
+	portEND_SWITCHING_ISR(xHigherPriorityTaskWoken); // Force context switch if needed
 	return USBD_OK;
 }
 

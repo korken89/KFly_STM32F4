@@ -14,9 +14,9 @@
 /* Includes */
 
 /* Defines */
-#define MPU6050_ADDRESS_AD0_LOW     	0x68 // address pin low (GND), default for InvenSense evaluation board
-#define MPU6050_ADDRESS_AD0_HIGH    	0x69 // address pin high (VCC)
-#define MPU6050_DEFAULT_ADDRESS     	MPU6050_ADDRESS_AD0_HIGH
+#define MPU6050_ADDRESS_AD0_LOW    	0x68 // Address pin low (GND)
+#define MPU6050_ADDRESS_AD0_HIGH   	0x69 // Address pin high (VCC)
+#define MPU6050_ADDRESS     		MPU6050_ADDRESS_AD0_HIGH
 
 /* Global variable defines */
 
