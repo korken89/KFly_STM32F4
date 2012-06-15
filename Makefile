@@ -6,7 +6,7 @@
 # External high speed crystal frequency
 F_HSE = 12000000
 
-# Use Standard Pherial Librarys (true = 1)
+# Use Standard Pheriphial Libraries (true = 1)
 USE_STD_LIBS = 1
 
 # Optimization
@@ -22,7 +22,7 @@ OBJCOPY = arm-none-eabi-objcopy
 MCU     = -mcpu=cortex-m4 -mthumb -g -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -fsingle-precision-constant
 CFLAGS  = $(COMMON) -std=gnu99 -O$(OPTIMIZATION) $(INCLUDE)
 AFLAGS  = $(COMMON) $(INCLUDE)
-LDFLAGS = $(COMMON) -Tstm32f4x_flash.ld -Wl,--build-id=none,-Map=main.map -lc -lm
+LDFLAGS = $(COMMON) -Tstm32f4x_flash.ld -Wl,--build-id=none,-Map=main.map
 
 # StdLibs to use if wanted
 STDLIBDIR = Libraries/STM32F4xx_StdPeriph_Driver/src/
