@@ -39,6 +39,7 @@ void I2C2_ER_IRQHandler(void);
 
 static uint16_t I2C_Addr(I2C_TypeDef *, uint8_t DevAddr, uint8_t dir);
 static uint16_t I2C_SendByte(I2C_TypeDef *, uint8_t);
+static uint16_t I2C_Read(I2C_TypeDef *, uint8_t *);
 static uint16_t I2C_Start(I2C_TypeDef *);
 static uint16_t WaitSR1FlagsSet(I2C_TypeDef *, uint16_t);
 static uint32_t WaitLineIdle(I2C_TypeDef *);
@@ -158,7 +159,10 @@ ErrorStatus I2C_MasterTransferData(I2C_TypeDef *I2Cx, I2C_MASTER_SETUP_Type *Tra
 
 			/* Send Stop if no data is to be received */
 			if ((TransferCfg->RX_Length == 0) || (TransferCfg->RX_Data == NULL))
+			{
 				I2Cx->CR1 |= I2C_CR1_STOP;
+				WaitLineIdle(I2Cx);
+			}
 		}
 
 		/* Second Start condition (Repeat Start) */
@@ -185,16 +189,105 @@ ErrorStatus I2C_MasterTransferData(I2C_TypeDef *I2Cx, I2C_MASTER_SETUP_Type *Tra
 			 * */
 
 			/* Receive a number of data bytes */
-			while (TransferCfg->RX_Count < TransferCfg->RX_Length)
+
+			if (TransferCfg->RX_Length == 1) //We are going to read only 1 byte
 			{
+				//Before Clearing Addr bit by reading SR2, we have to cancel ack.
+				I2Cx->CR1 &= (uint16_t)~((uint16_t)I2C_CR1_ACK);
+
+				//Now Read the SR2 to clear ADDR
+				(void)I2Cx->SR2;
+
+				//Order a STOP condition
+				//Note: Spec_p583 says this should be done just after clearing ADDR
+				//If it is done before ADDR is set, a STOP is generated immediately as the clock is being streched
+				I2Cx->CR1 |= I2C_CR1_STOP;
+				//Be carefull that till the stop condition is actually transmitted the clock will stay active even if a NACK is generated after the next received byte.
+
+				//Read the next byte
+				I2C_Read(I2Cx, rxdat);
+				TransferCfg->RX_Count++;
+
+				//Make Sure Stop bit is cleared and Line is now Iddle
+				WaitLineIdle(I2Cx);
+
+				//Enable the Acknowledgement again
+				I2Cx->CR1 |= ((uint16_t)I2C_CR1_ACK);
+			}
+
+			else if (TransferCfg->RX_Length == 2) //We are going to read 2 bytes (See: Spec_p584)
+			{
+				//Before Clearing Addr, reset ACK, set POS
+				I2Cx->CR1 &= (uint16_t)~((uint16_t)I2C_CR1_ACK);
+				I2Cx->CR1 |= I2C_CR1_POS;
+
+				//Read the SR2 to clear ADDR
+				(void)I2Cx->SR2;
+
+				//Wait for the next 2 bytes to be received (1st in the DR, 2nd in the shift register)
+				WaitSR1FlagsSet(I2Cx, I2C_SR1_BTF);
+				//As we don't read anything from the DR, the clock is now being strecthed.
+
+				//Order a stop condition (as the clock is being strecthed, the stop condition is generated immediately)
+				I2Cx->CR1 |= I2C_CR1_STOP;
+
+				//Read the next two bytes
+				I2C_Read(I2Cx, rxdat++);
+				TransferCfg->RX_Count++;
+				I2C_Read(I2Cx, rxdat);
+				TransferCfg->RX_Count++;
+
+				//Make Sure Stop bit is cleared and Line is now Iddle
+				WaitLineIdle(I2Cx);
+
+				//Enable the ack and reset Pos
+				I2Cx->CR1 |= ((uint16_t)I2C_CR1_ACK);
+				I2Cx->CR1 &= (uint16_t)~((uint16_t)I2C_CR1_POS);
+			}
+			else //We have more than 2 bytes. See spec_p585
+			{
+				//Read the SR2 to clear ADDR
+				(void)I2Cx->SR2;
+
+				while((TransferCfg->RX_Length - TransferCfg->RX_Count) > 3) //Read till the last 3 bytes
+				{
+					I2C_Read(I2Cx, rxdat++);
+					TransferCfg->RX_Count++;
+				}
+
+				//3 more bytes to read. Wait till the next to is actually received
+				WaitSR1FlagsSet(I2Cx, I2C_SR1_BTF);
+				//Here the clock is strecthed. One more to read.
+
+				//Reset Ack
+				I2Cx->CR1 &= (uint16_t)~((uint16_t)I2C_CR1_ACK);
+
+				//Read N-2
+				I2C_Read(I2Cx, rxdat++);
+				TransferCfg->RX_Count++;
+				//Once we read this, N is going to be read to the shift register and NACK is generated
+
+				//Wait for the BTF
+				WaitSR1FlagsSet(I2Cx, I2C_SR1_BTF); //N-1 is in DR, N is in shift register
+				//Here the clock is stretched
+
+				//Generate a stop condition
+				I2Cx->CR1 |= I2C_CR1_STOP;
+
+				//Read the last two bytes (N-1 and N)
+				//Read the next two bytes
+				I2C_Read(I2Cx, rxdat++);
+				TransferCfg->RX_Count++;
+				I2C_Read(I2Cx, rxdat);
+				TransferCfg->RX_Count++;
+
+				//Make Sure Stop bit is cleared and Line is now Iddle
+				WaitLineIdle(I2Cx);
+
+				//Enable the ack
+				I2Cx->CR1 |= ((uint16_t)I2C_CR1_ACK);
 			}
 		}
-
-		/* *
-		 * TODO:
-		 * When transfer is completed, send stop
-		 * */
-		WaitLineIdle(I2Cx);
 	}
 	else /* Interrupt transfer */
 	{
@@ -263,6 +356,20 @@ static uint16_t I2C_SendByte(I2C_TypeDef *I2Cx, uint8_t data)
 	I2Cx->DR = data;
 
 	return WaitSR1FlagsSet(I2Cx, I2C_SR1_TXE);
+}
+
+static uint16_t I2C_Read(I2C_TypeDef *I2Cx, uint8_t *pBuf)
+{
+	uint32_t err;
+    uint32_t TimeOut = HSI_VALUE;
+
+	while(((I2Cx->SR1) & I2C_SR1_RXNE) != I2C_SR1_RXNE)
+		if (!(TimeOut--))
+			return ((I2Cx->SR1 & I2C_SR1_BITMASK) | 0x8000);
+
+	*pBuf = I2Cx->DR;   //This clears the RXNE bit. IF both RXNE and BTF is set, the clock stretches
+	return (I2Cx->SR1 & I2C_SR1_BITMASK);
+
 }
 
 static uint16_t I2C_Start(I2C_TypeDef *I2Cx)
