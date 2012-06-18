@@ -18,11 +18,7 @@
 #define I2C_STATUS_BITMASK		0x00DF
 #define I2C_ERROR_BITMASK		0xDF00
 #define I2C_SR1_BITMASK			0xDFDF
-#define I2C_STATUS_SB			(1<<0)
-#define I2C_STATUS_ADDR			(1<<1)
-#define I2C_STATUS_BTF			(1<<2)
-#define I2C_STATUS_RNE			(1<<6)
-#define I2C_STATUS_TE			(1<<7)
+
 
 /* Global variable defines */
 
