@@ -102,6 +102,8 @@ void ftoa(float num)
 	{
 		xUSBSendData("-", 1);
 	}
+	else
+		xUSBSendData("+", 1);
 
 	id = itoa((uint32_t)abs(exp)+1, text);
 	xUSBSendData(&text[id], 11-id);

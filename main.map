@@ -1,0 +1,1307 @@
+Archive member included because of file (symbol)
+
+/usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memcpy.o)
+                              ./FreeRTOS/queue.o (memcpy)
+/usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+                              ./FreeRTOS/tasks.o (memset)
+/usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strncpy.o)
+                              ./FreeRTOS/tasks.o (strncpy)
+
+Allocating common symbols
+Common symbol       size              file
+
+xQueueRegistry      0x40              ./FreeRTOS/queue.o
+usbd_cdc_OtherCfgDesc
+                    0x43              Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+USB_Rx_Buffer       0x40              Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+I2Ctmp              0x24              source/drivers/i2c.o
+CmdBuff             0x8               Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+USB_OTG_dev         0x5f0             source/main.o
+APP_Rx_Buffer       0x400             Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+USBD_StrDesc        0x32              Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x08000000         0x00100000         xr
+RAM              0x20000000         0x00020000         xrw
+RAM2             0x10000000         0x00010000         xrw
+MEMORY_B1        0x60000000         0x00000000         xr
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crti.o
+LOAD /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtbegin.o
+LOAD CMSIS/startup_stm32f4xx.o
+LOAD CMSIS/stm32f4xx_it.o
+LOAD CMSIS/system_stm32f4xx.o
+LOAD source/main.o
+LOAD source/drivers/comlink.o
+LOAD source/drivers/fifo.o
+LOAD source/drivers/hmc5883l.o
+LOAD source/drivers/i2c.o
+LOAD source/drivers/led.o
+LOAD source/drivers/mpu6050.o
+LOAD source/drivers/syscalls.o
+LOAD source/drivers/timer.o
+LOAD source/drivers/usb_bsp.o
+LOAD source/drivers/usbd_cdc.o
+LOAD source/drivers/usbd_desc.o
+LOAD source/drivers/usbd_usr.o
+LOAD ./FreeRTOS/list.o
+LOAD ./FreeRTOS/tasks.o
+LOAD ./FreeRTOS/queue.o
+LOAD ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+LOAD ./FreeRTOS/portable/MemMang/heap_1.o
+LOAD Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_gpio.o
+LOAD Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
+LOAD Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
+LOAD Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_syscfg.o
+LOAD Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.o
+LOAD Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_i2c.o
+LOAD Libraries/STM32F4xx_StdPeriph_Driver/src/misc.o
+LOAD Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+LOAD Libraries/STM32_USB_Device_Library/Core/src/usbd_core.o
+LOAD Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.o
+LOAD Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+LOAD Libraries/STM32_USB_OTG_Driver/src/usb_core.o
+LOAD Libraries/STM32_USB_OTG_Driver/src/usb_dcd.o
+LOAD Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.o
+START GROUP
+LOAD /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/libgcc.a
+LOAD /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a
+END GROUP
+LOAD /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtend.o
+LOAD /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtn.o
+                0x20020000                _estack = 0x20020000
+                0x00000000                _Min_Heap_Size = 0x0
+                0x00000400                _Min_Stack_Size = 0x400
+
+.isr_vector     0x08000000      0x188
+                0x08000000                . = ALIGN (0x4)
+ *(.isr_vector)
+ .isr_vector    0x08000000      0x188 CMSIS/startup_stm32f4xx.o
+                0x08000000                g_pfnVectors
+                0x08000188                . = ALIGN (0x4)
+
+.text           0x08000188     0x67fc
+                0x08000188                . = ALIGN (0x4)
+ *(.text)
+ .text          0x08000188        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crti.o
+ .text          0x08000188       0x68 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtbegin.o
+ .text          0x080001f0       0x14 CMSIS/startup_stm32f4xx.o
+ .text          0x08000204       0x5c CMSIS/stm32f4xx_it.o
+                0x08000204                NMI_Handler
+                0x08000208                HardFault_Handler
+                0x0800020c                MemManage_Handler
+                0x08000210                BusFault_Handler
+                0x08000214                UsageFault_Handler
+                0x08000218                DebugMon_Handler
+                0x0800021c                OTG_FS_WKUP_IRQHandler
+                0x08000250                OTG_FS_IRQHandler
+                0x0800025c                EXTI0_IRQHandler
+ .text          0x08000260      0x1e8 CMSIS/system_stm32f4xx.o
+                0x08000260                SystemCoreClockUpdate
+                0x080002f4                SystemInit
+ .text          0x08000448      0x33c source/main.o
+                0x08000448                vTaskCode
+                0x080004b4                itoa
+                0x08000508                ftoa
+                0x080006ec                vTaskPrintTimer
+ .text          0x08000784       0x48 source/drivers/comlink.o
+                0x08000784                vUSBQueueInit
+                0x080007a0                xUSBSendData
+ .text          0x080007cc       0x5c source/drivers/fifo.o
+                0x080007cc                fifo_write
+                0x080007ec                fifo_read
+                0x0800081c                fifo_flush
+ .text          0x08000828        0x4 source/drivers/hmc5883l.o
+                0x08000828                InitHMC5883L
+ .text          0x0800082c      0x850 source/drivers/i2c.o
+                0x0800082c                InitSensorBus
+                0x080008f0                I2C_getNum
+                0x08000928                I2C_MasterTransferData
+                0x08001000                I2C_MasterHandler
+                0x0800104c                I2C2_EV_IRQHandler
+                0x08001064                I2C2_ER_IRQHandler
+ .text          0x0800107c       0xa0 source/drivers/led.o
+                0x0800107c                LEDInit
+                0x080010c0                LEDToggle
+                0x080010e4                LEDOn
+                0x08001100                LEDOff
+ .text          0x0800111c        0x4 source/drivers/mpu6050.o
+                0x0800111c                InitMPU6050
+ .text          0x08001120       0x20 source/drivers/syscalls.o
+                0x08001120                _sbrk
+ .text          0x08001140       0x5c source/drivers/timer.o
+                0x08001140                InitFastCounter
+                0x08001194                GetFastCounterValue
+ .text          0x0800119c      0x144 source/drivers/usb_bsp.o
+                0x0800119c                USB_OTG_BSP_Init
+                0x08001240                USB_OTG_BSP_EnableInterrupt
+                0x08001268                USB_OTG_BSP_uDelay
+                0x080012a0                USB_OTG_BSP_mDelay
+ .text          0x080012e0      0x128 source/drivers/usbd_cdc.o
+                0x080012ec                cdc_DataTx
+ .text          0x08001408      0x10c source/drivers/usbd_desc.o
+                0x08001408                USBD_USR_DeviceDescriptor
+                0x08001418                USBD_USR_LangIDStrDescriptor
+                0x08001424                USBD_USR_ManufacturerStrDescriptor
+                0x08001444                USBD_USR_InterfaceStrDescriptor
+                0x08001468                USBD_USR_ConfigStrDescriptor
+                0x0800148c                USBD_USR_SerialStrDescriptor
+                0x080014d0                USBD_USR_ProductStrDescriptor
+ .text          0x08001514       0x44 source/drivers/usbd_usr.o
+                0x08001514                USBD_USR_Init
+                0x08001518                USBD_USR_DeviceReset
+                0x0800151c                USBD_USR_DeviceResumed
+                0x08001530                USBD_USR_DeviceConfigured
+                0x08001544                USBD_USR_DeviceSuspended
+ .text          0x08001558       0x98 ./FreeRTOS/list.o
+                0x08001558                vListInitialise
+                0x08001570                vListInitialiseItem
+                0x08001578                vListInsertEnd
+                0x08001594                vListInsert
+                0x080015cc                vListRemove
+ .text          0x080015f0      0x93c ./FreeRTOS/tasks.o
+                0x08001634                xTaskGenericCreate
+                0x08001804                xTaskIsTaskSuspended
+                0x08001838                vTaskResume
+                0x080018a8                xTaskResumeFromISR
+                0x08001944                vTaskStartScheduler
+                0x080019a4                vTaskEndScheduler
+                0x080019c0                vTaskSuspendAll
+                0x080019d4                xTaskGetTickCount
+                0x080019ec                xTaskGetTickCountFromISR
+                0x08001a0c                uxTaskGetNumberOfTasks
+                0x08001a18                vTaskIncrementTick
+                0x08001b2c                xTaskResumeAll
+                0x08001c10                vTaskDelay
+                0x08001c4c                vTaskDelayUntil
+                0x08001cc0                vTaskSwitchContext
+                0x08001d44                vTaskSuspend
+                0x08001db8                vTaskPlaceOnEventList
+                0x08001e00                xTaskRemoveFromEventList
+                0x08001e70                vTaskSetTimeOutState
+                0x08001e90                xTaskCheckForTimeOut
+                0x08001f1c                vTaskMissedYield
+ .text          0x08001f2c      0x5f4 ./FreeRTOS/queue.o
+                0x08001fbc                xQueueGenericReset
+                0x08002014                xQueueGenericCreate
+                0x08002054                xQueueGenericSend
+                0x08002170                xQueueGenericSendFromISR
+                0x08002210                xQueueGenericReceive
+                0x0800234c                xQueueReceiveFromISR
+                0x080023e8                uxQueueMessagesWaiting
+                0x08002408                uxQueueMessagesWaitingFromISR
+                0x08002418                vQueueDelete
+                0x08002498                xQueueIsQueueEmptyFromISR
+                0x080024b0                xQueueIsQueueFullFromISR
+                0x080024cc                vQueueAddToRegistry
+ .text          0x08002520      0x1a4 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x08002540                pxPortInitialiseStack
+                0x08002560                SVC_Handler
+                0x0800257c                xPortStartScheduler
+                0x080025fc                vPortEndScheduler
+                0x08002600                vPortYieldFromISR
+                0x08002610                vPortEnterCritical
+                0x08002628                vPortExitCritical
+                0x08002644                PendSV_Handler
+                0x08002694                SysTick_Handler
+ .text          0x080026c4       0x6c ./FreeRTOS/portable/MemMang/heap_1.o
+                0x080026c4                pvPortMalloc
+                0x0800270c                vPortFree
+                0x08002710                vPortInitialiseBlocks
+                0x08002720                xPortGetFreeHeapSize
+ .text          0x08002730      0x344 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_gpio.o
+                0x08002730                GPIO_DeInit
+                0x08002858                GPIO_Init
+                0x080029bc                GPIO_StructInit
+                0x080029d0                GPIO_PinLockConfig
+                0x080029f8                GPIO_ReadInputDataBit
+                0x08002a04                GPIO_ReadInputData
+                0x08002a0c                GPIO_ReadOutputDataBit
+                0x08002a18                GPIO_ReadOutputData
+                0x08002a20                GPIO_SetBits
+                0x08002a24                GPIO_ResetBits
+                0x08002a28                GPIO_WriteBit
+                0x08002a34                GPIO_Write
+                0x08002a38                GPIO_ToggleBits
+                0x08002a44                GPIO_PinAFConfig
+ .text          0x08002a74      0x118 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
+                0x08002a74                EXTI_DeInit
+                0x08002a94                EXTI_Init
+                0x08002b1c                EXTI_StructInit
+                0x08002b2c                EXTI_GenerateSWInterrupt
+                0x08002b40                EXTI_GetFlagStatus
+                0x08002b54                EXTI_ClearFlag
+                0x08002b60                EXTI_GetITStatus
+                0x08002b80                EXTI_ClearITPendingBit
+ .text          0x08002b8c      0x520 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
+                0x08002b8c                RCC_DeInit
+                0x08002bc4                RCC_HSEConfig
+                0x08002bd4                RCC_WaitForHSEStartUp
+                0x08002c08                RCC_AdjustHSICalibrationValue
+                0x08002c20                RCC_HSICmd
+                0x08002c2c                RCC_LSEConfig
+                0x08002c4c                RCC_LSICmd
+                0x08002c58                RCC_PLLConfig
+                0x08002c78                RCC_PLLCmd
+                0x08002c84                RCC_PLLI2SConfig
+                0x08002c98                RCC_PLLI2SCmd
+                0x08002ca4                RCC_ClockSecuritySystemCmd
+                0x08002cb0                RCC_MCO1Config
+                0x08002ccc                RCC_MCO2Config
+                0x08002ce8                RCC_SYSCLKConfig
+                0x08002d00                RCC_GetSYSCLKSource
+                0x08002d10                RCC_HCLKConfig
+                0x08002d28                RCC_PCLK1Config
+                0x08002d40                RCC_PCLK2Config
+                0x08002d58                RCC_GetClocksFreq
+                0x08002e14                RCC_RTCCLKConfig
+                0x08002e58                RCC_RTCCLKCmd
+                0x08002e64                RCC_BackupResetCmd
+                0x08002e70                RCC_I2SCLKConfig
+                0x08002e7c                RCC_AHB1PeriphClockCmd
+                0x08002e98                RCC_AHB2PeriphClockCmd
+                0x08002eb4                RCC_AHB3PeriphClockCmd
+                0x08002ed0                RCC_APB1PeriphClockCmd
+                0x08002eec                RCC_APB2PeriphClockCmd
+                0x08002f08                RCC_AHB1PeriphResetCmd
+                0x08002f24                RCC_AHB2PeriphResetCmd
+                0x08002f40                RCC_AHB3PeriphResetCmd
+                0x08002f5c                RCC_APB1PeriphResetCmd
+                0x08002f78                RCC_APB2PeriphResetCmd
+                0x08002f94                RCC_AHB1PeriphClockLPModeCmd
+                0x08002fb0                RCC_AHB2PeriphClockLPModeCmd
+                0x08002fcc                RCC_AHB3PeriphClockLPModeCmd
+                0x08002fe8                RCC_APB1PeriphClockLPModeCmd
+                0x08003004                RCC_APB2PeriphClockLPModeCmd
+                0x08003020                RCC_ITConfig
+                0x0800303c                RCC_GetFlagStatus
+                0x08003078                RCC_ClearFlag
+                0x0800308c                RCC_GetITStatus
+                0x080030a0                RCC_ClearITPendingBit
+ .text          0x080030ac       0x88 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_syscfg.o
+                0x080030ac                SYSCFG_DeInit
+                0x080030c8                SYSCFG_MemoryRemapConfig
+                0x080030d4                SYSCFG_EXTILineConfig
+                0x0800310c                SYSCFG_ETH_MediaInterfaceConfig
+                0x08003118                SYSCFG_CompensationCellCmd
+                0x08003124                SYSCFG_GetCompensationCellStatus
+ .text          0x08003134      0xf20 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.o
+                0x08003134                TIM_DeInit
+                0x08003308                TIM_TimeBaseInit
+                0x080033d4                TIM_TimeBaseStructInit
+                0x080033e8                TIM_PrescalerConfig
+                0x080033f0                TIM_CounterModeConfig
+                0x08003404                TIM_SetCounter
+                0x08003408                TIM_SetAutoreload
+                0x0800340c                TIM_GetCounter
+                0x08003410                TIM_GetPrescaler
+                0x08003418                TIM_UpdateDisableConfig
+                0x08003434                TIM_UpdateRequestConfig
+                0x08003450                TIM_ARRPreloadConfig
+                0x0800346c                TIM_SelectOnePulseMode
+                0x08003488                TIM_SetClockDivision
+                0x080034a4                TIM_Cmd
+                0x080034c0                TIM_OC1Init
+                0x08003560                TIM_OC2Init
+                0x08003600                TIM_OC3Init
+                0x080036a0                TIM_OC4Init
+                0x0800371c                TIM_OCStructInit
+                0x08003730                TIM_SelectOCxM
+                0x08003790                TIM_SetCompare1
+                0x08003794                TIM_SetCompare2
+                0x08003798                TIM_SetCompare3
+                0x0800379c                TIM_SetCompare4
+                0x080037a0                TIM_ForcedOC1Config
+                0x080037b4                TIM_ForcedOC2Config
+                0x080037c8                TIM_ForcedOC3Config
+                0x080037dc                TIM_ForcedOC4Config
+                0x080037f0                TIM_OC1PreloadConfig
+                0x08003804                TIM_OC2PreloadConfig
+                0x08003818                TIM_OC3PreloadConfig
+                0x0800382c                TIM_OC4PreloadConfig
+                0x08003840                TIM_OC1FastConfig
+                0x08003854                TIM_OC2FastConfig
+                0x08003868                TIM_OC3FastConfig
+                0x0800387c                TIM_OC4FastConfig
+                0x08003890                TIM_ClearOC1Ref
+                0x080038a4                TIM_ClearOC2Ref
+                0x080038b4                TIM_ClearOC3Ref
+                0x080038c8                TIM_ClearOC4Ref
+                0x080038d8                TIM_OC1PolarityConfig
+                0x080038ec                TIM_OC1NPolarityConfig
+                0x08003900                TIM_OC2PolarityConfig
+                0x08003914                TIM_OC2NPolarityConfig
+                0x08003928                TIM_OC3PolarityConfig
+                0x0800393c                TIM_OC3NPolarityConfig
+                0x08003950                TIM_OC4PolarityConfig
+                0x08003964                TIM_CCxCmd
+                0x08003988                TIM_CCxNCmd
+                0x080039ac                TIM_ICInit
+                0x08003b34                TIM_ICStructInit
+                0x08003b44                TIM_PWMIConfig
+                0x08003cb4                TIM_GetCapture1
+                0x08003cb8                TIM_GetCapture2
+                0x08003cbc                TIM_GetCapture3
+                0x08003cc0                TIM_GetCapture4
+                0x08003cc4                TIM_SetIC1Prescaler
+                0x08003ce0                TIM_SetIC2Prescaler
+                0x08003cfc                TIM_SetIC3Prescaler
+                0x08003d18                TIM_SetIC4Prescaler
+                0x08003d34                TIM_BDTRConfig
+                0x08003d68                TIM_BDTRStructInit
+                0x08003d7c                TIM_CtrlPWMOutputs
+                0x08003d9c                TIM_SelectCOM
+                0x08003db8                TIM_CCPreloadControl
+                0x08003dd4                TIM_ITConfig
+                0x08003de8                TIM_GenerateEvent
+                0x08003dec                TIM_GetFlagStatus
+                0x08003df8                TIM_ClearFlag
+                0x08003e00                TIM_GetITStatus
+                0x08003e18                TIM_ClearITPendingBit
+                0x08003e20                TIM_DMAConfig
+                0x08003e28                TIM_DMACmd
+                0x08003e3c                TIM_SelectCCDMA
+                0x08003e58                TIM_InternalClockConfig
+                0x08003e68                TIM_ITRxExternalClockConfig
+                0x08003e88                TIM_TIxExternalClockConfig
+                0x08003f1c                TIM_ETRClockMode1Config
+                0x08003f48                TIM_ETRClockMode2Config
+                0x08003f6c                TIM_SelectInputTrigger
+                0x08003f80                TIM_SelectOutputTrigger
+                0x08003f9c                TIM_SelectSlaveMode
+                0x08003fb8                TIM_SelectMasterSlaveMode
+                0x08003fd4                TIM_ETRConfig
+                0x08003ff0                TIM_EncoderInterfaceConfig
+                0x08004030                TIM_SelectHallSensor
+                0x0800404c                TIM_RemapConfig
+ .text          0x08004054      0x464 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_i2c.o
+                0x08004054                I2C_DeInit
+                0x080040c4                I2C_Init
+                0x080041b4                I2C_StructInit
+                0x080041d0                I2C_Cmd
+                0x080041ec                I2C_GenerateSTART
+                0x08004208                I2C_GenerateSTOP
+                0x08004224                I2C_Send7bitAddress
+                0x08004238                I2C_AcknowledgeConfig
+                0x08004254                I2C_OwnAddress2Config
+                0x0800426c                I2C_DualAddressCmd
+                0x08004288                I2C_GeneralCallCmd
+                0x080042a4                I2C_SoftwareResetCmd
+                0x080042bc                I2C_StretchClockCmd
+                0x080042d8                I2C_FastModeDutyCycleConfig
+                0x080042f8                I2C_NACKPositionConfig
+                0x08004318                I2C_SMBusAlertConfig
+                0x08004338                I2C_ARPCmd
+                0x08004354                I2C_SendData
+                0x08004358                I2C_ReceiveData
+                0x08004360                I2C_TransmitPEC
+                0x0800437c                I2C_PECPositionConfig
+                0x0800439c                I2C_CalculatePEC
+                0x080043b8                I2C_GetPEC
+                0x080043c0                I2C_DMACmd
+                0x080043dc                I2C_DMALastTransferCmd
+                0x080043f8                I2C_ReadRegister
+                0x08004410                I2C_ITConfig
+                0x08004424                I2C_CheckEvent
+                0x08004444                I2C_GetLastEvent
+                0x08004454                I2C_GetFlagStatus
+                0x0800448c                I2C_ClearFlag
+                0x08004494                I2C_GetITStatus
+                0x080044b0                I2C_ClearITPendingBit
+ .text          0x080044b8       0xe8 Libraries/STM32F4xx_StdPeriph_Driver/src/misc.o
+                0x080044b8                NVIC_PriorityGroupConfig
+                0x080044cc                NVIC_Init
+                0x08004550                NVIC_SetVectorTable
+                0x08004568                NVIC_SystemLPConfig
+                0x08004584                SysTick_CLKSourceConfig
+ .text          0x080045a0      0x2f8 Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+ .text          0x08004898      0x254 Libraries/STM32_USB_Device_Library/Core/src/usbd_core.o
+                0x08004a88                USBD_Init
+                0x08004ac0                USBD_DeInit
+                0x08004ac4                USBD_SetCfg
+                0x08004adc                USBD_ClrCfg
+ .text          0x08004aec       0xb8 Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.o
+                0x08004aec                USBD_CtlSendData
+                0x08004b0c                USBD_CtlContinueSendData
+                0x08004b20                USBD_CtlPrepareRx
+                0x08004b40                USBD_CtlContinueRx
+                0x08004b54                USBD_CtlSendStatus
+                0x08004b74                USBD_CtlReceiveStatus
+                0x08004b94                USBD_GetRxCount
+ .text          0x08004ba4      0x50c Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+                0x08004ba4                USBD_ParseSetupRequest
+                0x08004bf0                USBD_CtlError
+                0x08004c18                USBD_StdEPReq
+                0x08004d34                USBD_StdItfReq
+                0x08004d68                USBD_StdDevReq
+                0x08005060                USBD_GetString
+ .text          0x080050b0      0xc68 Libraries/STM32_USB_OTG_Driver/src/usb_core.o
+                0x0800513c                USB_OTG_WritePacket
+                0x08005188                USB_OTG_ReadPacket
+                0x080051d0                USB_OTG_SelectCore
+                0x08005398                USB_OTG_CoreInit
+                0x0800548c                USB_OTG_EnableGlobalInt
+                0x0800549c                USB_OTG_DisableGlobalInt
+                0x080054ac                USB_OTG_FlushTxFifo
+                0x08005500                USB_OTG_FlushRxFifo
+                0x0800554c                USB_OTG_SetCurrentMode
+                0x08005578                USB_OTG_GetMode
+                0x08005584                USB_OTG_IsDeviceMode
+                0x08005594                USB_OTG_IsHostMode
+                0x080055a0                USB_OTG_ReadCoreItr
+                0x080055ac                USB_OTG_ReadOtgItr
+                0x080055b4                USB_OTG_InitDevSpeed
+                0x080055c0                USB_OTG_EnableDevInt
+                0x08005608                USB_OTG_CoreInitDev
+                0x08005720                USB_OTG_GetDeviceSpeed
+                0x0800573c                USB_OTG_EP0Activate
+                0x08005768                USB_OTG_EPActivate
+                0x080057d4                USB_OTG_EPDeactivate
+                0x0800581c                USB_OTG_EPStartXfer
+                0x080059a0                USB_OTG_EP0StartXfer
+                0x08005ab0                USB_OTG_EPSetStall
+                0x08005ae8                USB_OTG_EPClearStall
+                0x08005b1c                USB_OTG_ReadDevAllOutEp_itr
+                0x08005b2c                USB_OTG_ReadDevOutEP_itr
+                0x08005b40                USB_OTG_ReadDevAllInEPItr
+                0x08005b50                USB_OTG_EP0_OutStart
+                0x08005b90                USB_OTG_ActiveRemoteWakeup
+                0x08005bd4                USB_OTG_UngateClock
+                0x08005bf8                USB_OTG_StopDevice
+                0x08005c44                USB_OTG_GetEPStatus
+                0x08005ca0                USB_OTG_SetEPStatus
+ .text          0x08005d18      0x2a8 Libraries/STM32_USB_OTG_Driver/src/usb_dcd.o
+                0x08005d18                DCD_Init
+                0x08005dc4                DCD_EP_Open
+                0x08005e04                DCD_EP_Close
+                0x08005e30                DCD_EP_PrepareRx
+                0x08005e6c                DCD_EP_Tx
+                0x08005ea4                DCD_EP_Stall
+                0x08005ee4                DCD_EP_ClrStall
+                0x08005f24                DCD_EP_Flush
+                0x08005f40                DCD_EP_SetAddress
+                0x08005f50                DCD_DevConnect
+                0x08005f60                DCD_DevDisconnect
+                0x08005f70                DCD_GetEPStatus
+                0x08005f98                DCD_SetEPStatus
+ .text          0x08005fc0      0x554 Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.o
+                0x08005fc0                USBD_OTG_ISR_Handler
+ .text          0x08006514       0xf0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memcpy.o)
+                0x08006514                memcpy
+ .text          0x08006604       0x8c /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+                0x08006604                memset
+ .text          0x08006690       0x74 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strncpy.o)
+                0x08006690                strncpy
+ .text          0x08006704        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtend.o
+ .text          0x08006704        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtn.o
+ *(.text*)
+ .text.Reset_Handler
+                0x08006704       0x5c CMSIS/startup_stm32f4xx.o
+                0x08006704                Reset_Handler
+ .text.Default_Handler
+                0x08006760        0x4 CMSIS/startup_stm32f4xx.o
+                0x08006760                RTC_Alarm_IRQHandler
+                0x08006760                HASH_RNG_IRQHandler
+                0x08006760                EXTI2_IRQHandler
+                0x08006760                TIM8_CC_IRQHandler
+                0x08006760                TIM1_CC_IRQHandler
+                0x08006760                DMA2_Stream5_IRQHandler
+                0x08006760                DMA1_Stream5_IRQHandler
+                0x08006760                PVD_IRQHandler
+                0x08006760                SDIO_IRQHandler
+                0x08006760                TAMP_STAMP_IRQHandler
+                0x08006760                CAN2_RX1_IRQHandler
+                0x08006760                EXTI3_IRQHandler
+                0x08006760                TIM8_TRG_COM_TIM14_IRQHandler
+                0x08006760                TIM1_UP_TIM10_IRQHandler
+                0x08006760                TIM8_UP_TIM13_IRQHandler
+                0x08006760                I2C3_ER_IRQHandler
+                0x08006760                DMA1_Stream2_IRQHandler
+                0x08006760                CAN1_RX0_IRQHandler
+                0x08006760                FPU_IRQHandler
+                0x08006760                OTG_HS_WKUP_IRQHandler
+                0x08006760                CAN2_SCE_IRQHandler
+                0x08006760                DMA2_Stream2_IRQHandler
+                0x08006760                SPI1_IRQHandler
+                0x08006760                TIM6_DAC_IRQHandler
+                0x08006760                TIM1_BRK_TIM9_IRQHandler
+                0x08006760                DCMI_IRQHandler
+                0x08006760                CAN2_RX0_IRQHandler
+                0x08006760                DMA2_Stream3_IRQHandler
+                0x08006760                USART6_IRQHandler
+                0x08006760                USART3_IRQHandler
+                0x08006760                CRYP_IRQHandler
+                0x08006760                CAN1_RX1_IRQHandler
+                0x08006760                UART5_IRQHandler
+                0x08006760                DMA2_Stream0_IRQHandler
+                0x08006760                TIM4_IRQHandler
+                0x08006760                I2C1_EV_IRQHandler
+                0x08006760                DMA1_Stream6_IRQHandler
+                0x08006760                DMA1_Stream1_IRQHandler
+                0x08006760                UART4_IRQHandler
+                0x08006760                TIM3_IRQHandler
+                0x08006760                RCC_IRQHandler
+                0x08006760                TIM8_BRK_TIM12_IRQHandler
+                0x08006760                Default_Handler
+                0x08006760                EXTI15_10_IRQHandler
+                0x08006760                ADC_IRQHandler
+                0x08006760                DMA1_Stream7_IRQHandler
+                0x08006760                TIM7_IRQHandler
+                0x08006760                CAN2_TX_IRQHandler
+                0x08006760                TIM5_IRQHandler
+                0x08006760                DMA2_Stream7_IRQHandler
+                0x08006760                I2C3_EV_IRQHandler
+                0x08006760                EXTI9_5_IRQHandler
+                0x08006760                RTC_WKUP_IRQHandler
+                0x08006760                ETH_WKUP_IRQHandler
+                0x08006760                SPI2_IRQHandler
+                0x08006760                OTG_HS_EP1_IN_IRQHandler
+                0x08006760                DMA1_Stream0_IRQHandler
+                0x08006760                CAN1_TX_IRQHandler
+                0x08006760                EXTI4_IRQHandler
+                0x08006760                FSMC_IRQHandler
+                0x08006760                ETH_IRQHandler
+                0x08006760                OTG_HS_EP1_OUT_IRQHandler
+                0x08006760                WWDG_IRQHandler
+                0x08006760                TIM2_IRQHandler
+                0x08006760                TIM1_TRG_COM_TIM11_IRQHandler
+                0x08006760                OTG_HS_IRQHandler
+                0x08006760                EXTI1_IRQHandler
+                0x08006760                USART2_IRQHandler
+                0x08006760                DMA2_Stream1_IRQHandler
+                0x08006760                CAN1_SCE_IRQHandler
+                0x08006760                FLASH_IRQHandler
+                0x08006760                DMA2_Stream4_IRQHandler
+                0x08006760                USART1_IRQHandler
+                0x08006760                SPI3_IRQHandler
+                0x08006760                DMA1_Stream4_IRQHandler
+                0x08006760                I2C1_ER_IRQHandler
+                0x08006760                DMA2_Stream6_IRQHandler
+                0x08006760                DMA1_Stream3_IRQHandler
+ .text.startup  0x08006764       0x88 source/main.o
+                0x08006764                main
+ .text.unlikely
+                0x080067ec       0x74 ./FreeRTOS/queue.o
+ *(.rodata)
+ .rodata        0x08006860        0xc source/drivers/led.o
+                0x08006860                GPIO_PIN
+                0x08006864                GPIO_CLK
+ .rodata        0x0800686c        0x4 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x0800686c                ulKernelPriority
+ .rodata        0x08006870        0x4 Libraries/STM32_USB_OTG_Driver/src/usb_core.o
+ *(.rodata*)
+ .rodata.str1.4
+                0x08006874       0x52 source/main.o
+                                 0x58 (size before relaxing)
+ *fill*         0x080068c6        0x2 00
+ .rodata.str1.4
+                0x080068c8       0x95 source/drivers/usbd_desc.o
+                                 0x98 (size before relaxing)
+ *fill*         0x0800695d        0x3 00
+ .rodata.str1.4
+                0x08006960        0x8 ./FreeRTOS/tasks.o
+ *(.glue_7)
+ .glue_7        0x00000000        0x0 linker stubs
+ *(.glue_7t)
+ .glue_7t       0x00000000        0x0 linker stubs
+ *(.eh_frame)
+ .eh_frame      0x08006968        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtbegin.o
+ .eh_frame      0x08006968        0x4 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtend.o
+ *(.init)
+ .init          0x0800696c        0x4 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crti.o
+                0x0800696c                _init
+ .init          0x08006970        0x8 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtn.o
+ *(.fini)
+ .fini          0x08006978        0x4 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crti.o
+                0x08006978                _fini
+ .fini          0x0800697c        0x8 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtn.o
+                0x08006984                . = ALIGN (0x4)
+                0x08006984                _etext = .
+
+.vfp11_veneer   0x08006984        0x0
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+
+.v4_bx          0x08006984        0x0
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.iplt           0x08006984        0x0
+ .iplt          0x00000000        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtbegin.o
+
+.rel.dyn        0x08006984        0x0
+ .rel.iplt      0x00000000        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtbegin.o
+
+.ARM.extab
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+
+.ARM            0x08006984        0x0
+                0x08006984                __exidx_start = .
+ *(.ARM.exidx*)
+                0x08006984                __exidx_end = .
+
+.preinit_array  0x08006984        0x0
+                0x08006984                PROVIDE (__preinit_array_start, .)
+ *(.preinit_array*)
+                0x08006984                PROVIDE (__preinit_array_end, .)
+
+.init_array     0x08006984        0x4
+                0x08006984                PROVIDE (__init_array_start, .)
+ *(SORT(.init_array.*))
+ *(.init_array*)
+ .init_array    0x08006984        0x4 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtbegin.o
+                0x08006988                PROVIDE (__init_array_end, .)
+
+.fini_array     0x08006988        0x4
+                0x08006988                PROVIDE (__fini_array_start, .)
+ *(.fini_array*)
+ .fini_array    0x08006988        0x4 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtbegin.o
+ *(SORT(.fini_array.*))
+                0x0800698c                PROVIDE (__fini_array_end, .)
+                0x0800698c                _sidata = .
+
+.data           0x20000000      0x14c load address 0x0800698c
+                0x20000000                . = ALIGN (0x4)
+                0x20000000                _sdata = .
+ *(.data)
+ .data          0x20000000        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crti.o
+ .data          0x20000000        0x4 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtbegin.o
+                0x20000000                __dso_handle
+ .data          0x20000004        0x0 CMSIS/startup_stm32f4xx.o
+ .data          0x20000004        0x0 CMSIS/stm32f4xx_it.o
+ .data          0x20000004       0x14 CMSIS/system_stm32f4xx.o
+                0x20000004                AHBPrescTable
+                0x20000014                SystemCoreClock
+ .data          0x20000018        0x0 source/main.o
+ .data          0x20000018        0x0 source/drivers/comlink.o
+ .data          0x20000018        0x0 source/drivers/fifo.o
+ .data          0x20000018        0x0 source/drivers/hmc5883l.o
+ .data          0x20000018        0x0 source/drivers/i2c.o
+ .data          0x20000018        0x8 source/drivers/led.o
+                0x20000018                GPIO_PORT
+ .data          0x20000020        0x0 source/drivers/mpu6050.o
+ .data          0x20000020        0x0 source/drivers/syscalls.o
+ .data          0x20000020        0x0 source/drivers/timer.o
+ .data          0x20000020        0x0 source/drivers/usb_bsp.o
+ .data          0x20000020       0x14 source/drivers/usbd_cdc.o
+                0x20000020                cdc_fops
+ .data          0x20000034       0x40 source/drivers/usbd_desc.o
+                0x20000034                USBD_DeviceDesc
+                0x20000048                USBD_LangIDDesc
+                0x2000004c                USBD_DeviceQualifierDesc
+                0x20000058                USR_desc
+ .data          0x20000074       0x1c source/drivers/usbd_usr.o
+                0x20000074                USR_cb
+ .data          0x20000090        0x0 ./FreeRTOS/list.o
+ .data          0x20000090        0x4 ./FreeRTOS/tasks.o
+ .data          0x20000094        0x0 ./FreeRTOS/queue.o
+ .data          0x20000094        0x4 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .data          0x20000098        0x0 ./FreeRTOS/portable/MemMang/heap_1.o
+ .data          0x20000098        0x0 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_gpio.o
+ .data          0x20000098        0x0 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
+ .data          0x20000098       0x10 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
+ .data          0x200000a8        0x0 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_syscfg.o
+ .data          0x200000a8        0x0 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.o
+ .data          0x200000a8        0x0 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_i2c.o
+ .data          0x200000a8        0x0 Libraries/STM32F4xx_StdPeriph_Driver/src/misc.o
+ .data          0x200000a8       0x74 Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+                0x200000a8                usbd_cdc_CfgDesc
+                0x200000f0                USBD_CDC_cb
+ .data          0x2000011c       0x30 Libraries/STM32_USB_Device_Library/Core/src/usbd_core.o
+                0x2000011c                USBD_DCD_INT_fops
+                0x20000120                USBD_DCD_INT_cb
+ .data          0x2000014c        0x0 Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.o
+ .data          0x2000014c        0x0 Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+ .data          0x2000014c        0x0 Libraries/STM32_USB_OTG_Driver/src/usb_core.o
+ .data          0x2000014c        0x0 Libraries/STM32_USB_OTG_Driver/src/usb_dcd.o
+ .data          0x2000014c        0x0 Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.o
+ .data          0x2000014c        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memcpy.o)
+ .data          0x2000014c        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+ .data          0x2000014c        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strncpy.o)
+ .data          0x2000014c        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtend.o
+ .data          0x2000014c        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtn.o
+ *(.data*)
+                0x2000014c                . = ALIGN (0x4)
+                0x2000014c                _edata = .
+
+.jcr            0x2000014c        0x4 load address 0x08006ad8
+ .jcr           0x2000014c        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtbegin.o
+ .jcr           0x2000014c        0x4 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtend.o
+
+.igot.plt       0x20000150        0x0 load address 0x08006adc
+ .igot.plt      0x00000000        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtbegin.o
+                0x20000150                . = ALIGN (0x4)
+
+.bss            0x20000150      0xc54 load address 0x08006adc
+                0x20000150                _sbss = .
+                0x20000150                __bss_start__ = _sbss
+ *(.bss)
+ .bss           0x20000150        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crti.o
+ .bss           0x20000150       0x1c /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtbegin.o
+ .bss           0x2000016c        0x0 CMSIS/startup_stm32f4xx.o
+ .bss           0x2000016c        0x0 CMSIS/stm32f4xx_it.o
+ .bss           0x2000016c        0x0 CMSIS/system_stm32f4xx.o
+ .bss           0x2000016c        0x0 source/main.o
+ .bss           0x2000016c        0x8 source/drivers/comlink.o
+                0x2000016c                xUSBQueueHandle
+                0x20000170                bUSBAvalible
+ .bss           0x20000174        0x0 source/drivers/fifo.o
+ .bss           0x20000174        0x0 source/drivers/hmc5883l.o
+ .bss           0x20000174        0x0 source/drivers/i2c.o
+ .bss           0x20000174        0x0 source/drivers/led.o
+ .bss           0x20000174        0x0 source/drivers/mpu6050.o
+ .bss           0x20000174        0x4 source/drivers/syscalls.o
+ .bss           0x20000178        0x0 source/drivers/timer.o
+ .bss           0x20000178        0x0 source/drivers/usb_bsp.o
+ .bss           0x20000178        0x0 source/drivers/usbd_cdc.o
+ .bss           0x20000178        0x0 source/drivers/usbd_desc.o
+ .bss           0x20000178        0x0 source/drivers/usbd_usr.o
+ .bss           0x20000178        0x0 ./FreeRTOS/list.o
+ .bss           0x20000178       0xe8 ./FreeRTOS/tasks.o
+                0x20000178                pxCurrentTCB
+ .bss           0x20000260        0x0 ./FreeRTOS/queue.o
+ .bss           0x20000260        0x0 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .bss           0x20000260        0x4 ./FreeRTOS/portable/MemMang/heap_1.o
+ .bss           0x20000264        0x0 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_gpio.o
+ .bss           0x20000264        0x0 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
+ .bss           0x20000264        0x0 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
+ .bss           0x20000264        0x0 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_syscfg.o
+ .bss           0x20000264        0x0 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.o
+ .bss           0x20000264        0x0 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_i2c.o
+ .bss           0x20000264        0x0 Libraries/STM32F4xx_StdPeriph_Driver/src/misc.o
+ .bss           0x20000264       0x1c Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+                0x20000268                USB_Tx_State
+                0x2000026c                APP_Rx_ptr_out
+                0x20000270                APP_Rx_ptr_in
+                0x20000274                APP_Rx_length
+ .bss           0x20000280        0x0 Libraries/STM32_USB_Device_Library/Core/src/usbd_core.o
+ .bss           0x20000280        0x0 Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.o
+ .bss           0x20000280       0x10 Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+                0x20000280                USBD_ep_status
+                0x20000288                USBD_default_cfg
+                0x2000028c                USBD_cfg_status
+ .bss           0x20000290        0x0 Libraries/STM32_USB_OTG_Driver/src/usb_core.o
+ .bss           0x20000290        0x0 Libraries/STM32_USB_OTG_Driver/src/usb_dcd.o
+ .bss           0x20000290        0x0 Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.o
+ .bss           0x20000290        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memcpy.o)
+ .bss           0x20000290        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+ .bss           0x20000290        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strncpy.o)
+ .bss           0x20000290        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtend.o
+ .bss           0x20000290        0x0 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtn.o
+ *(.bss*)
+ *(COMMON)
+ COMMON         0x20000290      0x5f0 source/main.o
+                0x20000290                USB_OTG_dev
+ COMMON         0x20000880       0x24 source/drivers/i2c.o
+                0x20000880                I2Ctmp
+ COMMON         0x200008a4       0x40 ./FreeRTOS/queue.o
+                0x200008a4                xQueueRegistry
+ COMMON         0x200008e4      0x48c Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+                0x200008e4                usbd_cdc_OtherCfgDesc
+                0x20000928                USB_Rx_Buffer
+                0x20000968                CmdBuff
+                0x20000970                APP_Rx_Buffer
+ COMMON         0x20000d70       0x32 Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+                0x20000d70                USBD_StrDesc
+                0x20000da4                . = ALIGN (0x4)
+ *fill*         0x20000da2        0x2 00
+                0x20000da4                _ebss = .
+                0x20000da4                __bss_end__ = _ebss
+                0x20000da4                PROVIDE (__HEAP_START, __bss_end__)
+
+._user_heap_stack
+                0x20000da4      0x400 load address 0x08007730
+                0x20000da4                . = ALIGN (0x4)
+                0x20000da4                PROVIDE (end, .)
+                0x20000da4                PROVIDE (_end, .)
+                0x20000da4                . = (. + _Min_Heap_Size)
+                0x200011a4                . = (. + _Min_Stack_Size)
+ *fill*         0x20000da4      0x400 00
+                0x200011a4                . = ALIGN (0x4)
+
+.rtos_heap      0x10000000    0x10000
+                0x10000000                . = ALIGN (0x4)
+ *(.rtos_heap)
+ .rtos_heap     0x10000000    0x10000 ./FreeRTOS/portable/MemMang/heap_1.o
+                0x10010000                . = ALIGN (0x4)
+
+.memory_b1_text
+ *(.mb1text)
+ *(.mb1text*)
+ *(.mb1rodata)
+ *(.mb1rodata*)
+
+/DISCARD/
+ libc.a(*)
+ libm.a(*)
+ libgcc.a(*)
+
+.ARM.attributes
+                0x00000000       0x35
+ *(.ARM.attributes)
+ .ARM.attributes
+                0x00000000       0x1b /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crti.o
+ .ARM.attributes
+                0x0000001b       0x2b /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtbegin.o
+ .ARM.attributes
+                0x00000046       0x27 CMSIS/startup_stm32f4xx.o
+ .ARM.attributes
+                0x0000006d       0x39 CMSIS/stm32f4xx_it.o
+ .ARM.attributes
+                0x000000a6       0x39 CMSIS/system_stm32f4xx.o
+ .ARM.attributes
+                0x000000df       0x39 source/main.o
+ .ARM.attributes
+                0x00000118       0x39 source/drivers/comlink.o
+ .ARM.attributes
+                0x00000151       0x39 source/drivers/fifo.o
+ .ARM.attributes
+                0x0000018a       0x39 source/drivers/hmc5883l.o
+ .ARM.attributes
+                0x000001c3       0x39 source/drivers/i2c.o
+ .ARM.attributes
+                0x000001fc       0x39 source/drivers/led.o
+ .ARM.attributes
+                0x00000235       0x39 source/drivers/mpu6050.o
+ .ARM.attributes
+                0x0000026e       0x39 source/drivers/syscalls.o
+ .ARM.attributes
+                0x000002a7       0x39 source/drivers/timer.o
+ .ARM.attributes
+                0x000002e0       0x39 source/drivers/usb_bsp.o
+ .ARM.attributes
+                0x00000319       0x39 source/drivers/usbd_cdc.o
+ .ARM.attributes
+                0x00000352       0x39 source/drivers/usbd_desc.o
+ .ARM.attributes
+                0x0000038b       0x39 source/drivers/usbd_usr.o
+ .ARM.attributes
+                0x000003c4       0x39 ./FreeRTOS/list.o
+ .ARM.attributes
+                0x000003fd       0x39 ./FreeRTOS/tasks.o
+ .ARM.attributes
+                0x00000436       0x39 ./FreeRTOS/queue.o
+ .ARM.attributes
+                0x0000046f       0x39 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .ARM.attributes
+                0x000004a8       0x39 ./FreeRTOS/portable/MemMang/heap_1.o
+ .ARM.attributes
+                0x000004e1       0x39 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_gpio.o
+ .ARM.attributes
+                0x0000051a       0x39 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
+ .ARM.attributes
+                0x00000553       0x39 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
+ .ARM.attributes
+                0x0000058c       0x39 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_syscfg.o
+ .ARM.attributes
+                0x000005c5       0x39 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.o
+ .ARM.attributes
+                0x000005fe       0x39 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_i2c.o
+ .ARM.attributes
+                0x00000637       0x39 Libraries/STM32F4xx_StdPeriph_Driver/src/misc.o
+ .ARM.attributes
+                0x00000670       0x39 Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+ .ARM.attributes
+                0x000006a9       0x39 Libraries/STM32_USB_Device_Library/Core/src/usbd_core.o
+ .ARM.attributes
+                0x000006e2       0x39 Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.o
+ .ARM.attributes
+                0x0000071b       0x39 Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+ .ARM.attributes
+                0x00000754       0x39 Libraries/STM32_USB_OTG_Driver/src/usb_core.o
+ .ARM.attributes
+                0x0000078d       0x39 Libraries/STM32_USB_OTG_Driver/src/usb_dcd.o
+ .ARM.attributes
+                0x000007c6       0x39 Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.o
+ .ARM.attributes
+                0x000007ff       0x2b /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memcpy.o)
+ .ARM.attributes
+                0x0000082a       0x2b /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+ .ARM.attributes
+                0x00000855       0x2b /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strncpy.o)
+ .ARM.attributes
+                0x00000880       0x2b /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtend.o
+ .ARM.attributes
+                0x000008ab       0x1b /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/thumb2/crtn.o
+OUTPUT(main.elf elf32-littlearm)
+
+.debug_line     0x00000000     0x4dac
+ .debug_line    0x00000000       0x79 CMSIS/startup_stm32f4xx.o
+ .debug_line    0x00000079      0x126 CMSIS/stm32f4xx_it.o
+ .debug_line    0x0000019f      0x16a CMSIS/system_stm32f4xx.o
+ .debug_line    0x00000309      0x320 source/main.o
+ .debug_line    0x00000629      0x12e source/drivers/comlink.o
+ .debug_line    0x00000757      0x112 source/drivers/fifo.o
+ .debug_line    0x00000869       0xd0 source/drivers/hmc5883l.o
+ .debug_line    0x00000939      0x47a source/drivers/i2c.o
+ .debug_line    0x00000db3      0x14d source/drivers/led.o
+ .debug_line    0x00000f00       0xcf source/drivers/mpu6050.o
+ .debug_line    0x00000fcf       0xbd source/drivers/syscalls.o
+ .debug_line    0x0000108c      0x144 source/drivers/timer.o
+ .debug_line    0x000011d0      0x1b0 source/drivers/usb_bsp.o
+ .debug_line    0x00001380      0x208 source/drivers/usbd_cdc.o
+ .debug_line    0x00001588      0x15d source/drivers/usbd_desc.o
+ .debug_line    0x000016e5      0x147 source/drivers/usbd_usr.o
+ .debug_line    0x0000182c      0x160 ./FreeRTOS/list.o
+ .debug_line    0x0000198c      0x4be ./FreeRTOS/tasks.o
+ .debug_line    0x00001e4a      0x407 ./FreeRTOS/queue.o
+ .debug_line    0x00002251      0x1ce ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .debug_line    0x0000241f      0x152 ./FreeRTOS/portable/MemMang/heap_1.o
+ .debug_line    0x00002571      0x249 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_gpio.o
+ .debug_line    0x000027ba      0x19d Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
+ .debug_line    0x00002957      0x2e4 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
+ .debug_line    0x00002c3b      0x123 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_syscfg.o
+ .debug_line    0x00002d5e      0x6d5 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.o
+ .debug_line    0x00003433      0x2d5 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_i2c.o
+ .debug_line    0x00003708      0x16a Libraries/STM32F4xx_StdPeriph_Driver/src/misc.o
+ .debug_line    0x00003872      0x2c3 Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+ .debug_line    0x00003b35      0x247 Libraries/STM32_USB_Device_Library/Core/src/usbd_core.o
+ .debug_line    0x00003d7c      0x1a3 Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.o
+ .debug_line    0x00003f1f      0x2b3 Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+ .debug_line    0x000041d2      0x68a Libraries/STM32_USB_OTG_Driver/src/usb_core.o
+ .debug_line    0x0000485c      0x25f Libraries/STM32_USB_OTG_Driver/src/usb_dcd.o
+ .debug_line    0x00004abb      0x2f1 Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.o
+
+.debug_info     0x00000000    0x16009
+ .debug_info    0x00000000       0x65 CMSIS/startup_stm32f4xx.o
+ .debug_info    0x00000065      0xc81 CMSIS/stm32f4xx_it.o
+ .debug_info    0x00000ce6      0x661 CMSIS/system_stm32f4xx.o
+ .debug_info    0x00001347      0xecc source/main.o
+ .debug_info    0x00002213      0x19e source/drivers/comlink.o
+ .debug_info    0x000023b1      0x1ca source/drivers/fifo.o
+ .debug_info    0x0000257b       0xac source/drivers/hmc5883l.o
+ .debug_info    0x00002627      0xc7e source/drivers/i2c.o
+ .debug_info    0x000032a5      0x3c8 source/drivers/led.o
+ .debug_info    0x0000366d       0xac source/drivers/mpu6050.o
+ .debug_info    0x00003719       0xf2 source/drivers/syscalls.o
+ .debug_info    0x0000380b      0x3ca source/drivers/timer.o
+ .debug_info    0x00003bd5     0x113b source/drivers/usb_bsp.o
+ .debug_info    0x00004d10      0x312 source/drivers/usbd_cdc.o
+ .debug_info    0x00005022      0x453 source/drivers/usbd_desc.o
+ .debug_info    0x00005475      0x215 source/drivers/usbd_usr.o
+ .debug_info    0x0000568a      0x2ce ./FreeRTOS/list.o
+ .debug_info    0x00005958      0xc87 ./FreeRTOS/tasks.o
+ .debug_info    0x000065df      0x919 ./FreeRTOS/queue.o
+ .debug_info    0x00006ef8      0x25c ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .debug_info    0x00007154      0x19e ./FreeRTOS/portable/MemMang/heap_1.o
+ .debug_info    0x000072f2      0x62e Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_gpio.o
+ .debug_info    0x00007920      0x36e Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
+ .debug_info    0x00007c8e      0xdbd Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
+ .debug_info    0x00008a4b      0x275 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_syscfg.o
+ .debug_info    0x00008cc0     0x234f Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.o
+ .debug_info    0x0000b00f      0xb8d Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_i2c.o
+ .debug_info    0x0000bb9c      0x596 Libraries/STM32F4xx_StdPeriph_Driver/src/misc.o
+ .debug_info    0x0000c132     0x1160 Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+ .debug_info    0x0000d292     0x10a7 Libraries/STM32_USB_Device_Library/Core/src/usbd_core.o
+ .debug_info    0x0000e339      0xde7 Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.o
+ .debug_info    0x0000f120     0x11ff Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+ .debug_info    0x0001031f     0x2959 Libraries/STM32_USB_OTG_Driver/src/usb_core.o
+ .debug_info    0x00012c78     0x11a7 Libraries/STM32_USB_OTG_Driver/src/usb_dcd.o
+ .debug_info    0x00013e1f     0x21ea Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.o
+
+.debug_abbrev   0x00000000     0x3b30
+ .debug_abbrev  0x00000000       0x12 CMSIS/startup_stm32f4xx.o
+ .debug_abbrev  0x00000012      0x144 CMSIS/stm32f4xx_it.o
+ .debug_abbrev  0x00000156      0x185 CMSIS/system_stm32f4xx.o
+ .debug_abbrev  0x000002db      0x26c source/main.o
+ .debug_abbrev  0x00000547       0xe1 source/drivers/comlink.o
+ .debug_abbrev  0x00000628       0xbf source/drivers/fifo.o
+ .debug_abbrev  0x000006e7       0x64 source/drivers/hmc5883l.o
+ .debug_abbrev  0x0000074b      0x2c0 source/drivers/i2c.o
+ .debug_abbrev  0x00000a0b      0x16e source/drivers/led.o
+ .debug_abbrev  0x00000b79       0x64 source/drivers/mpu6050.o
+ .debug_abbrev  0x00000bdd       0x88 source/drivers/syscalls.o
+ .debug_abbrev  0x00000c65      0x107 source/drivers/timer.o
+ .debug_abbrev  0x00000d6c      0x217 source/drivers/usb_bsp.o
+ .debug_abbrev  0x00000f83      0x17d source/drivers/usbd_cdc.o
+ .debug_abbrev  0x00001100      0x187 source/drivers/usbd_desc.o
+ .debug_abbrev  0x00001287      0x123 source/drivers/usbd_usr.o
+ .debug_abbrev  0x000013aa       0xe7 ./FreeRTOS/list.o
+ .debug_abbrev  0x00001491      0x30c ./FreeRTOS/tasks.o
+ .debug_abbrev  0x0000179d      0x1fa ./FreeRTOS/queue.o
+ .debug_abbrev  0x00001997      0x18b ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .debug_abbrev  0x00001b22      0x11c ./FreeRTOS/portable/MemMang/heap_1.o
+ .debug_abbrev  0x00001c3e      0x1ce Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_gpio.o
+ .debug_abbrev  0x00001e0c      0x1cd Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
+ .debug_abbrev  0x00001fd9      0x295 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
+ .debug_abbrev  0x0000226e      0x150 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_syscfg.o
+ .debug_abbrev  0x000023be      0x242 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.o
+ .debug_abbrev  0x00002600      0x194 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_i2c.o
+ .debug_abbrev  0x00002794      0x14c Libraries/STM32F4xx_StdPeriph_Driver/src/misc.o
+ .debug_abbrev  0x000028e0      0x285 Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+ .debug_abbrev  0x00002b65      0x289 Libraries/STM32_USB_Device_Library/Core/src/usbd_core.o
+ .debug_abbrev  0x00002dee      0x17e Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.o
+ .debug_abbrev  0x00002f6c      0x307 Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+ .debug_abbrev  0x00003273      0x3fc Libraries/STM32_USB_OTG_Driver/src/usb_core.o
+ .debug_abbrev  0x0000366f      0x23f Libraries/STM32_USB_OTG_Driver/src/usb_dcd.o
+ .debug_abbrev  0x000038ae      0x282 Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.o
+
+.debug_aranges  0x00000000      0x480
+ .debug_aranges
+                0x00000000       0x28 CMSIS/startup_stm32f4xx.o
+ .debug_aranges
+                0x00000028       0x20 CMSIS/stm32f4xx_it.o
+ .debug_aranges
+                0x00000048       0x20 CMSIS/system_stm32f4xx.o
+ .debug_aranges
+                0x00000068       0x28 source/main.o
+ .debug_aranges
+                0x00000090       0x20 source/drivers/comlink.o
+ .debug_aranges
+                0x000000b0       0x20 source/drivers/fifo.o
+ .debug_aranges
+                0x000000d0       0x20 source/drivers/hmc5883l.o
+ .debug_aranges
+                0x000000f0       0x20 source/drivers/i2c.o
+ .debug_aranges
+                0x00000110       0x20 source/drivers/led.o
+ .debug_aranges
+                0x00000130       0x20 source/drivers/mpu6050.o
+ .debug_aranges
+                0x00000150       0x20 source/drivers/syscalls.o
+ .debug_aranges
+                0x00000170       0x20 source/drivers/timer.o
+ .debug_aranges
+                0x00000190       0x20 source/drivers/usb_bsp.o
+ .debug_aranges
+                0x000001b0       0x20 source/drivers/usbd_cdc.o
+ .debug_aranges
+                0x000001d0       0x20 source/drivers/usbd_desc.o
+ .debug_aranges
+                0x000001f0       0x20 source/drivers/usbd_usr.o
+ .debug_aranges
+                0x00000210       0x20 ./FreeRTOS/list.o
+ .debug_aranges
+                0x00000230       0x20 ./FreeRTOS/tasks.o
+ .debug_aranges
+                0x00000250       0x30 ./FreeRTOS/queue.o
+ .debug_aranges
+                0x00000280       0x20 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .debug_aranges
+                0x000002a0       0x20 ./FreeRTOS/portable/MemMang/heap_1.o
+ .debug_aranges
+                0x000002c0       0x20 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_gpio.o
+ .debug_aranges
+                0x000002e0       0x20 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
+ .debug_aranges
+                0x00000300       0x20 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
+ .debug_aranges
+                0x00000320       0x20 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_syscfg.o
+ .debug_aranges
+                0x00000340       0x20 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.o
+ .debug_aranges
+                0x00000360       0x20 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_i2c.o
+ .debug_aranges
+                0x00000380       0x20 Libraries/STM32F4xx_StdPeriph_Driver/src/misc.o
+ .debug_aranges
+                0x000003a0       0x20 Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+ .debug_aranges
+                0x000003c0       0x20 Libraries/STM32_USB_Device_Library/Core/src/usbd_core.o
+ .debug_aranges
+                0x000003e0       0x20 Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.o
+ .debug_aranges
+                0x00000400       0x20 Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+ .debug_aranges
+                0x00000420       0x20 Libraries/STM32_USB_OTG_Driver/src/usb_core.o
+ .debug_aranges
+                0x00000440       0x20 Libraries/STM32_USB_OTG_Driver/src/usb_dcd.o
+ .debug_aranges
+                0x00000460       0x20 Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.o
+
+.debug_ranges   0x00000000      0xe78
+ .debug_ranges  0x00000000       0x20 CMSIS/startup_stm32f4xx.o
+ .debug_ranges  0x00000020       0x20 CMSIS/system_stm32f4xx.o
+ .debug_ranges  0x00000040       0x48 source/main.o
+ .debug_ranges  0x00000088      0x638 source/drivers/i2c.o
+ .debug_ranges  0x000006c0       0x18 source/drivers/usbd_cdc.o
+ .debug_ranges  0x000006d8      0x150 ./FreeRTOS/tasks.o
+ .debug_ranges  0x00000828       0x50 ./FreeRTOS/queue.o
+ .debug_ranges  0x00000878       0x38 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .debug_ranges  0x000008b0       0x30 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
+ .debug_ranges  0x000008e0      0x160 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.o
+ .debug_ranges  0x00000a40       0x80 Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+ .debug_ranges  0x00000ac0      0x178 Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+ .debug_ranges  0x00000c38       0xa0 Libraries/STM32_USB_OTG_Driver/src/usb_core.o
+ .debug_ranges  0x00000cd8      0x1a0 Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.o
+
+.debug_loc      0x00000000     0x8bd8
+ .debug_loc     0x00000000       0x20 CMSIS/stm32f4xx_it.o
+ .debug_loc     0x00000020      0x1ae CMSIS/system_stm32f4xx.o
+ .debug_loc     0x000001ce      0x3d1 source/main.o
+ .debug_loc     0x0000059f       0x7c source/drivers/comlink.o
+ .debug_loc     0x0000061b       0x80 source/drivers/fifo.o
+ .debug_loc     0x0000069b      0x9ce source/drivers/i2c.o
+ .debug_loc     0x00001069       0x3f source/drivers/led.o
+ .debug_loc     0x000010a8       0x13 source/drivers/syscalls.o
+ .debug_loc     0x000010bb       0x2c source/drivers/timer.o
+ .debug_loc     0x000010e7       0xe5 source/drivers/usb_bsp.o
+ .debug_loc     0x000011cc       0xd6 source/drivers/usbd_cdc.o
+ .debug_loc     0x000012a2      0x239 source/drivers/usbd_desc.o
+ .debug_loc     0x000014db       0x8b ./FreeRTOS/list.o
+ .debug_loc     0x00001566      0x950 ./FreeRTOS/tasks.o
+ .debug_loc     0x00001eb6      0xabd ./FreeRTOS/queue.o
+ .debug_loc     0x00002973       0xc0 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .debug_loc     0x00002a33       0x74 ./FreeRTOS/portable/MemMang/heap_1.o
+ .debug_loc     0x00002aa7      0x2cf Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_gpio.o
+ .debug_loc     0x00002d76      0x1e7 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
+ .debug_loc     0x00002f5d      0x944 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
+ .debug_loc     0x000038a1       0x9d Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_syscfg.o
+ .debug_loc     0x0000393e     0x1aae Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.o
+ .debug_loc     0x000053ec      0x810 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_i2c.o
+ .debug_loc     0x00005bfc      0x130 Libraries/STM32F4xx_StdPeriph_Driver/src/misc.o
+ .debug_loc     0x00005d2c      0x37f Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+ .debug_loc     0x000060ab      0x416 Libraries/STM32_USB_Device_Library/Core/src/usbd_core.o
+ .debug_loc     0x000064c1      0x232 Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.o
+ .debug_loc     0x000066f3      0x614 Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+ .debug_loc     0x00006d07     0x1145 Libraries/STM32_USB_OTG_Driver/src/usb_core.o
+ .debug_loc     0x00007e4c      0x507 Libraries/STM32_USB_OTG_Driver/src/usb_dcd.o
+ .debug_loc     0x00008353      0x885 Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.o
+
+.debug_str      0x00000000     0x5414
+ .debug_str     0x00000000      0x7ae CMSIS/stm32f4xx_it.o
+                                0x8fc (size before relaxing)
+ .debug_str     0x000007ae      0x1fd CMSIS/system_stm32f4xx.o
+                                0x300 (size before relaxing)
+ .debug_str     0x000009ab       0xf0 source/main.o
+                                0x947 (size before relaxing)
+ .debug_str     0x00000a9b       0x6b source/drivers/comlink.o
+                                0x16e (size before relaxing)
+ .debug_str     0x00000b06       0x70 source/drivers/fifo.o
+                                0x170 (size before relaxing)
+ .debug_str     0x00000b76       0x27 source/drivers/hmc5883l.o
+                                 0xf2 (size before relaxing)
+ .debug_str     0x00000b9d      0x482 source/drivers/i2c.o
+                                0x5f3 (size before relaxing)
+ .debug_str     0x0000101f       0x5c source/drivers/led.o
+                                0x2e6 (size before relaxing)
+ .debug_str     0x0000107b       0x25 source/drivers/mpu6050.o
+                                 0xf0 (size before relaxing)
+ .debug_str     0x000010a0       0x44 source/drivers/syscalls.o
+                                0x104 (size before relaxing)
+ .debug_str     0x000010e4      0x14f source/drivers/timer.o
+                                0x2ad (size before relaxing)
+ .debug_str     0x00001233      0x612 source/drivers/usb_bsp.o
+                               0x1000 (size before relaxing)
+ .debug_str     0x00001845       0xce source/drivers/usbd_cdc.o
+                                0x1fd (size before relaxing)
+ .debug_str     0x00001913      0x133 source/drivers/usbd_desc.o
+                                0x2f0 (size before relaxing)
+ .debug_str     0x00001a46       0x87 source/drivers/usbd_usr.o
+                                0x210 (size before relaxing)
+ .debug_str     0x00001acd      0x12e ./FreeRTOS/list.o
+                                0x211 (size before relaxing)
+ .debug_str     0x00001bfb      0x5c1 ./FreeRTOS/tasks.o
+                                0x751 (size before relaxing)
+ .debug_str     0x000021bc      0x336 ./FreeRTOS/queue.o
+                                0x534 (size before relaxing)
+ .debug_str     0x000024f2      0x130 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                                0x247 (size before relaxing)
+ .debug_str     0x00002622       0xae ./FreeRTOS/portable/MemMang/heap_1.o
+                                0x185 (size before relaxing)
+ .debug_str     0x000026d0      0x197 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_gpio.o
+                                0x416 (size before relaxing)
+ .debug_str     0x00002867      0x1ca Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
+                                0x2e1 (size before relaxing)
+ .debug_str     0x00002a31      0x54f Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
+                                0x7c3 (size before relaxing)
+ .debug_str     0x00002f80      0x153 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_syscfg.o
+                                0x272 (size before relaxing)
+ .debug_str     0x000030d3      0xa76 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.o
+                                0xd43 (size before relaxing)
+ .debug_str     0x00003b49      0x326 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_i2c.o
+                                0x5d8 (size before relaxing)
+ .debug_str     0x00003e6f      0x151 Libraries/STM32F4xx_StdPeriph_Driver/src/misc.o
+                                0x34c (size before relaxing)
+ .debug_str     0x00003fc0      0x1a0 Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+                                0xa99 (size before relaxing)
+ .debug_str     0x00004160      0x17a Libraries/STM32_USB_Device_Library/Core/src/usbd_core.o
+                                0xa4b (size before relaxing)
+ .debug_str     0x000042da       0xc1 Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.o
+                                0x935 (size before relaxing)
+ .debug_str     0x0000439b      0x1da Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+                                0xa76 (size before relaxing)
+ .debug_str     0x00004575      0xb29 Libraries/STM32_USB_OTG_Driver/src/usb_core.o
+                               0x15fd (size before relaxing)
+ .debug_str     0x0000509e       0xfe Libraries/STM32_USB_OTG_Driver/src/usb_dcd.o
+                                0xa9d (size before relaxing)
+ .debug_str     0x0000519c      0x278 Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.o
+                               0x11fb (size before relaxing)
+
+.comment        0x00000000       0x30
+ .comment       0x00000000       0x30 CMSIS/stm32f4xx_it.o
+                                 0x31 (size before relaxing)
+ .comment       0x00000000       0x31 CMSIS/system_stm32f4xx.o
+ .comment       0x00000000       0x31 source/main.o
+ .comment       0x00000000       0x31 source/drivers/comlink.o
+ .comment       0x00000000       0x31 source/drivers/fifo.o
+ .comment       0x00000000       0x31 source/drivers/hmc5883l.o
+ .comment       0x00000000       0x31 source/drivers/i2c.o
+ .comment       0x00000000       0x31 source/drivers/led.o
+ .comment       0x00000000       0x31 source/drivers/mpu6050.o
+ .comment       0x00000000       0x31 source/drivers/syscalls.o
+ .comment       0x00000000       0x31 source/drivers/timer.o
+ .comment       0x00000000       0x31 source/drivers/usb_bsp.o
+ .comment       0x00000000       0x31 source/drivers/usbd_cdc.o
+ .comment       0x00000000       0x31 source/drivers/usbd_desc.o
+ .comment       0x00000000       0x31 source/drivers/usbd_usr.o
+ .comment       0x00000000       0x31 ./FreeRTOS/list.o
+ .comment       0x00000000       0x31 ./FreeRTOS/tasks.o
+ .comment       0x00000000       0x31 ./FreeRTOS/queue.o
+ .comment       0x00000000       0x31 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .comment       0x00000000       0x31 ./FreeRTOS/portable/MemMang/heap_1.o
+ .comment       0x00000000       0x31 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_gpio.o
+ .comment       0x00000000       0x31 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
+ .comment       0x00000000       0x31 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
+ .comment       0x00000000       0x31 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_syscfg.o
+ .comment       0x00000000       0x31 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.o
+ .comment       0x00000000       0x31 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_i2c.o
+ .comment       0x00000000       0x31 Libraries/STM32F4xx_StdPeriph_Driver/src/misc.o
+ .comment       0x00000000       0x31 Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+ .comment       0x00000000       0x31 Libraries/STM32_USB_Device_Library/Core/src/usbd_core.o
+ .comment       0x00000000       0x31 Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.o
+ .comment       0x00000000       0x31 Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+ .comment       0x00000000       0x31 Libraries/STM32_USB_OTG_Driver/src/usb_core.o
+ .comment       0x00000000       0x31 Libraries/STM32_USB_OTG_Driver/src/usb_dcd.o
+ .comment       0x00000000       0x31 Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.o
+
+.debug_frame    0x00000000     0x2174
+ .debug_frame   0x00000000       0xa8 CMSIS/stm32f4xx_it.o
+ .debug_frame   0x000000a8       0x34 CMSIS/system_stm32f4xx.o
+ .debug_frame   0x000000dc       0xa8 source/main.o
+ .debug_frame   0x00000184       0x44 source/drivers/comlink.o
+ .debug_frame   0x000001c8       0x40 source/drivers/fifo.o
+ .debug_frame   0x00000208       0x20 source/drivers/hmc5883l.o
+ .debug_frame   0x00000228       0xa0 source/drivers/i2c.o
+ .debug_frame   0x000002c8       0x58 source/drivers/led.o
+ .debug_frame   0x00000320       0x20 source/drivers/mpu6050.o
+ .debug_frame   0x00000340       0x20 source/drivers/syscalls.o
+ .debug_frame   0x00000360       0x3c source/drivers/timer.o
+ .debug_frame   0x0000039c       0x68 source/drivers/usb_bsp.o
+ .debug_frame   0x00000404       0x84 source/drivers/usbd_cdc.o
+ .debug_frame   0x00000488       0xa8 source/drivers/usbd_desc.o
+ .debug_frame   0x00000530       0x60 source/drivers/usbd_usr.o
+ .debug_frame   0x00000590       0x70 ./FreeRTOS/list.o
+ .debug_frame   0x00000600      0x23c ./FreeRTOS/tasks.o
+ .debug_frame   0x0000083c      0x188 ./FreeRTOS/queue.o
+ .debug_frame   0x000009c4       0xd0 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .debug_frame   0x00000a94       0x5c ./FreeRTOS/portable/MemMang/heap_1.o
+ .debug_frame   0x00000af0      0x118 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_gpio.o
+ .debug_frame   0x00000c08       0x9c Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_exti.o
+ .debug_frame   0x00000ca4      0x2dc Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_rcc.o
+ .debug_frame   0x00000f80       0x80 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_syscfg.o
+ .debug_frame   0x00001000      0x64c Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_tim.o
+ .debug_frame   0x0000164c      0x240 Libraries/STM32F4xx_StdPeriph_Driver/src/stm32f4xx_i2c.o
+ .debug_frame   0x0000188c       0x68 Libraries/STM32F4xx_StdPeriph_Driver/src/misc.o
+ .debug_frame   0x000018f4       0xdc Libraries/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.o
+ .debug_frame   0x000019d0      0x150 Libraries/STM32_USB_Device_Library/Core/src/usbd_core.o
+ .debug_frame   0x00001b20       0xb8 Libraries/STM32_USB_Device_Library/Core/src/usbd_ioreq.o
+ .debug_frame   0x00001bd8       0xa8 Libraries/STM32_USB_Device_Library/Core/src/usbd_req.o
+ .debug_frame   0x00001c80      0x300 Libraries/STM32_USB_OTG_Driver/src/usb_core.o
+ .debug_frame   0x00001f80      0x134 Libraries/STM32_USB_OTG_Driver/src/usb_dcd.o
+ .debug_frame   0x000020b4       0x38 Libraries/STM32_USB_OTG_Driver/src/usb_dcd_int.o
+ .debug_frame   0x000020ec       0x30 /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memcpy.o)
+ .debug_frame   0x0000211c       0x2c /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-memset.o)
+ .debug_frame   0x00002148       0x2c /usr/local/CodeBench_1802_EABI/bin/../lib/gcc/arm-none-eabi/4.6.1/../../../../arm-none-eabi/lib/thumb2/libc.a(lib_a-strncpy.o)

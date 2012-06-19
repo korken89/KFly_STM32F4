@@ -18,7 +18,7 @@
 #define I2C_STATUS_BITMASK		0x00DF
 #define I2C_ERROR_BITMASK		0xDF00
 #define I2C_SR1_BITMASK			0xDFDF
-
+#define I2C_ERROR_BIT			(1<<13) /* One of the reserved bits is used as timeout error bit */
 
 /* Global variable defines */
 
@@ -47,7 +47,6 @@ typedef struct
 	uint32_t Retransmissions_Max;	/* Maximum number of retransmissions */
 	uint32_t Retransmissions_Count;	/* Current retransmission counter */
 	uint16_t Status;				/* Current status of I2C activity */
-	I2C_DIRECTION_Type Direction;	/* Current direction of the transfer */
 	void (*Callback)(void);		/* Pointer to "callback" function when transmission complete used in interrupt transfer mode */
 } I2C_MASTER_SETUP_Type;
 
