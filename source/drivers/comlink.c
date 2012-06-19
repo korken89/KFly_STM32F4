@@ -45,9 +45,9 @@ ErrorStatus xUSBSendData(uint8_t *data, uint32_t size)
 	else
 	{
 		vTaskSuspendAll();
-
-		cdc_DataTx(data, size);
-
+		{
+			cdc_DataTx(data, size);
+		}
 		xTaskResumeAll();
 
 		return SUCCESS;

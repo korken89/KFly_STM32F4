@@ -50,13 +50,12 @@ typedef struct
 	uint8_t Retransmissions_Max;	/* Maximum number of retransmissions */
 	uint8_t Retransmissions_Count;	/* Current retransmission counter */
 	uint16_t Status;				/* Current status of I2C activity */
-	void (*Callback)(void);		/* Pointer to "callback" function when transmission complete. Used in interrupt transfer mode */
+	void (*Callback)(void);		/* Pointer to "callback" function when transmission's complete. Used in interrupt transfer mode */
 } I2C_MASTER_SETUP_Type;
 
 
 /* Global function defines */
 void InitSensorBus(void);
 ErrorStatus I2C_MasterTransferData(I2C_TypeDef *, I2C_MASTER_SETUP_Type *, I2C_TRANSFER_OPTION_Type);
-void I2C_MasterHandler(I2C_TypeDef *);
 
 #endif

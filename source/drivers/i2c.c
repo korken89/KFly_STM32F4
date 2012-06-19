@@ -37,6 +37,7 @@ int8_t I2C_getNum(I2C_TypeDef *);
 
 void I2C2_EV_IRQHandler(void); /* These two functions shall be moved to stm32f4xx_it.c */
 void I2C2_ER_IRQHandler(void);
+void I2C_MasterHandler(I2C_TypeDef *);
 
 static uint16_t I2C_Addr(I2C_TypeDef *, uint8_t, uint8_t);
 static uint16_t I2C_SendByte(I2C_TypeDef *, uint8_t);
@@ -161,8 +162,6 @@ retry:
 				}
 				TransferCfg->TX_Count++;
 			}
-			xUSBSendData("3", 1);
-
 
 			TransferCfg->Status = WaitSR1FlagsSet(I2Cx, I2C_SR1_BTF);
 			if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
@@ -383,20 +382,20 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 	I2C_MASTER_SETUP_Type *RXTX_Setup = I2Ctmp[I2C_num].RXTX_Setup;
 
 	/* *
-	 * TODO:
 	 *
+	 * TODO:
 	 * Everything...
+	 *
 	 * */
 
-	if (I2Ctmp[I2C_num].Direction == I2C_SENDING) /* Sending */
+	if (I2Ctmp[I2C_num].Direction == I2C_SENDING) /* Sending data */
 	{
 
 	}
-	else /* Receiving */
+	else /* Receiving data */
 	{
 
 	}
-
 }
 
 void I2C2_EV_IRQHandler(void)
