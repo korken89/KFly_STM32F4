@@ -143,6 +143,13 @@ void main(void)
 
 	/* *
 	 *
+	 * Initializes the I2C-bus.
+	 *
+	 * */
+	InitSensorBus();
+
+	/* *
+	 *
 	 * 	USB init.
 	 * 	Running USB Full Speed as Virtual COM Port via the CDC interface
 	 * 	Shows as ttyACMxx in Linux and COMxx in Windows.
@@ -162,12 +169,12 @@ void main(void)
 				tskIDLE_PRIORITY+1,
 		    	0);
 
-	/*xTaskCreate(vTaskPrintTimer,
+	xTaskCreate(vTaskPrintTimer,
 				"TIMER",
 				256,
 				0,
 				tskIDLE_PRIORITY+1,
-				0);*/
+				0);
 
 	vTaskStartScheduler();
 
@@ -200,11 +207,10 @@ void vTaskCode(void *pvParameters)
 
 void vTaskPrintTimer(void *pvParameters)
 {
-
-
+	uint8_t data;
 	while(1)
 	{
-
-		vTaskDelay(1000);
+		GetMUP6050ID(&data);
+		vTaskDelay(5000);
 	}
 }

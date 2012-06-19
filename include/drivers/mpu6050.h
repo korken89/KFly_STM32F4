@@ -9,6 +9,9 @@
 #include "task.h"
 #include "queue.h"
 
+/* Drivers */
+#include "comlink.h"
+
 /* KFly includes */
 
 /* Includes */

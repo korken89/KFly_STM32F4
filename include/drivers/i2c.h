@@ -9,6 +9,9 @@
 #include "task.h"
 #include "queue.h"
 
+/* Drivers */
+#include "comlink.h"
+
 /* KFly includes */
 
 /* Includes */
@@ -37,17 +40,17 @@ typedef enum
 
 typedef struct
 {
-	uint32_t Slave_Address_7bit;	/* Slave address in 7bit mode */
+	uint8_t Slave_Address_7bit;		/* Slave address in 7bit mode */
 	uint8_t *TX_Data;				/* Pointer to Transmit data - NULL if data transmit is not used */
-	uint32_t TX_Length;				/* Transmit data length - 0 if data transmit is not used*/
-	uint32_t TX_Count;				/* Current Transmit data counter */
+	uint8_t TX_Length;				/* Transmit data length - 0 if data transmit is not used*/
+	uint8_t TX_Count;				/* Current Transmit data counter */
 	uint8_t *RX_Data;				/* Pointer to Receive data - NULL if data receive is not used */
-	uint32_t RX_Length;				/* Receive data length - 0 if data receive is not used */
-	uint32_t RX_Count;				/* Current Receive data counter */
-	uint32_t Retransmissions_Max;	/* Maximum number of retransmissions */
-	uint32_t Retransmissions_Count;	/* Current retransmission counter */
+	uint8_t RX_Length;				/* Receive data length - 0 if data receive is not used */
+	uint8_t RX_Count;				/* Current Receive data counter */
+	uint8_t Retransmissions_Max;	/* Maximum number of retransmissions */
+	uint8_t Retransmissions_Count;	/* Current retransmission counter */
 	uint16_t Status;				/* Current status of I2C activity */
-	void (*Callback)(void);		/* Pointer to "callback" function when transmission complete used in interrupt transfer mode */
+	void (*Callback)(void);		/* Pointer to "callback" function when transmission complete. Used in interrupt transfer mode */
 } I2C_MASTER_SETUP_Type;
 
 

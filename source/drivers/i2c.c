@@ -137,7 +137,7 @@ retry:
 			TransferCfg->Retransmissions_Count++;
 			goto retry;
 		}
-
+		xUSBSendData("1", 1);
 		/* In case of sending data first */
 		if ((TransferCfg->TX_Length != 0) && (TransferCfg->TX_Data != NULL))
 		{
@@ -148,6 +148,7 @@ retry:
 				TransferCfg->Retransmissions_Count++;
 				goto retry;
 			}
+			xUSBSendData("2", 1);
 			(void)I2Cx->SR2;
 
 			/* Send a number of data bytes */
@@ -159,8 +160,10 @@ retry:
 					TransferCfg->Retransmissions_Count++;
 					goto retry;
 				}
+				TransferCfg->TX_Count++;
 			}
-			TransferCfg->TX_Count++;
+			xUSBSendData("3", 1);
+
 
 			TransferCfg->Status = WaitSR1FlagsSet(I2Cx, I2C_SR1_BTF);
 			if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
@@ -168,6 +171,7 @@ retry:
 				TransferCfg->Retransmissions_Count++;
 				goto retry;
 			}
+			xUSBSendData("4", 1);
 			/* Send Stop if no data is to be received */
 			if ((TransferCfg->RX_Length == 0) || (TransferCfg->RX_Data == NULL))
 			{
@@ -187,6 +191,7 @@ retry:
 				goto retry;
 			}
 			(void)I2Cx->SR2;
+			xUSBSendData("5", 1);
 		}
 
 		/* *
@@ -210,7 +215,7 @@ retry:
 				TransferCfg->Retransmissions_Count++;
 				goto retry;
 			}
-
+			xUSBSendData("6", 1);
 			/* Receive a number of data bytes */
 
 			if (TransferCfg->RX_Length == 1) /* We are going to read only 1 byte */
@@ -236,10 +241,10 @@ retry:
 					goto retry;
 				}
 				TransferCfg->RX_Count++;
-
+				xUSBSendData("7", 1);
 				/* Make Sure Stop bit is cleared and Line is now Iddle */
 				TransferCfg->Status = WaitLineIdle(I2Cx);
-
+				xUSBSendData("8", 1);
 				/* Enable the Acknowledgement again */
 				I2Cx->CR1 |= ((uint16_t)I2C_CR1_ACK);
 			}
