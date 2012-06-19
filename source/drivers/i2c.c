@@ -118,6 +118,7 @@ ErrorStatus I2C_MasterTransferData(	I2C_TypeDef *I2Cx, I2C_MASTER_SETUP_Type *Tr
 	{
 		TransferCfg->Retransmissions_Count = 0;
 retry:
+		I2Cx->SR1 &= ~(I2Cx->SR1 & I2C_ERROR_BITMASK); /* Clear errors */
 		if (TransferCfg->Retransmissions_Count > TransferCfg->Retransmissions_Max)
 		{ /* Maximum number of retransmissions reached, abort */
 			I2Cx->CR1 |= I2C_CR1_STOP;
@@ -211,7 +212,6 @@ retry:
 			if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 			{
 				TransferCfg->Retransmissions_Count++;
-				I2Cx->SR1 &= ~(I2Cx->SR1 & I2C_ERROR_BITMASK); /* Clear errors */
 				goto retry;
 			}
 
