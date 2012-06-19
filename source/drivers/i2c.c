@@ -2,12 +2,6 @@
  *
  * Hardware Communication Layer for the I2C bus
  *
- * TODO:
- * Everything...
- *
- * The I2C read on the STM32F4xx is not symetric so special
- * care must be taken if the number of bytes to be read are
- * one, two or more than two.
  * */
 
 
@@ -30,7 +24,7 @@
 typedef struct
 {
 	I2C_MASTER_SETUP_Type *RXTX_Setup;		/* Transmission setup */
-	I2C_DIRECTION_Type Direction;			/* Current direction phase, 0 - write, 1 - read */
+	I2C_DIRECTION_Type Direction;			/* Current direction phase */
 	void (*inthandler)(I2C_TypeDef *I2Cx);	/* Transmission interrupt handler */
 } I2C_INT_CFG_Type;
 
@@ -44,7 +38,7 @@ int8_t I2C_getNum(I2C_TypeDef *);
 void I2C2_EV_IRQHandler(void); /* These two functions shall be moved to stm32f4xx_it.c */
 void I2C2_ER_IRQHandler(void);
 
-static uint16_t I2C_Addr(I2C_TypeDef *, uint8_t DevAddr, uint8_t dir);
+static uint16_t I2C_Addr(I2C_TypeDef *, uint8_t, uint8_t);
 static uint16_t I2C_SendByte(I2C_TypeDef *, uint8_t);
 static uint16_t I2C_Read(I2C_TypeDef *, uint8_t *);
 static uint16_t I2C_Start(I2C_TypeDef *);
@@ -88,7 +82,7 @@ void InitSensorBus(void)
 	I2C_InitStructure.I2C_OwnAddress1 = 0x00;
 	I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
 	I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
-	I2C_InitStructure.I2C_ClockSpeed = 400000;
+	I2C_InitStructure.I2C_ClockSpeed = 50000;
 
 	/* Initialize the Peripheral */
 	I2C_Init(I2CBus, &I2C_InitStructure);
@@ -179,6 +173,7 @@ retry:
 			{
 				I2Cx->CR1 |= I2C_CR1_STOP;
 				TransferCfg->Status = WaitLineIdle(I2Cx);
+				return SUCCESS;
 			}
 		}
 
@@ -193,6 +188,17 @@ retry:
 			}
 			(void)I2Cx->SR2;
 		}
+
+		/* *
+		 *
+		 * --------------------------- RECIEVE PHASE ---------------------------
+		 *
+		 * The I2C read on the STM32F4xx is not symetric so special
+		 * care must be taken if the number of bytes to be read are
+		 * one, two or more than two.
+		 *
+		 * */
+
 
 		/* Then, start reading after sending data */
 		if ((TransferCfg->RX_Length != 0) && (TransferCfg->RX_Data != NULL))
@@ -241,7 +247,7 @@ retry:
 			else if (TransferCfg->RX_Length == 2) /* We are going to read 2 bytes (See: Spec_p584) */
 			{
 				/* Before Clearing Addr, reset ACK, set POS */
-				I2Cx->CR1 &= (uint16_t)~((uint16_t)I2C_CR1_ACK);
+				I2Cx->CR1 &= ~I2C_CR1_ACK;
 				I2Cx->CR1 |= I2C_CR1_POS;
 
 				/* Read the SR2 to clear ADDR */

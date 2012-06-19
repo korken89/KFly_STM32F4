@@ -20,3 +20,8 @@ void InitMPU6050(void)
 {
 
 }
+
+ErrorStatus GetMUP6050ID(uint8_t *data)
+{
+	return SUCCESS;
+}

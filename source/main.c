@@ -162,12 +162,12 @@ void main(void)
 				tskIDLE_PRIORITY+1,
 		    	0);
 
-	xTaskCreate(vTaskPrintTimer,
+	/*xTaskCreate(vTaskPrintTimer,
 				"TIMER",
 				256,
 				0,
 				tskIDLE_PRIORITY+1,
-				0);
+				0);*/
 
 	vTaskStartScheduler();
 
@@ -204,17 +204,7 @@ void vTaskPrintTimer(void *pvParameters)
 
 	while(1)
 	{
-		ftoa(12345.67f);
-		xUSBSendData("\n\r", 2);
-		ftoa(-12345.67f);
-		xUSBSendData("\n\r", 2);
-		ftoa(0.0067f);
-		xUSBSendData("\n\r", 2);
-		ftoa(-0.0067f);
-		xUSBSendData("\n\r", 2);
-		ftoa(0.0f);
-		xUSBSendData("\n\r", 2);
-		xUSBSendData("\n\r", 2);
+
 		vTaskDelay(1000);
 	}
 }
