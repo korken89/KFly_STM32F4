@@ -1,6 +1,6 @@
 /* *
  *
- * Hardware Abstraction Layer for HMC588L Magnetometer
+ * Hardware Abstraction Layer for HMC5883L Magnetometer
  *
  * TODO:
  * ...

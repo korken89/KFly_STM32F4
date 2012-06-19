@@ -32,14 +32,11 @@ ErrorStatus GetMUP6050ID(uint8_t *data)
 	Setup.RX_Data = data;
 	Setup.RX_Length = 1;
 	Setup.Retransmissions_Max = 0;
-	ErrorStatus temp = I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_POLLING);
-
 
 	/*xUSBSendData(data, 1);
 	xUSBSendData(&Setup.Status, 2);
 	xUSBSendData(&Setup.TX_Count, 1);
 	xUSBSendData(&Setup.RX_Count, 1);*/
 
-
-	return temp;
+	return I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_POLLING);
 }
