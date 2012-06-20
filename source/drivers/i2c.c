@@ -405,12 +405,23 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 	if (TransferCfg->Retransmissions_Count > TransferCfg->Retransmissions_Max)
 	{ /* Maximum number of retransmissions reached, abort */
 		I2Cx->CR1 |= I2C_CR1_STOP;
+
+		/* *
+		 * TODO:
+		 * Disable interrupts
+		 * */
 	}
 
 	if (status & I2C_ERROR_BITMASK) /* Error */
 	{
 		I2Cx->SR1 &= ~(I2Cx->SR1 & I2C_ERROR_BITMASK); /* Clear errors */
 		TransferCfg->Retransmissions_Count++;
+
+		/* *
+		 * TODO:
+		 * Generate new start
+		 * Reset all variables
+		 * */
 	}
 
 	if (I2Ctmp[I2C_num].Direction == I2C_SENDING) /* Sending data */
@@ -426,26 +437,41 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 			case I2C_SR1_TXE: /* Data has been sent to the shift register, transmit register empty */
 				break;
 
-			case (I2C_SR1_TXE | I2C_SR1_BTF): /* all data has been sent from shift register and transmit register */
+			case (I2C_SR1_TXE | I2C_SR1_BTF): /* Shift register and transmit register empty */
 				break;
 
 			default:
 				break;
 		}
 	}
-	else /* Receiving data */
+
+	/* *
+	 *
+	 * ----------------------------- RECIEVE PHASE -----------------------------
+	 * The I2C read on the STM32F4xx is not symetric so special
+	 * care must be taken if the number of bytes to be read are
+	 * one, two or more than two.
+	 *
+	 * Note to self:
+	 * I will design the receiving part as the I2C_RdBufEasy in yigiter's example.
+	 * However some extra logic will be added to handle the special case of only
+	 * one byte being received. Hopefully I won't have to design for all the
+	 * special cases as I did in the polled read. By doing this the the BTF flag
+	 * shall never be set.
+	 *
+	 * */
+
+	else
 	{
-		switch (status & I2C_STATUS_BITMASK)
+		switch (status & (I2C_STATUS_BITMASK & ~I2C_SR1_BTF)) /* Just in case remove the BTF flag */
 		{
-			case I2C_SR1_SB: /* Second Start condition (Repeat Start) sent */
+			case I2C_SR1_SB: /* Start/Restart condition sent */
 				break;
 
 			case I2C_SR1_ADDR: /* Address+R sent, ack receieved */
 				break;
 
 			case I2C_SR1_RXNE: /* Data has been sent to the data register, ready for read out */
-			case (I2C_SR1_RXNE | I2C_SR1_BTF):
-			case I2C_SR1_BTF:
 				break;
 
 			default:
