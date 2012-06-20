@@ -107,8 +107,7 @@ int8_t I2C_getNum(I2C_TypeDef *I2Cx)
 		return -1;
 }
 
-ErrorStatus I2C_MasterTransferData(	I2C_TypeDef *I2Cx, I2C_MASTER_SETUP_Type *TransferCfg, \
-										I2C_TRANSFER_OPTION_Type Opt, void (*Callback)(void))
+ErrorStatus I2C_MasterTransferData(I2C_TypeDef *I2Cx, I2C_MASTER_SETUP_Type *TransferCfg, I2C_TRANSFER_OPTION_Type Opt)
 {
 	uint8_t *txdat;
 	uint8_t *rxdat;
@@ -374,7 +373,6 @@ retry:
 		TransferCfg->TX_Count = 0;
 		TransferCfg->RX_Count = 0;
 		TransferCfg->Retransmissions_Count = 0;
-		TransferCfg->Callback = Callback;
 
 		I2Ctmp[I2C_getNum(I2Cx)].Direction = I2C_SENDING;
 		I2Ctmp[I2C_getNum(I2Cx)].RXTX_Setup = TransferCfg;
@@ -399,24 +397,30 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 	 * Note to self:
 	 * In order to prevent repeated running of the ISR, when TXE or RXNE = 1 and
 	 * awaiting BTF = 1, turn off the buffer interrupts (ITBUFEN) and just await
-	 * the BTF interrupt. This should break the "infinite ISR recall"-loop. If
-	 * needed again just turn on the buffer interrupts (ITBUFEN) again.
+	 * the BTF interrupt. This should break the "infinite ISR recall"-loop.
 	 *
 	 * */
 
+
+	if (TransferCfg->Retransmissions_Count > TransferCfg->Retransmissions_Max)
+	{ /* Maximum number of retransmissions reached, abort */
+		I2Cx->CR1 |= I2C_CR1_STOP;
+	}
+
 	if (status & I2C_ERROR_BITMASK) /* Error */
 	{
-
+		I2Cx->SR1 &= ~(I2Cx->SR1 & I2C_ERROR_BITMASK); /* Clear errors */
+		TransferCfg->Retransmissions_Count++;
 	}
 
 	if (I2Ctmp[I2C_num].Direction == I2C_SENDING) /* Sending data */
 	{
 		switch (status & I2C_STATUS_BITMASK)
 		{
-			case I2C_SR1_SB: /* Start condition event */
+			case I2C_SR1_SB: /* Start condition sent */
 				break;
 
-			case I2C_SR1_ADDR: /* Address+W sent, ack receieved event */
+			case I2C_SR1_ADDR: /* Address+W sent, ack receieved */
 				break;
 
 			case I2C_SR1_TXE: /* Data has been sent to the shift register, transmit register empty */
@@ -433,10 +437,10 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 	{
 		switch (status & I2C_STATUS_BITMASK)
 		{
-			case I2C_SR1_SB: /* Second Start condition (Repeat Start) event */
+			case I2C_SR1_SB: /* Second Start condition (Repeat Start) sent */
 				break;
 
-			case I2C_SR1_ADDR: /* Address+R sent, ack receieved event */
+			case I2C_SR1_ADDR: /* Address+R sent, ack receieved */
 				break;
 
 			case I2C_SR1_RXNE: /* Data has been sent to the data register, ready for read out */
