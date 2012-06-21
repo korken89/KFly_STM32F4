@@ -39,7 +39,7 @@ INCLUDE = -I./include -I./include/drivers -I./CMSIS -I./Libraries/STM32F4xx_StdP
 CSRCS = $(wildcard CMSIS/*.c) $(wildcard source/*.c) $(wildcard source/drivers/*.c) 
 
 # FreeRTOS includes and source files
-RTOS_DIR = ./FreeRTOS/
+RTOS_DIR = FreeRTOS/
 RTOS_PORT = $(RTOS_DIR)portable/GCC/ARM_CM4F/
 RTOS_MEM = $(RTOS_DIR)portable/MemMang/
 INCLUDE += -I$(RTOS_PORT) -I$(RTOS_DIR)include/

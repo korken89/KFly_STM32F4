@@ -29,8 +29,8 @@ typedef struct
 } I2C_INT_CFG_Type;
 
 /* Gobal variable defines */
-volatile I2C_INT_CFG_Type I2Ctmp[3]; /* Pointer to I2C Config Setup */
-
+volatile I2C_INT_CFG_Type I2Ctmp[3];	/* Pointer to I2C Config Setup */
+volatile xQueueHandle I2CMutex[3]; 	/* Mutexes for the I2C */
 
 /* Private function defines */
 int8_t I2C_getNum(I2C_TypeDef *);
@@ -391,6 +391,14 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 	int8_t I2C_num = I2C_getNum(I2Cx);
 	uint16_t status = I2Cx->SR1 & I2C_SR1_BITMASK;
 	I2C_MASTER_SETUP_Type *TransferCfg = I2Ctmp[I2C_num].RXTX_Setup;
+	TransferCfg->Status = status;
+
+	/* Start Debug */
+	/* xUSBSendData("\n\r", 2);
+	xUSBSendData(&TransferCfg->Status, 2);
+	xUSBSendData(&TransferCfg->RX_Count, 1);
+	xUSBSendData(&TransferCfg->TX_Count, 1); */
+	/* End Debug */
 
 	/* *
 	 *
@@ -409,6 +417,7 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 		/* *
 		 * TODO:
 		 * Disable interrupts
+		 * Return error
 		 * */
 	}
 
@@ -429,15 +438,50 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 		switch (status & I2C_STATUS_BITMASK)
 		{
 			case I2C_SR1_SB: /* Start condition sent */
+				if ((TransferCfg->TX_Length != 0) && (TransferCfg->TX_Data != NULL))
+				{ /* If there is data to send, send Addr+W */
+					I2Cx->DR = (TransferCfg->Slave_Address_7bit << 1);
+					(void)I2Cx->SR2; /* Read SR2 to start sending address */
+				}
+				else /* Else go to Addr+R */
+				{
+
+				}
 				break;
 
 			case I2C_SR1_ADDR: /* Address+W sent, ack receieved */
+				/* Start sending the first byte */
+				I2Cx->DR = (uint16_t)*(TransferCfg->TX_Data + TransferCfg->TX_Count++);
 				break;
 
 			case I2C_SR1_TXE: /* Data has been sent to the shift register, transmit register empty */
+				if (TransferCfg->TX_Count >= TransferCfg->TX_Length)
+				{ /* All data has been sent, turn of TXE interrupt and await BTF */
+					I2C_ITConfig(I2Cx, I2C_IT_BUF, DISABLE);
+				}
+				else
+				{ /* More data to send */
+					I2Cx->DR = (uint16_t)*(TransferCfg->TX_Data + TransferCfg->TX_Count++);
+				}
 				break;
 
+			case I2C_SR1_BTF:
 			case (I2C_SR1_TXE | I2C_SR1_BTF): /* Shift register and transmit register empty */
+				/* All data has been sent, if needed send Restart and enable interrupts again
+				 * and change the transfer direction */
+				if ((TransferCfg->RX_Length != 0) && (TransferCfg->RX_Data != NULL))
+				{
+					I2Ctmp[I2C_num].Direction = I2C_RECEIVING;
+					I2Cx->CR1 |= I2C_CR1_START;
+					I2C_ITConfig(I2Cx, I2C_IT_BUF, ENABLE);
+				}
+				else
+				{ /* No data to receive, end transmission */
+					I2Cx->CR1 |= I2C_CR1_STOP;
+					I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
+				}
+
+
 				break;
 
 			default:
@@ -452,7 +496,7 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 	 * care must be taken if the number of bytes to be read are
 	 * one, two or more than two.
 	 *
-	 * Note to self:
+	 * Note to self: (maybe)
 	 * I will design the receiving part as the I2C_RdBufEasy in yigiter's example.
 	 * However some extra logic will be added to handle the special case of only
 	 * one byte being received. Hopefully I won't have to design for all the
@@ -463,15 +507,61 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 
 	else
 	{
-		switch (status & (I2C_STATUS_BITMASK & ~I2C_SR1_BTF)) /* Just in case remove the BTF flag */
+		switch (status & I2C_STATUS_BITMASK)
 		{
 			case I2C_SR1_SB: /* Start/Restart condition sent */
+				if ((TransferCfg->RX_Length != 0) && (TransferCfg->RX_Data != NULL))
+				{ /* If there is data to receive, send Addr+R */
+					I2Cx->DR = (TransferCfg->Slave_Address_7bit << 1) | 0x01;
+				}
+				else /* Else go to end */
+				{
+
+				}
 				break;
 
 			case I2C_SR1_ADDR: /* Address+R sent, ack receieved */
+				if (TransferCfg->RX_Length == 1)
+				{	/* If there is only one byte to receive, reset ACK */
+					I2Cx->CR1 &= ~I2C_CR1_ACK;
+
+					/* Now Read the SR2 to clear ADDR */
+					(void)I2Cx->SR2;
+
+					/* Order a STOP condition, it shall be done after reading SR2 */
+					I2Cx->CR1 |= I2C_CR1_STOP;
+				}
+				else if (TransferCfg->RX_Length == 2)
+				{	/* If there is two bytes to receive, reset ACK, set POS */
+					I2Cx->CR1 &= ~I2C_CR1_ACK;
+					I2Cx->CR1 |= I2C_CR1_POS;
+
+					/* Now we shall wait for BTF so disable BUF interrupts */
+					I2C_ITConfig(I2Cx, I2C_IT_BUF, DISABLE);
+
+					(void)I2Cx->SR2; /* Read SR2 to start reading data */
+				}
+				else /* If tere is more than two bytes to receive, just start shuffling data  */
+					(void)I2Cx->SR2; /* Read SR2 to start reading data */
+
 				break;
 
 			case I2C_SR1_RXNE: /* Data has been sent to the data register, ready for read out */
+			case (I2C_SR1_RXNE | I2C_SR1_BTF):
+			case I2C_SR1_BTF:
+				if (TransferCfg->RX_Length == 1)
+				{
+
+				}
+				else if (TransferCfg->RX_Length == 2)
+				{
+
+				}
+				else
+				{
+
+				}
+
 				break;
 
 			default:
