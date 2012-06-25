@@ -33,12 +33,16 @@ typedef struct
 /* Gobal variable defines */
 volatile I2C_INT_CFG_Type I2Ctmp[3];	/* Pointer to I2C Config Setup */
 volatile xQueueHandle I2CMutex[3]; 	/* Mutexes for the I2C */
+volatile uint8_t dataholder = 0;
+volatile uint16_t status = 0;
+volatile uint8_t whereami = 0;
 
 /* Private function defines */
 int8_t I2C_getNum(I2C_TypeDef *);
 
-void I2C2_EV_IRQHandler(void);
 void I2C_MasterHandler(I2C_TypeDef *);
+void I2C2_EV_IRQHandler(void);
+void I2C2_ER_IRQHandler(void);
 
 static uint16_t I2C_Addr(I2C_TypeDef *, uint8_t, uint8_t);
 static uint16_t I2C_SendByte(I2C_TypeDef *, uint8_t);
@@ -48,8 +52,6 @@ static uint16_t WaitSR1FlagsSet(I2C_TypeDef *, uint16_t);
 static uint16_t WaitLineIdle(I2C_TypeDef *);
 
 /* Private external functions */
-
-volatile uint8_t dataholder = 0;
 
 void InitSensorBus(void)
 {
@@ -98,7 +100,6 @@ void InitSensorBus(void)
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
-
 
 	/*NVIC_InitStructure.NVIC_IRQChannel = I2C2_ER_IRQn;
 	NVIC_Init(&NVIC_InitStructure);*/
@@ -161,7 +162,7 @@ retry:
 		/* In case of sending data first */
 		if ((TransferCfg->TX_Length != 0) && (TransferCfg->TX_Data != NULL))
 		{
-			/* Send slave address + WR direction bit = 0 */
+			/* Send slave address + W direction bit = 0 */
 			TransferCfg->Status = I2C_Addr(I2Cx, TransferCfg->Slave_Address_7bit, 0);
 			if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 			{
@@ -383,15 +384,9 @@ retry:
 	}
 	else /* Interrupt transfer */
 	{
-		/* *
-		 * During interrupt transfers we can't guarantee that the
-		 * TransferCfg struct won't become corrupt so all data is copied.
-		 * However the buffers where to save the data must never be allowed
-		 * to disapear while a transfer in ongoing.
-		 * */
-
 		int8_t I2C_num = I2C_getNum(I2Cx);
 
+		/* Copy setup into local variable */
 		I2Ctmp[I2C_num].Direction = I2C_SENDING;
 		I2Ctmp[I2C_num].RXTX_Setup = *TransferCfg;
 		I2Ctmp[I2C_num].RXTX_Setup.Status = 0;
@@ -405,10 +400,6 @@ retry:
 
 	return SUCCESS;
 }
-
-
-volatile uint16_t status = 0;
-volatile uint8_t whereami = 0;
 
 void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 {
@@ -667,6 +658,11 @@ send_slar:
 }
 
 void I2C2_EV_IRQHandler(void)
+{
+	I2C_MasterHandler(I2C2);
+}
+
+void I2C2_ER_IRQHandler(void)
 {
 	I2C_MasterHandler(I2C2);
 }
