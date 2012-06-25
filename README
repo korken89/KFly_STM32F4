@@ -11,5 +11,5 @@ HW Specs:
 SW Specs:
 * Runs FreeRTOS (with FPU support) with an Hardware Abstraction Layer on top for fast application development
 * USB Bootloader
-* Controll signal to Motor mixing for different types of frames
+* "Control signal to Motor"-mixing for different types of frames
 * Flight control: Rate mode, Attitude mode and more to come
