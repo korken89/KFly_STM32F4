@@ -113,6 +113,10 @@ ErrorStatus I2C_MasterTransferData(I2C_TypeDef *I2Cx, I2C_MASTER_SETUP_Type *Tra
 	uint8_t *rxdat;
 	uint8_t tmp;
 
+	/* Enable the ack and reset Pos */
+	I2Cx->CR1 |= I2C_CR1_ACK;
+	I2Cx->CR1 &= ~I2C_CR1_POS;
+
 	if (Opt == I2C_TRANSFER_POLLING)
 	{
 		TransferCfg->Retransmissions_Count = 0;
@@ -401,17 +405,15 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 	/* End Debug */
 
 	/* *
-	 *
 	 * Note to self:
 	 * In order to prevent repeated running of the ISR, when TXE or RXNE = 1 and
 	 * awaiting BTF = 1, turn off the buffer interrupts (ITBUFEN) and just await
 	 * the BTF interrupt. This should break the "infinite ISR recall"-loop.
-	 *
 	 * */
 
 
 	if (TransferCfg->Retransmissions_Count > TransferCfg->Retransmissions_Max)
-	{ /* Maximum number of retransmissions reached, abort */
+	{ 	/* Maximum number of retransmissions reached, abort */
 		I2Cx->CR1 |= I2C_CR1_STOP;
 
 		/* *
@@ -439,8 +441,8 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 		{
 			case I2C_SR1_SB: /* Start condition sent */
 				if ((TransferCfg->TX_Length != 0) && (TransferCfg->TX_Data != NULL))
-				{ /* If there is data to send, send Addr+W */
-					I2Cx->DR = (TransferCfg->Slave_Address_7bit << 1);
+				{ 	/* If there is data to send, send Addr+W */
+					I2Cx->DR = (uint16_t)(TransferCfg->Slave_Address_7bit << 1);
 					(void)I2Cx->SR2; /* Read SR2 to start sending address */
 				}
 				else /* Else go to Addr+R */
@@ -456,11 +458,11 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 
 			case I2C_SR1_TXE: /* Data has been sent to the shift register, transmit register empty */
 				if (TransferCfg->TX_Count >= TransferCfg->TX_Length)
-				{ /* All data has been sent, turn of TXE interrupt and await BTF */
+				{ 	/* All data has been sent, turn of TXE interrupt and await BTF */
 					I2C_ITConfig(I2Cx, I2C_IT_BUF, DISABLE);
 				}
 				else
-				{ /* More data to send */
+				{ 	/* More data to send */
 					I2Cx->DR = (uint16_t)*(TransferCfg->TX_Data + TransferCfg->TX_Count++);
 				}
 				break;
@@ -476,12 +478,10 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 					I2C_ITConfig(I2Cx, I2C_IT_BUF, ENABLE);
 				}
 				else
-				{ /* No data to receive, end transmission */
+				{ 	/* No data to receive, end transmission */
 					I2Cx->CR1 |= I2C_CR1_STOP;
 					I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
 				}
-
-
 				break;
 
 			default:
@@ -496,7 +496,7 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 	 * care must be taken if the number of bytes to be read are
 	 * one, two or more than two.
 	 *
-	 * Note to self: (maybe)
+	 * Note to self: [This is not yet final, normal read will be tried first]
 	 * I will design the receiving part as the I2C_RdBufEasy in yigiter's example.
 	 * However some extra logic will be added to handle the special case of only
 	 * one byte being received. Hopefully I won't have to design for all the
@@ -511,12 +511,13 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 		{
 			case I2C_SR1_SB: /* Start/Restart condition sent */
 				if ((TransferCfg->RX_Length != 0) && (TransferCfg->RX_Data != NULL))
-				{ /* If there is data to receive, send Addr+R */
+				{ 	/* If there is data to receive, send Addr+R */
 					I2Cx->DR = (TransferCfg->Slave_Address_7bit << 1) | 0x01;
 				}
 				else /* Else go to end */
 				{
-
+					I2Cx->CR1 |= I2C_CR1_STOP;
+					I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
 				}
 				break;
 
@@ -530,6 +531,7 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 
 					/* Order a STOP condition, it shall be done after reading SR2 */
 					I2Cx->CR1 |= I2C_CR1_STOP;
+					I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
 				}
 				else if (TransferCfg->RX_Length == 2)
 				{	/* If there is two bytes to receive, reset ACK, set POS */
@@ -551,15 +553,50 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 			case I2C_SR1_BTF:
 				if (TransferCfg->RX_Length == 1)
 				{
-
+					/* This should never run. */
 				}
 				else if (TransferCfg->RX_Length == 2)
-				{
+				{	/* The next 2 bytes has been received (1st in the DR, 2nd in the shift register) */
+					/* Order a stop condition */
+					I2Cx->CR1 |= I2C_CR1_STOP;
 
+					/* Read the two bytes */
+					*(TransferCfg->RX_Data + TransferCfg->RX_Count++) = (uint8_t)I2Cx->DR;
+					*(TransferCfg->RX_Data + TransferCfg->RX_Count++) = (uint8_t)I2Cx->DR;
+
+					I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
 				}
-				else
+				else /* There is more than two bytes to recieve */
 				{
+					if ((TransferCfg->RX_Length - TransferCfg->RX_Count) > 3)
+					{ 	/* For as long as there are more than three bytes to recieve, just read them out */
+						*(TransferCfg->RX_Data + TransferCfg->RX_Count++) = (uint8_t)I2Cx->DR;
 
+						if ((TransferCfg->RX_Length - TransferCfg->RX_Count) == 3)
+						{ 	/* 3 more bytes to read. Wait till the next is actually received (BTF = 1) */
+							I2C_ITConfig(I2Cx, I2C_IT_BUF, DISABLE);
+						}
+					}
+					else
+					{
+						if ((TransferCfg->RX_Length - TransferCfg->RX_Count) == 3)
+						{ 	/* 3 more bytes to read */
+							/* Reset Ack */
+							I2Cx->CR1 &= ~I2C_CR1_ACK;
+							/* Read N-2 */
+							*(TransferCfg->RX_Data + TransferCfg->RX_Count++) = (uint8_t)I2Cx->DR;
+						}
+						else if ((TransferCfg->RX_Length - TransferCfg->RX_Count) == 2)
+						{ 	/* 2 more bytes to read */
+							/* Generate stop condition */
+							I2Cx->CR1 |= I2C_CR1_STOP;
+							/* Read the last two bytes (N-1 and N) */
+							*(TransferCfg->RX_Data + TransferCfg->RX_Count++) = (uint8_t)I2Cx->DR;
+							*(TransferCfg->RX_Data + TransferCfg->RX_Count++) = (uint8_t)I2Cx->DR;
+
+							I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
+						}
+					}
 				}
 
 				break;
@@ -611,7 +648,7 @@ static uint16_t I2C_Read(I2C_TypeDef *I2Cx, uint8_t *pBuf)
 		if (!(TimeOut--))
 			return ((I2Cx->SR1 & I2C_SR1_BITMASK) | I2C_ERROR_BIT);
 
-	*pBuf = I2Cx->DR;   /*This clears the RXNE bit. IF both RXNE and BTF is set, the clock stretches */
+	*pBuf = I2Cx->DR;   /* This clears the RXNE bit. IF both RXNE and BTF is set, the clock stretches */
 	return (I2Cx->SR1 & I2C_SR1_BITMASK);
 
 }

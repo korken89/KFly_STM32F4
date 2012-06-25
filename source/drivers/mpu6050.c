@@ -23,7 +23,7 @@ void InitMPU6050(void)
 
 ErrorStatus GetMUP6050ID(uint8_t *data)
 {
-	uint8_t send = 0x75;
+	uint8_t send = MPU6050_RA_WHO_AM_I;
 	I2C_MASTER_SETUP_Type Setup;
 
 	Setup.Slave_Address_7bit = MPU6050_ADDRESS;
