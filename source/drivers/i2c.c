@@ -49,7 +49,6 @@ static uint16_t WaitLineIdle(I2C_TypeDef *);
 
 /* Private external functions */
 
-volatile I2C_MASTER_SETUP_Type Setup;
 volatile uint8_t dataholder = 0;
 
 void InitSensorBus(void)
