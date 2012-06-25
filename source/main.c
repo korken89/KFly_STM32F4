@@ -207,11 +207,11 @@ void vTaskCode(void *pvParameters)
 
 void vTaskPrintTimer(void *pvParameters)
 {
-	uint8_t data;
+	extern volatile uint8_t dataholder;
 	while(1)
 	{
-		GetMUP6050ID(&data);
-		xUSBSendData(&data, 1);
 		vTaskDelay(5000);
+		GetMUP6050ID(&dataholder);
+		xUSBSendData("t", 1);
 	}
 }
