@@ -525,6 +525,12 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 	 *
 	 * */
 
+	/* *
+	 * TODO:
+	 * - Add if-statement when waiting for BTF
+	 * - Fix the bug when receiving 3 bytes, put code in I2C_SR1_RXNE case.
+	 * */
+
 	else
 	{
 		switch (status & I2C_STATUS_BITMASK)
@@ -583,8 +589,11 @@ send_slar:
 				break;
 
 			case I2C_SR1_RXNE: /* Data has been sent to the data register, ready for read out */
-			case (I2C_SR1_RXNE | I2C_SR1_BTF):
+
+				/* Put "recieve more than 3 bytes"-code here*/
+
 			case I2C_SR1_BTF:
+			case (I2C_SR1_RXNE | I2C_SR1_BTF): /* Data in the register and shift register */
 				if (I2Ctmp[I2C_num].RXTX_Setup.RX_Length == 1)
 				{
 					whereami = 13;
@@ -642,7 +651,6 @@ send_slar:
 							*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
 
 							I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
-
 
 							xUSBSendData("17", 2);
 						}
