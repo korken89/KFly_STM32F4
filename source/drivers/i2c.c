@@ -445,9 +445,9 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 			case I2C_SR1_SB: /* Start condition sent */
 				if ((I2Ctmp[I2C_num].RXTX_Setup.TX_Length != 0) && (I2Ctmp[I2C_num].RXTX_Setup.TX_Data != NULL))
 				{ 	/* If there is data to send, send Addr+W */
+					I2Cx->DR = (uint16_t)(I2Ctmp[I2C_num].RXTX_Setup.Slave_Address_7bit << 1);
 					xUSBSendData("1", 1);
 					whereami = 1;
-					I2Cx->DR = (uint16_t)(I2Ctmp[I2C_num].RXTX_Setup.Slave_Address_7bit << 1);
 				}
 				else /* Else go to Addr+R */
 				{
@@ -462,23 +462,23 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 				whereami = 3;
 				(void)I2Cx->SR2; /* Read SR2 to clear ADDR */
 				/* Start sending the first byte */
-				xUSBSendData("2", 1);
 				I2Cx->DR = (uint16_t)*(I2Ctmp[I2C_num].RXTX_Setup.TX_Data + I2Ctmp[I2C_num].RXTX_Setup.TX_Count++);
+				xUSBSendData("2", 1);
 				break;
 
 			case I2C_SR1_TXE: /* Data has been sent to the shift register, transmit register empty */
 				if (I2Ctmp[I2C_num].RXTX_Setup.TX_Count == I2Ctmp[I2C_num].RXTX_Setup.TX_Length)
 				{ 	/* All data has been sent, turn of TXE interrupt and await BTF */
+					I2C_ITConfig(I2Cx, I2C_IT_BUF, DISABLE);
 					xUSBSendData("4", 1);
 					whereami = 4;
-					I2C_ITConfig(I2Cx, I2C_IT_BUF, DISABLE);
 				}
 				else
 				{ 	/* More data to send */
-					xUSBSendData("3", 1);
-					whereami = 5;
 					xUSBSendData((I2Ctmp[I2C_num].RXTX_Setup.TX_Data + I2Ctmp[I2C_num].RXTX_Setup.TX_Count), 1);
 					I2Cx->DR = (uint16_t)*(I2Ctmp[I2C_num].RXTX_Setup.TX_Data + I2Ctmp[I2C_num].RXTX_Setup.TX_Count++);
+					xUSBSendData("3", 1);
+					whereami = 5;
 				}
 				break;
 
@@ -488,18 +488,17 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 				 * and change the transfer direction */
 				if ((I2Ctmp[I2C_num].RXTX_Setup.RX_Length != 0) && (I2Ctmp[I2C_num].RXTX_Setup.RX_Data != NULL))
 				{
-					whereami = 6;
 					I2Ctmp[I2C_num].Direction = I2C_RECEIVING;
 					I2Cx->CR1 |= I2C_CR1_START;
 					I2C_ITConfig(I2Cx, I2C_IT_BUF, ENABLE);
+					whereami = 6;
 					xUSBSendData("5", 1);
 				}
 				else
 				{ 	/* No data to receive, end transmission */
-					whereami = 7;
-					I2Cx->CR1 |= I2C_CR1_STOP;
 					I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
-
+					I2Cx->CR1 |= I2C_CR1_STOP;
+					whereami = 7;
 					xUSBSendData("6", 1);
 				}
 				break;
@@ -516,19 +515,6 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 	 * care must be taken if the number of bytes to be read are
 	 * one, two or more than two.
 	 *
-	 * Note to self: [This is not yet final, normal read will be tried first]
-	 * I will design the receiving part as the I2C_RdBufEasy in yigiter's example.
-	 * However some extra logic will be added to handle the special case of only
-	 * one byte being received. Hopefully I won't have to design for all the
-	 * special cases as I did in the polled read. By doing this the the BTF flag
-	 * shall never be set.
-	 *
-	 * */
-
-	/* *
-	 * TODO:
-	 * - Add if-statement when waiting for BTF
-	 * - Fix the bug when receiving 3 bytes, put code in I2C_SR1_RXNE case.
 	 * */
 
 	else
@@ -539,16 +525,16 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 send_slar:
 				if ((I2Ctmp[I2C_num].RXTX_Setup.RX_Length != 0) && (I2Ctmp[I2C_num].RXTX_Setup.RX_Data != NULL))
 				{ 	/* If there is data to receive, send Addr+R */
-					whereami = 8;
 					I2Cx->DR = (uint16_t)((I2Ctmp[I2C_num].RXTX_Setup.Slave_Address_7bit << 1) | 0x01);
+					whereami = 8;
 					xUSBSendData("7", 1);
 				}
 				else /* Else go to end */
 				{
-					whereami = 9;
-					I2Cx->CR1 |= I2C_CR1_STOP;
 					I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
+					I2Cx->CR1 |= I2C_CR1_STOP;
 
+					whereami = 9;
 					xUSBSendData("8", 1);
 				}
 				break;
@@ -556,107 +542,110 @@ send_slar:
 			case I2C_SR1_ADDR: /* Address+R sent, ack receieved */
 				if (I2Ctmp[I2C_num].RXTX_Setup.RX_Length == 1)
 				{	/* If there is only one byte to receive, reset ACK */
-					whereami = 10;
 					I2Cx->CR1 &= ~I2C_CR1_ACK;
-
 					/* Now Read the SR2 to clear ADDR */
 					(void)I2Cx->SR2;
-
 					/* Order a STOP condition, it shall be done after reading SR2 */
 					I2Cx->CR1 |= I2C_CR1_STOP;
 
+					whereami = 10;
 					xUSBSendData("9", 1);
 				}
 				else if (I2Ctmp[I2C_num].RXTX_Setup.RX_Length == 2)
-				{	/* If there is two bytes to receive, reset ACK, set POS */
-					whereami = 11;
-					I2Cx->CR1 &= ~I2C_CR1_ACK;
-					I2Cx->CR1 |= I2C_CR1_POS;
-
+				{
 					/* Now we shall wait for BTF so disable BUF interrupts */
 					I2C_ITConfig(I2Cx, I2C_IT_BUF, DISABLE);
 
+					/* If there is two bytes to receive, reset ACK, set POS */
+					I2Cx->CR1 &= ~I2C_CR1_ACK;
+					I2Cx->CR1 |= I2C_CR1_POS;
+
 					(void)I2Cx->SR2; /* Read SR2 to start reading data */
+
+					whereami = 11;
 					xUSBSendData("10", 2);
 				}
 				else /* If tere is more than two bytes to receive, just start shuffling data  */
 				{
-					whereami = 12;
 					(void)I2Cx->SR2; /* Read SR2 to start reading data */
+
+					whereami = 12;
 					xUSBSendData("11", 2);
 				}
-
 				break;
 
-			case I2C_SR1_RXNE: /* Data has been sent to the data register, ready for read out */
+			case I2C_SR1_RXNE: /* Data in data register ready for read outn shift register empty */
+				if (I2Ctmp[I2C_num].RXTX_Setup.RX_Length == 1)
+				{	/* One byte recieve does not wait for BTF */
+					I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
+					*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
 
-				/* Put "recieve more than 3 bytes"-code here*/
+					whereami = 13;
+					xUSBSendData("x", 1);
+					xUSBSendData(&dataholder, 1);
+				}
+				else
+				{
+					if ((I2Ctmp[I2C_num].RXTX_Setup.RX_Length - I2Ctmp[I2C_num].RXTX_Setup.RX_Count) > 3)
+					{ 	/* For as long as there are more than three bytes to recieve, just read them out */
+						*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
+
+						whereami = 15;
+						xUSBSendData("14", 2);
+					}
+					/* When there are three bytes left, disable RXNE interrupt */
+					if ((I2Ctmp[I2C_num].RXTX_Setup.RX_Length - I2Ctmp[I2C_num].RXTX_Setup.RX_Count) == 3)
+					{ 	/* 3 more bytes to read. Wait till the next is actually received (BTF = 1) */
+						I2C_ITConfig(I2Cx, I2C_IT_BUF, DISABLE);
+
+						xUSBSendData("15", 2);
+					}
+				}
+				break;
 
 			case I2C_SR1_BTF:
 			case (I2C_SR1_RXNE | I2C_SR1_BTF): /* Data in the register and shift register */
-				if (I2Ctmp[I2C_num].RXTX_Setup.RX_Length == 1)
-				{
-					whereami = 13;
-					xUSBSendData("x", 1);
-					*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
-					xUSBSendData(&dataholder, 1);
+				if (I2Ctmp[I2C_num].RXTX_Setup.RX_Length == 2)
+				{	/* The next 2 bytes has been received (1st in the DR, 2nd in the shift register) */
 					I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
 
-				}
-				else if (I2Ctmp[I2C_num].RXTX_Setup.RX_Length == 2)
-				{	/* The next 2 bytes has been received (1st in the DR, 2nd in the shift register) */
 					/* Order a stop condition */
-					whereami = 14;
 					I2Cx->CR1 |= I2C_CR1_STOP;
 
 					/* Read the two bytes */
 					*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
 					*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
 
-					I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
-
+					whereami = 14;
 					xUSBSendData("13", 2);
 				}
-				else /* There is more than two bytes to recieve */
+				else if (I2Ctmp[I2C_num].RXTX_Setup.RX_Length > 2) /* There is more than two bytes to recieve */
 				{
-					if ((I2Ctmp[I2C_num].RXTX_Setup.RX_Length - I2Ctmp[I2C_num].RXTX_Setup.RX_Count) > 3)
-					{ 	/* For as long as there are more than three bytes to recieve, just read them out */
-						whereami = 15;
+					if ((I2Ctmp[I2C_num].RXTX_Setup.RX_Length - I2Ctmp[I2C_num].RXTX_Setup.RX_Count) == 3)
+					{ 	/* 3 more bytes to read */
+						/* Reset Ack */
+						I2Cx->CR1 &= ~I2C_CR1_ACK;
+
+						/* Read N-2 */
 						*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
-						xUSBSendData("14", 2);
-						if ((I2Ctmp[I2C_num].RXTX_Setup.RX_Length - I2Ctmp[I2C_num].RXTX_Setup.RX_Count) == 3)
-						{ 	/* 3 more bytes to read. Wait till the next is actually received (BTF = 1) */
-							I2C_ITConfig(I2Cx, I2C_IT_BUF, DISABLE);
-							xUSBSendData("15", 2);
-						}
+
+						whereami = 16;
+						xUSBSendData("16", 2);
 					}
-					else
-					{
-						if ((I2Ctmp[I2C_num].RXTX_Setup.RX_Length - I2Ctmp[I2C_num].RXTX_Setup.RX_Count) == 3)
-						{ 	/* 3 more bytes to read */
-							whereami = 16;
-							/* Reset Ack */
-							I2Cx->CR1 &= ~I2C_CR1_ACK;
-							/* Read N-2 */
-							*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
-							xUSBSendData("16", 2);
-						}
-						else if ((I2Ctmp[I2C_num].RXTX_Setup.RX_Length - I2Ctmp[I2C_num].RXTX_Setup.RX_Count) == 2)
-						{ 	/* 2 more bytes to read */
-							whereami = 17;
-							/* Generate stop condition */
-							I2Cx->CR1 |= I2C_CR1_STOP;
-							/* Read the last two bytes (N-1 and N) */
-							*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
-							*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
+					else if ((I2Ctmp[I2C_num].RXTX_Setup.RX_Length - I2Ctmp[I2C_num].RXTX_Setup.RX_Count) == 2)
+					{ 	/* 2 more bytes to read */
+						I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
 
-							I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
+						/* Generate stop condition */
+						I2Cx->CR1 |= I2C_CR1_STOP;
+						/* Read the last two bytes (N-1 and N) */
+						*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
+						*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
 
-							xUSBSendData("17", 2);
-						}
+						whereami = 17;
+						xUSBSendData("17", 2);
 					}
 				}
-
 				break;
 
 			default:
