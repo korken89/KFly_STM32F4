@@ -21,7 +21,7 @@
 #define I2C_STATUS_BITMASK		0x00DF
 #define I2C_ERROR_BITMASK		0xDF00
 #define I2C_SR1_BITMASK			0xDFDF
-#define I2C_ERROR_BIT			(1<<13) /* One of the reserved bits is used as timeout error bit */
+#define I2C_ERROR_BIT			((uint16_t)(1<<13)) /* One of the reserved bits is used as timeout error bit */
 
 /* Global variable defines */
 extern volatile xQueueHandle 	I2CMutex[3]; /* Mutexes for the I2C */

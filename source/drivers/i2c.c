@@ -11,17 +11,17 @@
 #include "i2c.h"
 
 /* Private Defines */
-#define I2CBus                    	I2C2
-#define RCC_APB1Periph_I2Cx       	RCC_APB1Periph_I2C2
-#define RCC_AHB1Periph_GPIO_SCL   	RCC_AHB1Periph_GPIOB
-#define RCC_AHB1Periph_GPIO_SDA   	RCC_AHB1Periph_GPIOB
-#define GPIO_AF_I2Cx              	GPIO_AF_I2C2
-#define GPIO_SCL                  	GPIOB
-#define GPIO_SDA                  	GPIOB
-#define GPIO_Pin_SCL              	GPIO_Pin_10
-#define GPIO_Pin_SDA              	GPIO_Pin_11
-#define GPIO_PinSource_SCL        	GPIO_PinSource10
-#define GPIO_PinSource_SDA        	GPIO_PinSource11
+#define I2CBus						I2C2
+#define RCC_APB1Periph_I2Cx			RCC_APB1Periph_I2C2
+#define RCC_AHB1Periph_GPIO_SCL		RCC_AHB1Periph_GPIOB
+#define RCC_AHB1Periph_GPIO_SDA		RCC_AHB1Periph_GPIOB
+#define GPIO_AF_I2Cx				GPIO_AF_I2C2
+#define GPIO_SCL					GPIOB
+#define GPIO_SDA					GPIOB
+#define GPIO_Pin_SCL				GPIO_Pin_10
+#define GPIO_Pin_SDA				GPIO_Pin_11
+#define GPIO_PinSource_SCL			GPIO_PinSource10
+#define GPIO_PinSource_SDA			GPIO_PinSource11
 
 /* Private Typedefs */
 typedef struct
@@ -31,8 +31,8 @@ typedef struct
 } I2C_INT_CFG_Type;
 
 /* Gobal variable defines */
-volatile I2C_INT_CFG_Type I2Ctmp[3];	/* Pointer to I2C Config Setup */
-volatile xQueueHandle I2CMutex[3]; 	/* Mutexes for the I2C */
+volatile I2C_INT_CFG_Type I2Ctmp[3];		/* Pointer to I2C Config Setup */
+volatile xQueueHandle I2CMutex[3]; 		/* Mutexes for the I2C */
 volatile uint8_t dataholder = 0;
 volatile uint16_t status = 0;
 volatile uint8_t whereami = 0;
@@ -415,27 +415,29 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 	 * */
 
 
-	if (I2Ctmp[I2C_num].RXTX_Setup.Retransmissions_Count > I2Ctmp[I2C_num].RXTX_Setup.Retransmissions_Max)
-	{ 	/* Maximum number of retransmissions reached, abort */
-		I2Cx->CR1 |= I2C_CR1_STOP;
-
-		/* *
-		 * TODO:
-		 * Disable interrupts
-		 * Return error
-		 * */
-	}
-
 	if (status & I2C_ERROR_BITMASK) /* Error */
 	{
 		I2Cx->SR1 &= ~(I2Cx->SR1 & I2C_ERROR_BITMASK); /* Clear errors */
 		I2Ctmp[I2C_num].RXTX_Setup.Retransmissions_Count++;
 
-		/* *
-		 * TODO:
-		 * Generate new start
-		 * Reset all variables
-		 * */
+		if (I2Ctmp[I2C_num].RXTX_Setup.Retransmissions_Count > I2Ctmp[I2C_num].RXTX_Setup.Retransmissions_Max)
+		{ 	/* Maximum number of retransmissions reached, abort */
+			I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
+			I2Cx->CR1 |= I2C_CR1_STOP;
+
+			I2Ctmp[I2C_num].RXTX_Setup.Status |= I2C_ERROR_BIT; /* Set error bit */
+		}
+		else
+		{
+			I2Ctmp[I2C_num].RXTX_Setup.TX_Count = 0;
+			I2Ctmp[I2C_num].RXTX_Setup.RX_Count = 0;
+			I2Ctmp[I2C_num].RXTX_Setup.Status = 0;
+
+			I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), ENABLE);
+			I2Cx->CR1 |= I2C_CR1_START; /* Send start condition to start the transfer */
+		}
+
+		return;
 	}
 
 	if (I2Ctmp[I2C_num].Direction == I2C_SENDING) /* Sending data */
@@ -563,14 +565,14 @@ send_slar:
 					(void)I2Cx->SR2; /* Read SR2 to start reading data */
 
 					whereami = 11;
-					xUSBSendData("10", 2);
+					xUSBSendData("a", 1);
 				}
 				else /* If tere is more than two bytes to receive, just start shuffling data  */
 				{
 					(void)I2Cx->SR2; /* Read SR2 to start reading data */
 
 					whereami = 12;
-					xUSBSendData("11", 2);
+					xUSBSendData("b", 1);
 				}
 				break;
 
@@ -582,7 +584,7 @@ send_slar:
 
 					whereami = 13;
 					xUSBSendData("x", 1);
-					xUSBSendData(&dataholder, 1);
+					xUSBSendData((uint8_t *)&dataholder, 1);
 				}
 				else
 				{
@@ -591,20 +593,20 @@ send_slar:
 						*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
 
 						whereami = 15;
-						xUSBSendData("14", 2);
+						xUSBSendData("c", 1);
 					}
 					/* When there are three bytes left, disable RXNE interrupt */
 					if ((I2Ctmp[I2C_num].RXTX_Setup.RX_Length - I2Ctmp[I2C_num].RXTX_Setup.RX_Count) == 3)
 					{ 	/* 3 more bytes to read. Wait till the next is actually received (BTF = 1) */
 						I2C_ITConfig(I2Cx, I2C_IT_BUF, DISABLE);
 
-						xUSBSendData("15", 2);
+						xUSBSendData("d", 1);
 					}
 				}
 				break;
 
 			case I2C_SR1_BTF:
-			case (I2C_SR1_RXNE | I2C_SR1_BTF): /* Data in the register and shift register */
+			case (I2C_SR1_RXNE | I2C_SR1_BTF): /* Data in the data register and shift register */
 				if (I2Ctmp[I2C_num].RXTX_Setup.RX_Length == 2)
 				{	/* The next 2 bytes has been received (1st in the DR, 2nd in the shift register) */
 					I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
@@ -617,7 +619,7 @@ send_slar:
 					*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
 
 					whereami = 14;
-					xUSBSendData("13", 2);
+					xUSBSendData("e", 1);
 				}
 				else if (I2Ctmp[I2C_num].RXTX_Setup.RX_Length > 2) /* There is more than two bytes to recieve */
 				{
@@ -630,7 +632,7 @@ send_slar:
 						*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
 
 						whereami = 16;
-						xUSBSendData("16", 2);
+						xUSBSendData("f", 1);
 					}
 					else if ((I2Ctmp[I2C_num].RXTX_Setup.RX_Length - I2Ctmp[I2C_num].RXTX_Setup.RX_Count) == 2)
 					{ 	/* 2 more bytes to read */
@@ -643,7 +645,7 @@ send_slar:
 						*(I2Ctmp[I2C_num].RXTX_Setup.RX_Data + I2Ctmp[I2C_num].RXTX_Setup.RX_Count++) = (uint8_t)I2Cx->DR;
 
 						whereami = 17;
-						xUSBSendData("17", 2);
+						xUSBSendData("g", 1);
 					}
 				}
 				break;
