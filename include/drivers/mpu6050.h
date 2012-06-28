@@ -18,10 +18,17 @@
 #include "i2c.h"
 
 /* Defines */
+/* Convertions */
+#define DPS250_TO_RADPS 				(0.0174532925f / 131.0f)
+#define DPS500_TO_RADPS 				(0.0174532925f / 65.5f)
+#define DPS1000_TO_RADPS				(0.0174532925f / 32.8f)
+#define DPS2000_TO_RADPS				(0.0174532925f / 16.4f)
+
 /* MPU6050 Address */
 #define MPU6050_ADDRESS_AD0_LOW    		0x68 // Address pin low (GND)
 #define MPU6050_ADDRESS_AD0_HIGH   		0x69 // Address pin high (VCC)
 #define MPU6050_ADDRESS     			MPU6050_ADDRESS_AD0_HIGH
+
 /* MPU6050 Register Map */
 #define MPU6050_RA_XG_OFFS_TC       	0x00 //[7] PWR_MODE, [6:1] XG_OFFS_TC, [0] OTP_BNK_VLD
 #define MPU6050_RA_YG_OFFS_TC       	0x01 //[7] PWR_MODE, [6:1] YG_OFFS_TC, [0] OTP_BNK_VLD
@@ -141,6 +148,6 @@
 /* Global function defines */
 void InitMPU6050(void);
 ErrorStatus GetMUP6050ID(uint8_t *);
-
+ErrorStatus GetMPU6050Rates(uint8_t *);
 
 #endif

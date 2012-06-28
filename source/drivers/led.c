@@ -1,6 +1,6 @@
 #include "led.h"
 
-// Make
+/* Holders for the PIN typdefs */
 GPIO_TypeDef *	GPIO_PORT[LEDn]	= {LED0_GPIO_PORT, LED1_GPIO_PORT};
 const uint16_t 	GPIO_PIN[LEDn] 	= {LED0_PIN, LED1_PIN};
 const uint32_t 	GPIO_CLK[LEDn] 	= {LED0_GPIO_CLK, LED1_GPIO_CLK};
