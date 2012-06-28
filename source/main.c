@@ -111,26 +111,20 @@ void ftoa(float num)
 
 void main(void)
 {
+	for (volatile uint32_t i = 0; i < 0xFFFFFF; i++);
 	/* *
 	 *
 	 * Initialization of peripherals and I/O-ports
 	 *
 	 * */
-	LEDInit();
-	USBD_Init(	&USB_OTG_dev,
-				USB_OTG_FS_CORE_ID,
-				&USR_desc,
-				&USBD_CDC_cb,
-				&USR_cb);
-	LEDOn(RED);
-	for (volatile uint32_t i = 0; i < 0xFFFFFF*7; i++);
-	LEDOff(RED);
+
 	/* *
 	 *
 	 * LED init.
 	 * Initializes and sets up the port for the LEDs as outputs.
 	 *
 	 * */
+	LEDInit();
 
 	/* *
 	 *
@@ -153,7 +147,12 @@ void main(void)
 	 *
 	 * */
 	InitSensorBus();
+
+	/* *
+	 * Initialize all sensors
+	 * */
 	InitMPU6050();
+
 	/* *
 	 *
 	 * 	USB init.
@@ -162,7 +161,11 @@ void main(void)
 	 * 	Linux version does not need a driver but Windows version uses STM serial driver.
 	 *
 	 * */
-
+	USBD_Init(	&USB_OTG_dev,
+				USB_OTG_FS_CORE_ID,
+				&USR_desc,
+				&USBD_CDC_cb,
+				&USR_cb);
 
 	xTaskCreate(vTaskCode,
 				"MISC",
@@ -210,8 +213,8 @@ void vTaskCode(void *pvParameters)
 void vTaskPrintTimer(void *pvParameters)
 {
 	extern volatile uint8_t dataholder;
-	static uint8_t data[14];
-	static uint8_t send = MPU6050_RA_ACCEL_XOUT_H;
+	uint8_t data[14];
+	uint8_t send = MPU6050_RA_ACCEL_XOUT_H;
 	I2C_MASTER_SETUP_Type Setup;
 
 	Setup.Slave_Address_7bit = MPU6050_ADDRESS;
@@ -225,8 +228,9 @@ void vTaskPrintTimer(void *pvParameters)
 	while(1)
 	{
 		vTaskDelay(5000);
-		//GetMUP6050ID((uint8_t *)&dataholder);
+		//GetMPU6050ID((uint8_t *)&dataholder);
+		GetHMC5883LID(data);
 
-		I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_INTERRUPT);
+		//I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_INTERRUPT);
 	}
 }

@@ -67,7 +67,7 @@ void InitMPU6050(void)
 	I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_POLLING);
 }
 
-ErrorStatus GetMUP6050ID(uint8_t *data)
+ErrorStatus GetMPP6050ID(uint8_t *data)
 {
 	static uint8_t send = MPU6050_RA_WHO_AM_I;
 	I2C_MASTER_SETUP_Type Setup;
@@ -80,12 +80,7 @@ ErrorStatus GetMUP6050ID(uint8_t *data)
 	Setup.Retransmissions_Max = 0;
 	Setup.Callback = NULL;
 
-	/*xUSBSendData(data, 1);
-	xUSBSendData(&Setup.Status, 2);
-	xUSBSendData(&Setup.TX_Count, 1);
-	xUSBSendData(&Setup.RX_Count, 1);*/
-
-	return I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_INTERRUPT);
+	return I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_POLLING);
 }
 
 ErrorStatus GetMPU6050Rates(uint8_t *data)

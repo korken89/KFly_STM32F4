@@ -12,6 +12,7 @@
 /* KFly includes */
 
 /* Includes */
+#include "i2c.h"
 
 /* Defines */
 #define HMC5883L_ADDRESS            0x1E
@@ -36,7 +37,7 @@
 
 /* Global function defines */
 void InitHMC5883L(void);
-
+ErrorStatus GetHMC5883LID(uint8_t *);
 
 
 #endif

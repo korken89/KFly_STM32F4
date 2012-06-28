@@ -59,7 +59,7 @@ void InitSensorBus(void)
 	I2C_InitTypeDef  I2C_InitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-	/* Enable the i2c */
+	/* Enable the I2C */
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2Cx, ENABLE);
 	/* Reset the Peripheral */
 	RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2Cx, ENABLE);

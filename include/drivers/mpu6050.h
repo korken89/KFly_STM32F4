@@ -147,7 +147,7 @@
 
 /* Global function defines */
 void InitMPU6050(void);
-ErrorStatus GetMUP6050ID(uint8_t *);
+ErrorStatus GetMPU6050ID(uint8_t *);
 ErrorStatus GetMPU6050Rates(uint8_t *);
 
 #endif
