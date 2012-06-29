@@ -4,6 +4,7 @@
  *
  * TODO:
  * Add support for Serial Communication AUX1, AUX2 and AUX3
+ * Add command parser
  *
  * */
 
@@ -24,7 +25,7 @@ extern uint16_t cdc_DataTx(uint8_t *, uint32_t);
  * */
 void vUSBQueueInit(void)
 {
-	xUSBQueueHandle = xQueueCreate(USBQueueSize, sizeof(uint8_t));
+	xUSBQueueHandle = xQueueCreate(xUSBQueueSize, sizeof(uint8_t));
 }
 
 /* *

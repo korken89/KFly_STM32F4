@@ -17,10 +17,10 @@
 /* Includes */
 
 /* Defines */
-#define USBQueueSize	256
-#define AUX1 			USART3
-#define AUX2 			USART1
-#define AUX3 			UART4
+#define xUSBQueueSize		256
+#define AUX1 				USART3
+#define AUX2 				USART1
+#define AUX3 				UART4
 
 /* Global variable defines */
 extern volatile xQueueHandle xUSBQueueHandle;
