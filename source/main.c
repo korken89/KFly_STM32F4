@@ -194,7 +194,7 @@ void vTaskCode(void *pvParameters)
 
 	while(1)
 	{
-		xQueueReceive(xUSBQueueHandle, &text, portMAX_DELAY);
+		xQueueReceive(xUSBQueue.xUSBQueueHandle, &text, portMAX_DELAY);
 
 		if (text == 'a')
 		{

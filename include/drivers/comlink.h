@@ -22,12 +22,15 @@
 #define AUX2 				USART1
 #define AUX3 				UART4
 
-/* Global variable defines */
-extern volatile xQueueHandle xUSBQueueHandle;
-
 /* Typedefs */
+typedef struct
+{
+	volatile xQueueHandle xUSBQueueHandle;
+	volatile Bool bUSBAvalible;
+} USB_QUEUE_Type;
 
-
+/* Global variable defines */
+extern volatile USB_QUEUE_Type xUSBQueue;
 
 /* Global function defines */
 void vUSBQueueInit(void);

@@ -25,9 +25,6 @@
 #include "led.h"
 #include "comlink.h"
 
-// This variable is privet to this file and comlink.c
-extern volatile Bool bUSBAvalible;
-
 USBD_Usr_cb_TypeDef USR_cb =
 {
   USBD_USR_Init,
@@ -72,7 +69,7 @@ void USBD_USR_DeviceReset(uint8_t speed )
 void USBD_USR_DeviceConfigured (void)
 {
 	/* USB status change, tell the system */
-	bUSBAvalible = TRUE;
+	xUSBQueue.bUSBAvalible = TRUE;
 
 	// Debug LED
 	LEDOn(GREEN);
@@ -86,7 +83,7 @@ void USBD_USR_DeviceConfigured (void)
 void USBD_USR_DeviceSuspended(void)
 {
 	/* USB status change, tell the system */
-	bUSBAvalible = FALSE;
+	xUSBQueue.bUSBAvalible = FALSE;
 
 	// Debug LED
 	LEDOff(GREEN);
@@ -102,7 +99,7 @@ void USBD_USR_DeviceSuspended(void)
 void USBD_USR_DeviceResumed(void)
 {
 	/* USB status change, tell the system */
-	bUSBAvalible = TRUE;
+	xUSBQueue.bUSBAvalible = TRUE;
 
 	// Debug LED
 	LEDOn(GREEN);

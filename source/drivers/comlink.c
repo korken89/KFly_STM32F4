@@ -54,8 +54,7 @@
 #include "comlink.h"
 
 /* Gobal variable defines */
-volatile xQueueHandle xUSBQueueHandle = NULL;
-volatile Bool bUSBAvalible = FALSE;
+volatile USB_QUEUE_Type xUSBQueue = {NULL, FALSE};
 
 /* Private function defines */
 
@@ -67,7 +66,7 @@ extern uint16_t cdc_DataTx(uint8_t *, uint32_t);
  * */
 void vUSBQueueInit(void)
 {
-	xUSBQueueHandle = xQueueCreate(xUSBQueueSize, sizeof(uint8_t));
+	xUSBQueue.xUSBQueueHandle = xQueueCreate(xUSBQueueSize, sizeof(uint8_t));
 }
 
 /* *
@@ -84,7 +83,7 @@ void vUSBQueueInit(void)
 ErrorStatus xUSBSendData(uint8_t *data, uint32_t size)
 {
 	/*  if USB is not avalible, signal with error. */
-	if (bUSBAvalible == FALSE)
+	if (xUSBQueue.bUSBAvalible == FALSE)
 		return ERROR;
 
 	else

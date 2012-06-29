@@ -190,7 +190,7 @@ static uint16_t cdc_DataRx (uint8_t* Buf, uint32_t Len)
 	for (uint32_t i = 0; i < Len; i++)
 	{
 		/* Send incomming data to RTOS queue for processing */
-		xQueueSendToBackFromISR(xUSBQueueHandle, (Buf + i), &xHigherPriorityTaskWoken);
+		xQueueSendToBackFromISR(xUSBQueue.xUSBQueueHandle, (Buf + i), &xHigherPriorityTaskWoken);
 	}
 
 	portEND_SWITCHING_ISR(xHigherPriorityTaskWoken); // Force context switch if needed
