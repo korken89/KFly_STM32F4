@@ -1,8 +1,8 @@
 /* *
  *
- * CRC8 and CRC16 generation code.
+ * CRC8 and CRC16 (CCITT) generation code.
  * pycrc was used to make the base code.
- * Modyfied by Emil Fresk.
+ * Modified by Emil Fresk.
  *
  * */
 
@@ -69,13 +69,13 @@ uint8_t CRC8(uint8_t *data, uint32_t data_len)
 
     while (data_len--)
     {
-        tbl_idx = ((crc >> 0) ^ *data) & 0xff;
-        crc = (crc8_table[tbl_idx] ^ (crc << 8)) & 0xff;
+        tbl_idx = (crc ^ *data) & 0xff;
+        crc = crc8_table[tbl_idx] ^ (crc << 8);
 
         data++;
     }
 
-    return crc & 0xff;
+    return crc;
 }
 
 uint16_t CRC16(uint8_t *data, uint32_t data_len)
@@ -86,11 +86,11 @@ uint16_t CRC16(uint8_t *data, uint32_t data_len)
     while (data_len--)
     {
         tbl_idx = ((crc >> 8) ^ *data) & 0xff;
-        crc = (crc16_table[tbl_idx] ^ (crc << 8)) & 0xffff;
+        crc = crc16_table[tbl_idx] ^ (crc << 8);
 
         data++;
     }
 
-    return crc & 0xffff;
+    return crc;
 }
 
