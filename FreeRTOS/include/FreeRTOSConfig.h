@@ -94,7 +94,7 @@ extern uint32_t SystemCoreClock;
 #define configMAX_PRIORITIES				( ( unsigned portBASE_TYPE ) 5 )
 #define configMINIMAL_STACK_SIZE			( ( unsigned short ) 130 )
 #define configTOTAL_HEAP_SIZE				( ( size_t ) ( 64 * 1024 ) ) // The heap is the entire CCM memory of the STM32F4xx
-#define configMAX_TASK_NAME_LEN				( 10 )
+#define configMAX_TASK_NAME_LEN				( 20 )
 #define configUSE_TRACE_FACILITY			0
 #define configUSE_16_BIT_TICKS				0
 #define configIDLE_SHOULD_YIELD				0
