@@ -55,7 +55,7 @@ void vInitSerialManager(void)
 
 	xTaskCreate(vTaskUSBSerialManager,
 				"SerialManager(USB)",
-				256,
+				512,
 				0,
 				tskSerialManagerPRIORITY,
 			    0);
@@ -71,22 +71,36 @@ void vInitSerialManager(void)
 void vTaskUSBSerialManager(void *pvParameters)
 {
 	char in_data;
+	Parser_Holder_Type data_holder;
+
+	data_holder.Port = PORT_USB;
+	data_holder.state = vRxWaitSync;
 
 	while(1)
 	{
 		xQueueReceive(xUSBQueue.xUSBQueueHandle, &in_data, portMAX_DELAY);
-
+		data_holder.state(in_data, &data_holder);
 	}
 }
 
-void vDataStreamParser(uint8_t data, RECEIVER_SOURCE_Type port)
+void vRxWaitSync(uint8_t data, Parser_Holder_Type *pHolder)
 {
-
+	if (data == SYNC_BYTE)
+		pHolder->state = vRxWaitCmd;
 }
 
+void vRxWaitCmd(uint8_t data, Parser_Holder_Type *pHolder)
+{
+	switch (data & 0x7F)
+	{
+		case Ping: // Ping
+			pHolder->state = NULL;
+			pHolder->data_length = PingLength;
+			break;
 
-
-
-
-
+		default:
+			pHolder->state = vRxWaitSync;
+			break;
+	}
+}
 

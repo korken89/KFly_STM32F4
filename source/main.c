@@ -227,10 +227,12 @@ void vTaskPrintTimer(void *pvParameters)
 
 	while(1)
 	{
-		vTaskDelay(5000);
+		vTaskDelay(1000);
 		//GetMPU6050ID((uint8_t *)&dataholder);
 		GetHMC5883LID(data);
-
+		vTaskDelay(100);
+		xUSBSendData(data, 3);
+		xUSBSendData("\n\r", 2);
 		//I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_INTERRUPT);
 	}
 }
