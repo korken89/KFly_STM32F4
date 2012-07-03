@@ -20,6 +20,7 @@
 /* Defines */
 #define SYNC_BYTE						(0xa6)
 #define tskSerialManagerPRIORITY		(tskIDLE_PRIORITY + 1)
+#define SERIAL_BUFFER_SIZE				256
 
 /* Typedefs */
 typedef enum
@@ -40,6 +41,7 @@ typedef enum
 	GetRunningMode,
 	WriteFirmware,
 	ReadFirmware,
+	ExitBootloader,
 	GetBootloaderVersion,
 	GetFirmwareVersion,
 	SaveToFlash,
@@ -52,7 +54,8 @@ typedef enum
 	CalibrateRCCenters,
 	GetRCCalibration,
 	SetRCCalibration,
-	GetRCValues
+	GetRCValues,
+	EndOfCommands
 } KFly_Command_Type;
 
 /* Length of commands */
@@ -61,6 +64,7 @@ typedef enum {
 	GetRunningModeLength = 0,
 	WriteFirmwareLength,
 	ReadFirmwareLength,
+	ExitBootloaderLength = 0,
 	GetBootloaderVersionLength = 0,
 	GetFirmwareVersionLength = 0,
 	SaveToFlashLength = 0,
@@ -81,8 +85,10 @@ typedef struct _parser_holder
 	Reveiver_Source_Type Port;
 	KFly_Data_Length_Type data_length;
 	uint32_t bytes_received;
-	uint8_t buffer[256];
-	void (*state)(uint8_t, struct _parser_holder *);
+	uint8_t buffer[SERIAL_BUFFER_SIZE];
+	uint32_t rx_error;
+	void (*current_state)(uint8_t, struct _parser_holder *);
+	void (*last_state)(uint8_t, struct _parser_holder *);
 } Parser_Holder_Type;
 
 /* Global variable defines */
@@ -90,8 +96,9 @@ typedef struct _parser_holder
 /* Global function defines */
 void vInitSerialManager(void);
 void vTaskUSBSerialManager(void *);
-void vRxWait(uint8_t, Parser_Holder_Type *);
-void vRxWaitSync(uint8_t, Parser_Holder_Type *);
-void vRxWaitCmd(uint8_t, Parser_Holder_Type *);
+void vWaitingForSYNC(uint8_t, Parser_Holder_Type *);
+void vWaitingForCMD(uint8_t, Parser_Holder_Type *);
+void vWaitingForSYNCorCMD(uint8_t, Parser_Holder_Type *);
+void vRxCmd(uint8_t, Parser_Holder_Type *);
 
 #endif
