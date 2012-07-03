@@ -55,6 +55,7 @@ typedef enum
 	GetRCCalibration,
 	SetRCCalibration,
 	GetRCValues,
+	GetDataDump,
 	EndOfCommands
 } KFly_Command_Type;
 
@@ -77,19 +78,20 @@ typedef enum {
 	CalibrateRCCentersLength = 0,
 	GetRCCalibrationLength = 0,
 	SetRCCalibrationLength,
-	GetRCValuesLength
+	GetRCValuesLength,
+	GetDataDumpLength = 0
 } KFly_Data_Length_Type;
 
 typedef struct _parser_holder
 {
 	Reveiver_Source_Type Port;
 	KFly_Data_Length_Type data_length;
-	uint32_t bytes_received;
 	uint8_t buffer[SERIAL_BUFFER_SIZE];
+	uint32_t buffer_count;
 	uint32_t rx_error;
 	void (*current_state)(uint8_t, struct _parser_holder *);
 	void (*next_state)(uint8_t, struct _parser_holder *);
-	void (*parser)(uint8_t, struct _parser_holder *);
+	void (*parser)(struct _parser_holder *);
 } Parser_Holder_Type;
 
 /* Global variable defines */
@@ -98,8 +100,11 @@ typedef struct _parser_holder
 void vInitSerialManager(void);
 void vTaskUSBSerialManager(void *);
 void vWaitingForSYNC(uint8_t, Parser_Holder_Type *);
-void vWaitingForCMD(uint8_t, Parser_Holder_Type *);
 void vWaitingForSYNCorCMD(uint8_t, Parser_Holder_Type *);
 void vRxCmd(uint8_t, Parser_Holder_Type *);
+void vRxSize(uint8_t, Parser_Holder_Type *);
+void vRxCRC8(uint8_t, Parser_Holder_Type *);
+void vRxData(uint8_t, Parser_Holder_Type *);
+void vRxCRC16(uint8_t, Parser_Holder_Type *);
 
 #endif
