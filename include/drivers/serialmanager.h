@@ -88,7 +88,8 @@ typedef struct _parser_holder
 	uint8_t buffer[SERIAL_BUFFER_SIZE];
 	uint32_t rx_error;
 	void (*current_state)(uint8_t, struct _parser_holder *);
-	void (*last_state)(uint8_t, struct _parser_holder *);
+	void (*next_state)(uint8_t, struct _parser_holder *);
+	void (*parser)(uint8_t, struct _parser_holder *);
 } Parser_Holder_Type;
 
 /* Global variable defines */

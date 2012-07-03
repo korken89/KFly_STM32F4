@@ -66,6 +66,7 @@ void vInitSerialManager(void)
  *
  * The Serial Manager task will handle incomming
  * data and direct it for decode and processing.
+ * The state machine can be seen in serial_state.png
  *
  * */
 void vTaskUSBSerialManager(void *pvParameters)
@@ -74,18 +75,15 @@ void vTaskUSBSerialManager(void *pvParameters)
 	Parser_Holder_Type data_holder;
 
 	data_holder.Port = PORT_USB;
-	data_holder.current_state = vWaitingForSYNC;
-	data_holder.last_state = NULL;
+	data_holder.current_state = NULL;
+	data_holder.next_state = vWaitingForSYNC;
+	data_holder.parser = NULL;
 	data_holder.rx_error = 0;
 
 	while(1)
 	{
 		xQueueReceive(xUSBQueue.xUSBQueueHandle, &in_data, portMAX_DELAY);
-		/* *
-		 * TODO: Add sync/double sync parsing here.
-		 * */
-		data_holder.state(data_in, &data_holder); /* This should only run when a correct byte/double sync has occured */
-
+		data_holder.next_state(in_data, &data_holder); /* This should only run when a correct byte/double sync has occured */
 	}
 }
 
@@ -109,12 +107,16 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 	switch (data & 0x7F)
 	{
 		case Ping:
-			pHolder->state = NULL;
-			pHolder->data_length = KFly_Data_Length_Type.PingLength;
+			pHolder->current_state = vRxCmd;
+			pHolder->next_state = NULL;
+			pHolder->parser = NULL;
+			pHolder->data_length = PingLength;
 			break;
 
 		default:
-			pHolder->state = vRxWaitSync;
+			pHolder->current_state = NULL;
+			pHolder->next_state = vWaitingForSYNC;
+			pHolder->parser = NULL;
 			break;
 	}
 }
