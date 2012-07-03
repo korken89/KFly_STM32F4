@@ -167,12 +167,14 @@ void main(void)
 				&USBD_CDC_cb,
 				&USR_cb);
 
-	xTaskCreate(vTaskCode,
+	vInitSerialManager();
+
+	/*xTaskCreate(vTaskCode,
 				"MISC",
 				256,
 				0,
 				tskIDLE_PRIORITY + 1,
-		    	0);
+		    	0);*/
 
 	xTaskCreate(vTaskPrintTimer,
 				"TIMER",
@@ -217,6 +219,11 @@ void vTaskPrintTimer(void *pvParameters)
 	uint8_t send = MPU6050_RA_ACCEL_XOUT_H;
 	I2C_MASTER_SETUP_Type Setup;
 
+	uint8_t msg[] = {0xa6, 0x01, 0x00, CRC8(msg, 3), 0xaa, 0xbb, 0, 0};
+	uint16_t crc = CRC16(msg,6);
+	msg[6] = (uint8_t)(crc>>8);
+	msg[7] = (uint8_t)(crc);
+
 	Setup.Slave_Address_7bit = MPU6050_ADDRESS;
 	Setup.TX_Data = &send;
 	Setup.TX_Length = 1;
@@ -227,12 +234,10 @@ void vTaskPrintTimer(void *pvParameters)
 
 	while(1)
 	{
-		vTaskDelay(1000);
+		vTaskDelay(5000);
 		//GetMPU6050ID((uint8_t *)&dataholder);
 		GetHMC5883LID(data);
-		vTaskDelay(100);
-		xUSBSendData(data, 3);
-		xUSBSendData("\n\r", 2);
+		//xUSBSendData(msg, 8);
 		//I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_INTERRUPT);
 	}
 }

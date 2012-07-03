@@ -23,6 +23,8 @@
 #include "i2c.h"
 #include "mpu6050.h"
 #include "hmc5883l.h"
+#include "crc.h"
+#include "serialmanager.h"
 
 /* Includes */
 #include "led.h"

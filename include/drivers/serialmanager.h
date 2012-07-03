@@ -61,7 +61,7 @@ typedef enum
 
 /* Length of commands */
 typedef enum {
-	PingLength = 0,
+	PingLength = 2,
 	GetRunningModeLength = 0,
 	WriteFirmwareLength,
 	ReadFirmwareLength,
