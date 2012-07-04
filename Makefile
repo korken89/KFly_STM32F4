@@ -18,6 +18,9 @@ SIZE    = arm-none-eabi-size
 OBJDUMP = arm-none-eabi-objdump
 OBJCOPY = arm-none-eabi-objcopy
 
+# Make date
+DATE = $(shell date +'%y%m%d-%H%M')
+
 # Flags
 MCU     = -mcpu=cortex-m4 -mthumb -g -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -fsingle-precision-constant
 CFLAGS  = $(COMMON) -std=gnu99 -O$(OPTIMIZATION) $(INCLUDE)
@@ -32,7 +35,9 @@ CSTD += $(STDLIBDIR)stm32f4xx_rcc.c
 CSTD += $(STDLIBDIR)stm32f4xx_syscfg.c
 CSTD += $(STDLIBDIR)stm32f4xx_tim.c
 CSTD += $(STDLIBDIR)stm32f4xx_i2c.c
+CSTD += $(STDLIBDIR)stm32f4xx_flash.c
 CSTD += $(STDLIBDIR)misc.c
+
 
 # Sources
 INCLUDE = -I./include -I./include/drivers -I./CMSIS -I./Libraries/STM32F4xx_StdPeriph_Driver/inc
@@ -60,7 +65,7 @@ CSTD    += $(USBLIB)
 
 ifeq ($(USE_STD_LIBS),1)
 	CSRCS += $(CSTD)
-	COMMON = $(MCU) -DHSE_VALUE=$(F_HSE) -DUSE_STDPERIPH_DRIVER -DUSE_USB_OTG_FS
+	COMMON = $(MCU) -DHSE_VALUE=$(F_HSE) -DUSE_STDPERIPH_DRIVER -DUSE_USB_OTG_FS -DDATE="\"$(DATE)\""
 else
 	COMMON = $(MCU) -DHSE_VALUE=$(F_HSE)
 endif

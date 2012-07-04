@@ -26,8 +26,19 @@ SECTIONS
     . = ALIGN(4);
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
+    _eisr_vector = .;
   } >FLASH
-
+  
+  /* Software version goes after the ISR */
+  .sw_version :
+  {
+    . = ALIGN(4);
+    *(.sw_version)
+    . = ALIGN(4);
+    _esw_version = .;        /* define a global symbols at end of code */
+  } >FLASH
+  
+  
   /* The program code and other data goes into FLASH */
   .text :
   {

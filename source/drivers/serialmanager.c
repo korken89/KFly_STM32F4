@@ -129,7 +129,7 @@ void vWaitingForSYNCorCMD(uint8_t data, Parser_Holder_Type *pHolder)
 	if (data == SYNC_BYTE) /* Byte with value of SYNC received,
 							send it to the function waiting for a byte */
 		pHolder->current_state(data, pHolder);
-	else /* In not SYNC check if byte is command */
+	else /* If not SYNC, check if byte is command */
 		vRxCmd(data, pHolder);
 }
 
@@ -155,11 +155,14 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			pHolder->data_length = PingLength;
 			break;
 
+
+		case GetFirmwareVersion:
+			pHolder->parser = printVersion;
+			pHolder->data_length = GetFirmwareVersionLength;
+			break;
 		/* *
 		 * Add new commands here!
 		 * */
-
-
 
 		default:
 			pHolder->next_state = vWaitingForSYNC;
@@ -184,7 +187,10 @@ void vRxSize(uint8_t data, Parser_Holder_Type *pHolder)
 		pHolder->data_length = data;
 	}
 	else
+	{
 		pHolder->next_state = vWaitingForSYNC;
+		pHolder->rx_error++;
+	}
 }
 
 /* *
@@ -267,4 +273,20 @@ void vRxCRC16(uint8_t data, Parser_Holder_Type *pHolder)
 		else
 			pHolder->rx_error++;
 	}
+}
+
+void printVersion(Parser_Holder_Type *pHolder)
+{
+	extern int _eisr_vector;
+	uint8_t str[128] = {0};
+	int i = 0;
+	uint8_t txt;
+
+	do
+	{
+		txt = *((uint8_t *)&_eisr_vector + i);
+		str[i++] = txt;
+	} while (txt);
+
+	xUSBSendData(str, i-1);
 }

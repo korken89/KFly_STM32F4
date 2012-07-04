@@ -39,9 +39,9 @@ typedef enum
 	Ping = 1,
 	DebugMessage,
 	GetRunningMode,
-	WriteFirmware,
-	ReadFirmware,
-	ExitBootloader,
+	WriteFirmware,			/* Bootloader specific */
+	ReadFirmware,			/* Bootloader specific */
+	ExitBootloader,			/* Bootloader specific */
 	GetBootloaderVersion,
 	GetFirmwareVersion,
 	SaveToFlash,
@@ -61,11 +61,11 @@ typedef enum
 
 /* Length of commands */
 typedef enum {
-	PingLength = 2,
+	PingLength = 0,
 	GetRunningModeLength = 0,
-	WriteFirmwareLength,
-	ReadFirmwareLength,
-	ExitBootloaderLength = 0,
+	WriteFirmwareLength,			/* Bootloader specific */
+	ReadFirmwareLength,				/* Bootloader specific */
+	ExitBootloaderLength = 0,		/* Bootloader specific */
 	GetBootloaderVersionLength = 0,
 	GetFirmwareVersionLength = 0,
 	SaveToFlashLength = 0,
@@ -106,5 +106,6 @@ void vRxSize(uint8_t, Parser_Holder_Type *);
 void vRxCRC8(uint8_t, Parser_Holder_Type *);
 void vRxData(uint8_t, Parser_Holder_Type *);
 void vRxCRC16(uint8_t, Parser_Holder_Type *);
+void printVersion(Parser_Holder_Type *);
 
 #endif
