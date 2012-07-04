@@ -13,6 +13,15 @@
 __attribute__((section(".sw_version"))) volatile const char build_version[] = KFLY_VERSION;
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 
+/*extern int _etext;
+extern int _sidata;
+extern int _sdata;
+extern int _edata;
+volatile int* etext = &_etext;
+volatile int* sidata = &_sidata;
+volatile int* sdata = &_sdata;
+volatile int* edata = &_edata;*/
+
 uint32_t itoa(int num, char *buf)
 {
 	if (num == 0)

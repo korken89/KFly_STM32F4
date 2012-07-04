@@ -83,7 +83,7 @@ dump: main.elf
 	@echo "main.dump created"
 	
 bin: main.elf
-	@$(OBJCOPY) -O binary main.elf main.bin
+	@$(OBJCOPY) main.elf -j.isr_vector -j.sw_version -j.text -j.ARM.extab -j.ARM -j.preinit_array -j.init_array -j.fini_array -j.data -O binary main.bin
 	@echo "main.bin created"
 
 all: main.elf

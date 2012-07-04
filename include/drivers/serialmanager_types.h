@@ -22,11 +22,12 @@ typedef enum
 	Cmd_Ping,
 	Cmd_DebugMessage,
 	Cmd_GetRunningMode,
+	Cmd_PrepareWriteFirmware,		/* Bootloader specific, shall allways require ACK */
 	Cmd_WriteFirmwarePackage,		/* Bootloader specific, shall allways require ACK */
 	Cmd_WriteLastFirmwarePackage,	/* Bootloader specific, shall allways require ACK */
 	Cmd_ReadFirmwarePackage,		/* Bootloader specific, shall allways require ACK */
 	Cmd_ReadLastFirmwarePackage,	/* Bootloader specific, shall allways require ACK */
-	Cmd_Nextpackage,				/* Bootloader specific, shall allways require ACK */
+	Cmd_NextPackage,				/* Bootloader specific, shall allways require ACK */
 	Cmd_ExitBootloader,				/* Bootloader specific, shall allways require ACK */
 	Cmd_GetBootloaderVersion,
 	Cmd_GetFirmwareVersion,
@@ -47,13 +48,16 @@ typedef enum
 
 /* Length of commands */
 typedef enum {
+	Length_ACK = 0,
 	Length_Ping = 0,
+	Length_DebugMessage = 0xFF,
 	Length_GetRunningMode = 0,
+	Length_PrepareWriteFirmware,			/* Bootloader specific, tells bootloader to erase and prepare the flash for write */
 	Length_WriteFirmwarePackage = 66,		/* Bootloader specific, package of 2 bytes Package no, 64 bytes data */
 	Length_WriteLastFirmwarePackage = 0xFF,	/* Bootloader specific, package of 2 bytes Package no, unknow number of bytes */
 	Length_ReadFirmwarePackage = 66,		/* Bootloader specific, package of 2 bytes Package no, 64 bytes data */
 	Length_ReadLastFirmwarePackage = 0xFF,	/* Bootloader specific, package of 2 bytes Package no, unknow number of bytes */
-	Length_Nextpackage = 0,					/* Bootloader specific, tells the sender that Flash write is complete and is redy for next package */
+	Length_NextPackage = 0,					/* Bootloader specific, tells the sender that Flash write is complete and is redy for next package */
 	Length_ExitBootloader = 0,				/* Bootloader specific, exits bootloader */
 	Length_GetBootloaderVersion = 0,
 	Length_GetFirmwareVersion = 0,
