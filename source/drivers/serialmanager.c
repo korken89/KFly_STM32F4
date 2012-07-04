@@ -161,13 +161,13 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 
 		case Cmd_Ping:
 			pHolder->parser = NULL;
-			pHolder->data_length = PingLength;
+			pHolder->data_length = Length_Ping;
 			break;
 
 
 		case Cmd_GetFirmwareVersion:
 			pHolder->parser = vPrintFirmwareVersion;
-			pHolder->data_length = GetFirmwareVersionLength;
+			pHolder->data_length = Length_GetFirmwareVersion;
 			break;
 		/* *
 		 * Add new commands here!
@@ -297,22 +297,4 @@ void vReturnACK(Parser_Holder_Type *pHolder)
 
 	if (pHolder->Port == PORT_USB)
 		xUSBSendData((uint8_t *)msg, 4);
-}
-
-void vPrintFirmwareVersion(Parser_Holder_Type *pHolder)
-{
-	extern int _eisr_vector;
-	uint8_t str[128] = {0};
-	int i = 0;
-	uint8_t txt;
-	/* TODO: Add message holder */
-
-	do
-	{
-		txt = *((uint8_t *)&_eisr_vector + i);
-		str[i++] = txt;
-	} while (txt);
-
-	if (pHolder->Port == PORT_USB)
-		xUSBSendData(str, i-1);
 }

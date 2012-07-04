@@ -2,15 +2,15 @@
 #include <stdlib.h>
 
 #ifndef DATE
-#define DATE "UKNOWN"
+	#define DATE "no timestamp"
 #endif
 
 #define MAINVERSION	 	"1"
 #define SUBVERSION 		"23"
 
-#define KFLYVERSION "KFly v" MAINVERSION "." SUBVERSION " (" DATE ")\0"
+#define KFLY_VERSION "KFly v" MAINVERSION "." SUBVERSION " (" DATE ")\0"
 
-__attribute__((section(".sw_version"))) volatile const static char build_date[] = KFLYVERSION;
+__attribute__((section(".sw_version"))) volatile const char build_version[] = KFLY_VERSION;
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 
 uint32_t itoa(int num, char *buf)
