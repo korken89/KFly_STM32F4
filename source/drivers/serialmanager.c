@@ -41,6 +41,15 @@
  * 		CCITT (16-bit) of whole message including SYNC and CRC8
  * 		For more information about the CRCs look in crc.c/crc.h
  *
+ *
+ * -------------------- OBSERVE! --------------------
+ * A command is build up by 8 bits (1 byte) and the 7-th bit is the ACK Request bit.
+ * So all command must not use the ACK bit unless they need an ACK.
+ * Command 0bxAxx xxxx <- A is ACK-bit.
+ * Also the value 0xa6/166d/0b10100110 is reserved as the SYNC-byte.
+ *
+ * This gives 126 commands for the user.
+ *
  * */
 
 #include "serialmanager.h"
@@ -143,21 +152,21 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 	pHolder->next_state = vRxSize;
 	pHolder->buffer[pHolder->buffer_count++] = data;
 
-	switch (data)
+	switch (data & ~ACK_BIT)
 	{
 		case SYNC_BYTE: /* SYNC is not allowed as command! */
 			pHolder->next_state = vRxCmd; /* If sync comes, continue running vRxCmd */
 			pHolder->rx_error++;
 			break;
 
-		case Ping:
+		case Cmd_Ping:
 			pHolder->parser = NULL;
 			pHolder->data_length = PingLength;
 			break;
 
 
-		case GetFirmwareVersion:
-			pHolder->parser = printVersion;
+		case Cmd_GetFirmwareVersion:
+			pHolder->parser = vPrintFirmwareVersion;
 			pHolder->data_length = GetFirmwareVersionLength;
 			break;
 		/* *
@@ -209,6 +218,10 @@ void vRxCRC8(uint8_t data, Parser_Holder_Type *pHolder)
 		if (pHolder->data_length == 0)
 		{	/* If no data, parse now! */
 			pHolder->next_state = vWaitingForSYNC;
+
+			if (pHolder->buffer[1] & ACK_BIT)
+				vReturnACK(pHolder);
+
 			if (pHolder->parser != NULL)
 				pHolder->parser(pHolder);
 
@@ -265,6 +278,9 @@ void vRxCRC16(uint8_t data, Parser_Holder_Type *pHolder)
 
 		if (CRC16(pHolder->buffer, (pHolder->buffer_count - 2)) == crc)
 		{
+			if (pHolder->buffer[1] & ACK_BIT)
+				vReturnACK(pHolder);
+
 			if (pHolder->parser != NULL)
 				pHolder->parser(pHolder);
 
@@ -275,12 +291,21 @@ void vRxCRC16(uint8_t data, Parser_Holder_Type *pHolder)
 	}
 }
 
-void printVersion(Parser_Holder_Type *pHolder)
+void vReturnACK(Parser_Holder_Type *pHolder)
+{
+	const uint8_t msg[4] = {SYNC_BYTE, Cmd_ACK, 0, CRC8((uint8_t *)msg, 3)};
+
+	if (pHolder->Port == PORT_USB)
+		xUSBSendData((uint8_t *)msg, 4);
+}
+
+void vPrintFirmwareVersion(Parser_Holder_Type *pHolder)
 {
 	extern int _eisr_vector;
 	uint8_t str[128] = {0};
 	int i = 0;
 	uint8_t txt;
+	/* TODO: Add message holder */
 
 	do
 	{
@@ -288,5 +313,6 @@ void printVersion(Parser_Holder_Type *pHolder)
 		str[i++] = txt;
 	} while (txt);
 
-	xUSBSendData(str, i-1);
+	if (pHolder->Port == PORT_USB)
+		xUSBSendData(str, i-1);
 }

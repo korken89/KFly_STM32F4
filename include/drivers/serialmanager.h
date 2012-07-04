@@ -21,6 +21,7 @@
 #define SYNC_BYTE						(0xa6)
 #define tskSerialManagerPRIORITY		(tskIDLE_PRIORITY + 1)
 #define SERIAL_BUFFER_SIZE				256
+#define ACK_BIT							(0x40)
 
 /* Typedefs */
 typedef enum
@@ -35,28 +36,29 @@ typedef enum
 /* These are all the commands for the serial protocol. */
 typedef enum
 {
-	None = 0,
-	Ping = 1,
-	DebugMessage,
-	GetRunningMode,
-	WriteFirmware,			/* Bootloader specific */
-	ReadFirmware,			/* Bootloader specific */
-	ExitBootloader,			/* Bootloader specific */
-	GetBootloaderVersion,
-	GetFirmwareVersion,
-	SaveToFlash,
-	GetRegulatorData,
-	SetRegulatorData,
-	GetChannelMix,
-	SetChannelMix,
-	StartRCCalibration,
-	StopRCCalibration,
-	CalibrateRCCenters,
-	GetRCCalibration,
-	SetRCCalibration,
-	GetRCValues,
-	GetDataDump,
-	EndOfCommands
+	Cmd_None = 0,
+	Cmd_ACK = 1,
+	Cmd_Ping,
+	Cmd_DebugMessage,
+	Cmd_GetRunningMode,
+	Cmd_WriteFirmware,			/* Bootloader specific */
+	Cmd_ReadFirmware,			/* Bootloader specific */
+	Cmd_ExitBootloader,			/* Bootloader specific */
+	Cmd_GetBootloaderVersion,
+	Cmd_GetFirmwareVersion,
+	Cmd_SaveToFlash,
+	Cmd_GetRegulatorData,
+	Cmd_SetRegulatorData,
+	Cmd_GetChannelMix,
+	Cmd_SetChannelMix,
+	Cmd_StartRCCalibration,
+	Cmd_StopRCCalibration,
+	Cmd_CalibrateRCCenters,
+	Cmd_GetRCCalibration,
+	Cmd_SetRCCalibration,
+	Cmd_GetRCValues,
+	Cmd_GetDataDump,
+	Cmd_EndOfCommands
 } KFly_Command_Type;
 
 /* Length of commands */
@@ -106,6 +108,7 @@ void vRxSize(uint8_t, Parser_Holder_Type *);
 void vRxCRC8(uint8_t, Parser_Holder_Type *);
 void vRxData(uint8_t, Parser_Holder_Type *);
 void vRxCRC16(uint8_t, Parser_Holder_Type *);
-void printVersion(Parser_Holder_Type *);
+void vReturnACK(Parser_Holder_Type *);
+void vPrintFirmwareVersion(Parser_Holder_Type *);
 
 #endif
