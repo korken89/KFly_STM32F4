@@ -46,7 +46,7 @@ void FLASH_If_Init(void)
 
 	/* Clear pending flags (if any) */
 	FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR |
-					FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR|FLASH_FLAG_PGSERR);
+					FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
 }
 
 /**
@@ -57,10 +57,10 @@ void FLASH_If_Init(void)
   */
 uint32_t FLASH_If_Erase(uint32_t StartSector)
 {
-	uint32_t UserStartSector = FLASH_Sector_1, i = 0;
+	uint32_t UserStartSector, i = 0;
 
 	/* Get the sector where start the user flash area */
-	UserStartSector = GetSector(APPLICATION_ADDRESS);
+	UserStartSector = GetSector(StartSector);
 
 	for(i = UserStartSector; i <= FLASH_Sector_11; i += 8)
 	{
