@@ -73,6 +73,8 @@ endif
 
 ASRCS   = $(wildcard CMSIS/*.s) $(wildcard source/*.s) $(wildcard source/drivers/*.s) 
 OBJECTS = $(ASRCS:.s=.o) $(CSRCS:.c=.o)
+BINPLACE = -j.isr_vector -j.sw_version -j.text -j.ARM.extab -j.ARM 
+BINPLACE += -j.preinit_array -j.init_array -j.fini_array -j.data
 
 test:
 	@echo $(USBLIB)
@@ -83,7 +85,7 @@ dump: main.elf
 	@echo "main.dump created"
 	
 bin: main.elf
-	@$(OBJCOPY) main.elf -j.isr_vector -j.sw_version -j.text -j.ARM.extab -j.ARM -j.preinit_array -j.init_array -j.fini_array -j.data -O binary main.bin
+	@$(OBJCOPY) main.elf $(BINPLACE) -O binary main.bin
 	@echo "main.bin created"
 
 all: main.elf

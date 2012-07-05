@@ -97,7 +97,8 @@ void vTaskUSBSerialManager(void *pvParameters)
 
 		if (in_data == SYNC_BYTE)
 		{
-			if ((data_holder.next_state != vWaitingForSYNC) && (data_holder.next_state != vWaitingForSYNCorCMD))
+			if ((data_holder.next_state != vWaitingForSYNC) && (data_holder.next_state != vWaitingForSYNCorCMD) \
+				&& (data_holder.next_state != vRxCmd))
 			{
 				data_holder.current_state = data_holder.next_state;
 				data_holder.next_state = vWaitingForSYNCorCMD;
@@ -138,8 +139,12 @@ void vWaitingForSYNCorCMD(uint8_t data, Parser_Holder_Type *pHolder)
 	if (data == SYNC_BYTE) /* Byte with value of SYNC received,
 							send it to the function waiting for a byte */
 		pHolder->current_state(data, pHolder);
-	else /* If not SYNC, check if byte is command */
+	else /* If not SYNC, reset transfer and check if byte is command */
+	{
+		pHolder->buffer_count = 0;
+		pHolder->buffer[pHolder->buffer_count++] = SYNC_BYTE;
 		vRxCmd(data, pHolder);
+	}
 }
 
 /* *
@@ -164,9 +169,13 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			pHolder->data_length = Length_Ping;
 			break;
 
+		case Cmd_GetBootloaderVersion:
+			pHolder->parser = vGetBootloaderVersion;
+			pHolder->data_length = Length_GetBootloaderVersion;
+			break;
 
 		case Cmd_GetFirmwareVersion:
-			pHolder->parser = vPrintFirmwareVersion;
+			pHolder->parser = vGetFirmwareVersion;
 			pHolder->data_length = Length_GetFirmwareVersion;
 			break;
 		/* *
@@ -193,7 +202,7 @@ void vRxSize(uint8_t data, Parser_Holder_Type *pHolder)
 	{	/* If correct length or unspecified length, go to CRC8 */
 		pHolder->next_state = vRxCRC8;
 		pHolder->buffer[pHolder->buffer_count++] = data;
-		pHolder->data_length = data;
+		pHolder->data_length = data; /* Set the length of the message to that of the header. */
 	}
 	else
 	{
@@ -228,9 +237,7 @@ void vRxCRC8(uint8_t data, Parser_Holder_Type *pHolder)
 			xUSBSendData("OK", 2);
 		}
 		else
-		{
 			pHolder->next_state = vRxData;
-		}
 	}
 	else
 	{
@@ -250,9 +257,7 @@ void vRxData(uint8_t data, Parser_Holder_Type *pHolder)
 	pHolder->buffer[pHolder->buffer_count++] = data;
 
 	if (pHolder->buffer_count < (pHolder->data_length + 4))
-	{
 		pHolder->next_state = vRxData;
-	}
 	else
 		pHolder->next_state = vRxCRC16;
 }
@@ -267,9 +272,8 @@ void vRxCRC16(uint8_t data, Parser_Holder_Type *pHolder)
 	pHolder->buffer[pHolder->buffer_count++] = data;
 
 	if (pHolder->buffer_count < (pHolder->data_length + 6))
-	{
 		pHolder->next_state = vRxCRC16;
-	}
+
 	else
 	{
 		pHolder->next_state = vWaitingForSYNC;
