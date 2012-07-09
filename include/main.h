@@ -28,6 +28,7 @@
 
 /* Includes */
 #include "led.h"
+#include "linear_algebra.h"
 
 void main(void);
 void vTaskCode(void *);
