@@ -13,10 +13,10 @@ USE_STD_LIBS = 1
 OPTIMIZATION = 2
 
 # Build tools
-GCC     = arm-none-eabi-gcc
-SIZE    = arm-none-eabi-size
-OBJDUMP = arm-none-eabi-objdump
-OBJCOPY = arm-none-eabi-objcopy
+GCC     = /usr/local/CodeBench/bin/arm-none-eabi-gcc
+SIZE    = /usr/local/CodeBench/bin/arm-none-eabi-size
+OBJDUMP = /usr/local/CodeBench/bin/arm-none-eabi-objdump
+OBJCOPY = /usr/local/CodeBench/bin/arm-none-eabi-objcopy
 
 # Make date
 DATE = $(shell date +'%y%m%d-%H%M')

@@ -1,25 +1,30 @@
 #include "linear_algebra.h"
 
-void InvertMatrix(float *M, int n)
+#define MAT_SIZE	6
+
+void InvertMatrix(float *M)
 {
+	const int n = MAT_SIZE;
+
 	float L[n][n];
 	float U[n][n];
 
-	LUFactorize(M, &L[0][0], &U[0][0], n);
+	LUFactorize(M, &L[0][0], &U[0][0]);
 
-	InvertLMatrix(&L[0][0], n);
-	InvertUMatrix(&U[0][0], n);
+	InvertLMatrix(&L[0][0]);
+	InvertUMatrix(&U[0][0]);
 
-	MultiplyULMatrix(&U[0][0], &L[0][0], M, n);
+	MultiplyULMatrix(&U[0][0], &L[0][0], M);
 }
 
 /* *
  * Factorizes a general matrix into a Upper triangular
  * and a Lower triangular matrix.
  * */
-void LUFactorize(float *a, float *L, float *U, int n)
+void LUFactorize(float *a, float *L, float *U)
 {
 	int k, i, j;
+	const int n = MAT_SIZE;
 
 	for(k = 0; k < n; k++)
 	{
@@ -38,10 +43,11 @@ void LUFactorize(float *a, float *L, float *U, int n)
 /* *
  * Inverts a Lower trianular matrix.
  * */
-void InvertLMatrix(float *L, int n)
+void InvertLMatrix(float *L)
 {
 	float sum;
 	int i,j,k;
+	const int n = MAT_SIZE;
 
 	for (j = 0; j < n; j++)
 	{
@@ -60,10 +66,11 @@ void InvertLMatrix(float *L, int n)
 /* *
  * Inverts a Upper trianular matrix.
  * */
-void InvertUMatrix(float *U, int n)
+void InvertUMatrix(float *U)
 {
 	float sum;
 	int i,j,k;
+	const int n = MAT_SIZE;
 
 	for (j = n - 1; j > -1; j--)
 		U[j*n+j] = 1.0f/U[j*n+j];
@@ -88,6 +95,7 @@ void InvertUMatrix(float *U, int n)
 void MatrixMultiply(float *a, int aRows, int aColumns, float *b, int bColumns, float *resultant)
 {
 	float sum;
+	const int n = MAT_SIZE;
 
 	for(int i = 0; i < aRows; i++)
 		for(int j = 0; j < bColumns; j++)
@@ -104,7 +112,7 @@ void MatrixMultiply(float *a, int aRows, int aColumns, float *b, int bColumns, f
 /* *
  * Multiplies a Upper triangular matrix with a Lower triangular matrix
  * */
-void MultiplyULMatrix(float *a, float *b, float *resultant, int n)
+void MultiplyULMatrix(float *a, float *b, float *resultant)
 {
 	/* *
 	 *
@@ -122,6 +130,7 @@ void MultiplyULMatrix(float *a, float *b, float *resultant, int n)
 	 *
 	 * */
 	float sum;
+	const int n = MAT_SIZE;
 
 	for(int i = 0; i < n; i++)
 	{

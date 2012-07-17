@@ -22,11 +22,11 @@
 /* Global variable defines */
 
 /* Global function defines */
-void InvertMatrix(float *, int);
-void LUFactorize(float *, float *, float *, int);
-void InvertLMatrix(float *, int);
-void InvertUMatrix(float *, int);
+void InvertMatrix(float *);
+void LUFactorize(float *, float *, float *);
+void InvertLMatrix(float *);
+void InvertUMatrix(float *);
 void MatrixMultiply(float *, int, int, float *, int, float *);
-void MultiplyULMatrix(float *, float *, float *, int);
+void MultiplyULMatrix(float *, float *, float *);
 
 #endif
