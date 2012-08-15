@@ -31,12 +31,12 @@
 #include "linear_algebra.h"
 
 #ifndef DATE
-	#define DATE "no timestamp"
+	#define DATE 		"no timestamp"
 #endif
 
 #define MAINVERSION	 	"1"
 #define SUBVERSION 		"23"
-#define KFLY_VERSION "KFly v" MAINVERSION "." SUBVERSION " (20" DATE ")\0"
+#define KFLY_VERSION	"KFly v" MAINVERSION "." SUBVERSION " (" DATE ")\0"
 
 
 void main(void);

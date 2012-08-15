@@ -32,7 +32,7 @@ typedef struct
 
 /* Gobal variable defines */
 volatile I2C_INT_CFG_Type I2Ctmp[3];		/* Pointer to I2C Config Setup */
-volatile xQueueHandle I2CMutex[3]; 		/* Mutexes for the I2C */
+volatile xQueueHandle I2CMutex[3]; 			/* Mutexes for the I2C */
 volatile uint8_t dataholder = 0;
 volatile uint16_t status = 0;
 volatile uint8_t whereami = 0;

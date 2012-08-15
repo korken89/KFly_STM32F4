@@ -19,7 +19,7 @@ OBJDUMP = arm-none-eabi-objdump
 OBJCOPY = arm-none-eabi-objcopy
 
 # Make date
-DATE = $(shell date +'%y%m%d-%H%M')
+DATE = 20$(shell date +'%y%m%d-%H%M')
 
 # Flags
 MCU     = -mcpu=cortex-m4 -mthumb -g -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -fsingle-precision-constant
