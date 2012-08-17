@@ -216,7 +216,7 @@ retry:
 		/* *
 		 *
 		 * --------------------------- RECIEVE PHASE ---------------------------
-		 * The I2C read on the STM32F4xx is not symetric so special
+		 * The I2C read on the STM32F4xx is not symmetric so special
 		 * care must be taken if the number of bytes to be read are
 		 * one, two or more than two.
 		 *
@@ -246,9 +246,9 @@ retry:
 
 				/* Order a STOP condition */
 				/* Note: Spec_p583 says this should be done just after clearing ADDR */
-				/* If it is done before ADDR is set, a STOP is generated immediately as the clock is being streched */
+				/* If it is done before ADDR is set, a STOP is generated immediately as the clock is being stretched */
 				I2Cx->CR1 |= I2C_CR1_STOP;
-				/* Be carefull that till the stop condition is actually transmitted the clock will stay active
+				/* Be careful that till the stop condition is actually transmitted the clock will stay active
 				 * even if a NACK is generated after the next received byte. */
 
 				/* Read the next byte */
@@ -260,10 +260,10 @@ retry:
 				}
 				TransferCfg->RX_Count++;
 
-				/* Make Sure Stop bit is cleared and Line is now Iddle */
+				/* Make Sure Stop bit is cleared and Line is now Idle */
 				TransferCfg->Status = WaitLineIdle(I2Cx);
 
-				/* Enable the Acknowledgement again */
+				/* Enable the Acknowledgment again */
 				I2Cx->CR1 |= ((uint16_t)I2C_CR1_ACK);
 			}
 
@@ -278,9 +278,9 @@ retry:
 
 				/* Wait for the next 2 bytes to be received (1st in the DR, 2nd in the shift register) */
 				TransferCfg->Status = WaitSR1FlagsSet(I2Cx, I2C_SR1_BTF);
-				/* As we don't read anything from the DR, the clock is now being strecthed. */
+				/* As we don't read anything from the DR, the clock is now being stretched. */
 
-				/* Order a stop condition (as the clock is being strecthed, the stop condition is generated immediately) */
+				/* Order a stop condition (as the clock is being stretched, the stop condition is generated immediately) */
 				I2Cx->CR1 |= I2C_CR1_STOP;
 
 				/* Read the next two bytes */
@@ -330,7 +330,7 @@ retry:
 					TransferCfg->Retransmissions_Count++;
 					goto retry;
 				}
-				/* Here the clock is strecthed. One more to read. */
+				/* Here the clock is stretched. One more to read. */
 
 				/* Reset Ack */
 				I2Cx->CR1 &= ~I2C_CR1_ACK;
@@ -457,7 +457,7 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 				}
 				break;
 
-			case I2C_SR1_ADDR: /* Address+W sent, ack receieved */
+			case I2C_SR1_ADDR: /* Address+W sent, ack received */
 			case (I2C_SR1_ADDR | I2C_SR1_TXE):
 				(void)I2Cx->SR2; /* Read SR2 to clear ADDR */
 				/* Start sending the first byte */
@@ -500,7 +500,7 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 	/* *
 	 *
 	 * ----------------------------- RECIEVE PHASE -----------------------------
-	 * The I2C read on the STM32F4xx is not symetric so special
+	 * The I2C read on the STM32F4xx is not symmetric so special
 	 * care must be taken if the number of bytes to be read are
 	 * one, two or more than two.
 	 *
@@ -523,7 +523,7 @@ send_slar:
 				}
 				break;
 
-			case I2C_SR1_ADDR: /* Address+R sent, ack receieved */
+			case I2C_SR1_ADDR: /* Address+R sent, ack received */
 				if (I2Ctmp[I2C_num].RXTX_Setup->RX_Length == 1)
 				{	/* If there is only one byte to receive, reset ACK */
 					I2Cx->CR1 &= ~I2C_CR1_ACK;
@@ -543,22 +543,22 @@ send_slar:
 
 					(void)I2Cx->SR2; /* Read SR2 to start reading data */
 				}
-				else /* If tere is more than two bytes to receive, just start shuffling data  */
+				else /* If there is more than two bytes to receive, just start shuffling data  */
 				{
 					(void)I2Cx->SR2; /* Read SR2 to start reading data */
 				}
 				break;
 
-			case I2C_SR1_RXNE: /* Data in data register ready for read outn shift register empty */
+			case I2C_SR1_RXNE: /* Data in data register ready for read out shift register empty */
 				if (I2Ctmp[I2C_num].RXTX_Setup->RX_Length == 1)
-				{	/* One byte recieve does not wait for BTF */
+				{	/* One byte receive does not wait for BTF */
 					I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
 					*(I2Ctmp[I2C_num].RXTX_Setup->RX_Data + I2Ctmp[I2C_num].RXTX_Setup->RX_Count++) = (uint8_t)I2Cx->DR;
 				}
 				else
 				{
 					if ((I2Ctmp[I2C_num].RXTX_Setup->RX_Length - I2Ctmp[I2C_num].RXTX_Setup->RX_Count) > 3)
-					{ 	/* For as long as there are more than three bytes to recieve, just read them out */
+					{ 	/* For as long as there are more than three bytes to receive, just read them out */
 						*(I2Ctmp[I2C_num].RXTX_Setup->RX_Data + I2Ctmp[I2C_num].RXTX_Setup->RX_Count++) = (uint8_t)I2Cx->DR;
 					}
 					/* When there are three bytes left, disable RXNE interrupt */
@@ -627,9 +627,9 @@ static uint16_t I2C_Addr(I2C_TypeDef *I2Cx, uint8_t DevAddr, uint8_t dir)
 	I2Cx->DR = (DevAddr << 1) | (dir & 0x01); /* Or in the lowest bit in dir */
 
 	/* Wait till ADDR is set (ADDR is set when the slave sends ACK to the address). */
-	/* Clock streches till ADDR is Reset. To reset the hardware i)Read the SR1 ii)Wait till ADDR is Set iii)Read SR2 */
+	/* Clock stretches till ADDR is Reset. To reset the hardware i)Read the SR1 ii)Wait till ADDR is Set iii)Read SR2 */
 	/* Note1: Spec_p602 recommends the waiting operation */
-	/* Note2: We don't read SR2 here. Therefore the clock is going to be streched even after return from this function */
+	/* Note2: We don't read SR2 here. Therefore the clock is going to be stretched even after return from this function */
 	return WaitSR1FlagsSet(I2Cx, I2C_SR1_ADDR);
 }
 
