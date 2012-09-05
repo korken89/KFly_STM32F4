@@ -5,7 +5,7 @@ HW Specs:
 * MPU-6050 accelerometer/gyro
 * HMC5883L magnetometer
 * 8 PWM outputs (50/400Hz)
-* 4 expansion connectors (3 UART/1 CAN)
+* 4 expansion connectors (3 UARTs & 1 CAN)
 * 6 slot RC input connector with support for (C)PPM up to 8 channels in and signal strength
 
 SW Specs:
@@ -16,12 +16,14 @@ SW Specs:
 
 TODO List:
 [ ] Finish the bootloader
+[ ] Add flash write/save support
 [ ] Add callback for I2C finished transfer
+[ ] Add SPI drivers for external Flash
 [ ] Add all comlink parsers
-[ ] Code the Quaternion based Extenden Kalman Filter
-[ ] Code the PI - PI and State Feedback regulator
 [ ] Make sensor readings interrupt driven
 [ ] Finish the HMC5883L and pressure sensor code
 [ ] Add interrupts on pin change for sensor data avalible
 [ ] Add PWM out for motors
 [ ] Add support for all the communication interfaces
+[ ] Code the Quaternion based Extenden Kalman Filter
+[ ] Code the PI PI - and State Feedback regulator
