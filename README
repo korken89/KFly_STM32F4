@@ -13,3 +13,15 @@ SW Specs:
 * USB Bootloader
 * "Control signal to Motor"-mixing for different types of frames
 * Flight control: Rate mode, Attitude mode and more to come
+
+TODO List:
+[ ] Finish the bootloader
+[ ] Add callback for I2C finished transfer
+[ ] Add all comlink parsers
+[ ] Code the Quaternion based Extenden Kalman Filter
+[ ] Code the PI - PI and State Feedback regulator
+[ ] Make sensor readings interrupt driven
+[ ] Finish the HMC5883L and pressure sensor code
+[ ] Add interrupts on pin change for sensor data avalible
+[ ] Add PWM out for motors
+[ ] Add support for all the communication interfaces

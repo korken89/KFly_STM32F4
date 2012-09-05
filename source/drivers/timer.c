@@ -17,7 +17,7 @@
  *
  * Fast Counter
  * Initializes and sets up the TIM2 as a 1MHz counter.
- *
+ * Overflows every 4294 seconds.
  * */
 void InitFastCounter(void)
 {
