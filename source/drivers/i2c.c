@@ -489,6 +489,10 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 				{ 	/* No data to receive, end transmission */
 					I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
 					I2Cx->CR1 |= I2C_CR1_STOP;
+
+					/* If there is a callback function, run it */
+					if (I2Ctmp[I2C_num].RXTX_Setup->Callback != NULL)
+						I2Ctmp[I2C_num].RXTX_Setup->Callback();
 				}
 				break;
 
@@ -520,6 +524,10 @@ send_slar:
 				{
 					I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
 					I2Cx->CR1 |= I2C_CR1_STOP;
+
+					/* If there is a callback function, run it */
+					if (I2Ctmp[I2C_num].RXTX_Setup->Callback != NULL)
+						I2Ctmp[I2C_num].RXTX_Setup->Callback();
 				}
 				break;
 
@@ -581,6 +589,10 @@ send_slar:
 					/* Read the two bytes */
 					*(I2Ctmp[I2C_num].RXTX_Setup->RX_Data + I2Ctmp[I2C_num].RXTX_Setup->RX_Count++) = (uint8_t)I2Cx->DR;
 					*(I2Ctmp[I2C_num].RXTX_Setup->RX_Data + I2Ctmp[I2C_num].RXTX_Setup->RX_Count++) = (uint8_t)I2Cx->DR;
+
+					/* If there is a callback function, run it */
+					if (I2Ctmp[I2C_num].RXTX_Setup->Callback != NULL)
+						I2Ctmp[I2C_num].RXTX_Setup->Callback();
 				}
 				else if (I2Ctmp[I2C_num].RXTX_Setup->RX_Length > 2) /* There is more than two bytes to recieve */
 				{
@@ -601,6 +613,9 @@ send_slar:
 						/* Read the last two bytes (N-1 and N) */
 						*(I2Ctmp[I2C_num].RXTX_Setup->RX_Data + I2Ctmp[I2C_num].RXTX_Setup->RX_Count++) = (uint8_t)I2Cx->DR;
 						*(I2Ctmp[I2C_num].RXTX_Setup->RX_Data + I2Ctmp[I2C_num].RXTX_Setup->RX_Count++) = (uint8_t)I2Cx->DR;
+						/* If there is a callback function, run it */
+						if (I2Ctmp[I2C_num].RXTX_Setup->Callback != NULL)
+							I2Ctmp[I2C_num].RXTX_Setup->Callback();
 					}
 				}
 				break;

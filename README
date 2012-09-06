@@ -17,7 +17,7 @@ SW Specs:
 TODO List:
 [ ] Finish the bootloader
 [ ] Add flash write/save support
-[ ] Add callback for I2C finished transfer
+[X] Add callback for I2C finished transfer
 [ ] Add SPI drivers for external Flash
 [ ] Add all comlink parsers
 [ ] Make sensor readings interrupt driven

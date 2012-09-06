@@ -20,7 +20,7 @@ void vGetBootloaderVersion(Parser_Holder_Type *pHolder)
 	uint8_t txt = *msg;
 	/* TODO: Add message holder */
 	str[0] = SYNC_BYTE;
-	str[1] = Cmd_GetFirmwareVersion;
+	str[1] = Cmd_GetBootloaderVersion;
 
 	while (txt)
 	{
