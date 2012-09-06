@@ -128,16 +128,15 @@ void vWaitingForSYNC(uint8_t data, Parser_Holder_Type *pHolder)
 
 /* *
  * A SYNC appeared in data stream.
- *
- * TODO: Add explanation
+ * When a SYNC is detected in the data stream the program will
+ * look and see if it is an SYNC byte or if it's a new SYNC.
  *
  * */
 void vWaitingForSYNCorCMD(uint8_t data, Parser_Holder_Type *pHolder)
 {
 	xUSBSendData("2", 1);
 
-	if (data == SYNC_BYTE) /* Byte with value of SYNC received,
-							send it to the function waiting for a byte */
+	if (data == SYNC_BYTE) /* Byte with value of SYNC received,	send it to the function waiting for a byte */
 		pHolder->current_state(data, pHolder);
 	else /* If not SYNC, reset transfer and check if byte is command */
 	{

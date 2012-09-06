@@ -30,8 +30,11 @@ void vUSBQueueInit(void)
  *
  * Function for sending data over USB.
  * Theoretical max speed is 1.6M baud however a much slower rate is
- * recommened because the in and out endpoints uses the same buffer.
- * 115200 buad is normal operating conditions. (Higher can be used)
+ * recommended because the in and out end points uses the same buffer.
+ * 115200 Baud is normal operating conditions. (Higher can be used)
+ *
+ * It's also important to send an entire message at a time, else
+ * someone might send a message in between, corrupting the data.
  *
  * Please observe that this function is NOT ISR-safe for the RTOS.
  * If called from ISR it can break packages sent via the RTOS.
