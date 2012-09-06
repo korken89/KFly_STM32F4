@@ -170,41 +170,77 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			break;
 
 		case Cmd_DebugMessage:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_DebugMessage;
 			break;
 
 		case Cmd_GetRunningMode:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_GetRunningMode;
 			break;
 
 		/* *
 		 *
-		 * Start Bootloader commands
+		 * Start Bootloader specific commands
 		 *
 		 * */
 
 		case Cmd_PrepareWriteFirmware:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_PrepareWriteFirmware;
 			break;
 
 		case Cmd_WriteFirmwarePackage:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_WriteFirmwarePackage;
 			break;
 
 		case Cmd_WriteLastFirmwarePackage:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_WriteLastFirmwarePackage;
 			break;
 
 		case Cmd_ReadFirmwarePackage:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_ReadFirmwarePackage;
 			break;
 
 		case Cmd_ReadLastFirmwarePackage:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_ReadLastFirmwarePackage;
 			break;
 
 		case Cmd_NextPackage:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_NextPackage;
 			break;
 
 		case Cmd_ExitBootloader:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_ExitBootloader;
 			break;
 
 		/* *
 		 *
-		 * End Bootloader commands
+		 * End Bootloader specific commands
 		 *
 		 * */
 
@@ -222,41 +258,101 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			pHolder->data_length = Length_GetFirmwareVersion;
 			break;
 
+		/* *
+		 *
+		 * Start Firmware specific commands
+		 *
+		 * */
+
 		case Cmd_SaveToFlash:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_SaveToFlash;
 			break;
 
 		case Cmd_GetRegulatorData:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_GetRegulatorData;
 			break;
 
 		case Cmd_SetRegulatorData:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_SetRegulatorData;
 			break;
 
 		case Cmd_GetChannelMix:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_GetChannelMix;
 			break;
 
 		case Cmd_SetChannelMix:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_SetChannelMix;
 			break;
 
 		case Cmd_StartRCCalibration:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_StartRCCalibration;
 			break;
 
 		case Cmd_StopRCCalibration:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_StopRCCalibration;
 			break;
 
 		case Cmd_CalibrateRCCenters:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_CalibrateRCCenters;
 			break;
 
 		case Cmd_GetRCCalibration:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_GetRCCalibration;
 			break;
 
 		case Cmd_SetRCCalibration:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_SetRCCalibrationRC;
 			break;
 
 		case Cmd_GetRCValues:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_GetRCValues;
 			break;
 
 		case Cmd_GetDataDump:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_GetDataDump;
 			break;
+
+		/* *
+		 *
+		 * Start Firmware specific commands
+		 *
+		 * */
 
 		/* *
 		 * Add new commands here!
