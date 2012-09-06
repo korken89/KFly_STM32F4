@@ -154,9 +154,6 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 {
 	xUSBSendData("3", 1);
 
-	pHolder->next_state = vRxSize;
-	pHolder->buffer[pHolder->buffer_count++] = data;
-
 	switch (data & ~ACK_BIT)
 	{
 		case SYNC_BYTE: /* SYNC is not allowed as command! */
@@ -165,16 +162,22 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			break;
 
 		case Cmd_Ping:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
 			pHolder->parser = NULL;
 			pHolder->data_length = Length_Ping;
 			break;
 
 		case Cmd_GetBootloaderVersion:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
 			pHolder->parser = vGetBootloaderVersion;
 			pHolder->data_length = Length_GetBootloaderVersion;
 			break;
 
 		case Cmd_GetFirmwareVersion:
+			pHolder->next_state = vRxSize;
+			pHolder->buffer[pHolder->buffer_count++] = data;
 			pHolder->parser = vGetFirmwareVersion;
 			pHolder->data_length = Length_GetFirmwareVersion;
 			break;
