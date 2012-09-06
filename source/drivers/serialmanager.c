@@ -161,12 +161,52 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			pHolder->rx_error++;
 			break;
 
+
 		case Cmd_Ping:
 			pHolder->next_state = vRxSize;
 			pHolder->buffer[pHolder->buffer_count++] = data;
 			pHolder->parser = NULL;
 			pHolder->data_length = Length_Ping;
 			break;
+
+		case Cmd_DebugMessage:
+			break;
+
+		case Cmd_GetRunningMode:
+			break;
+
+		/* *
+		 *
+		 * Start Bootloader commands
+		 *
+		 * */
+
+		case Cmd_PrepareWriteFirmware:
+			break;
+
+		case Cmd_WriteFirmwarePackage:
+			break;
+
+		case Cmd_WriteLastFirmwarePackage:
+			break;
+
+		case Cmd_ReadFirmwarePackage:
+			break;
+
+		case Cmd_ReadLastFirmwarePackage:
+			break;
+
+		case Cmd_NextPackage:
+			break;
+
+		case Cmd_ExitBootloader:
+			break;
+
+		/* *
+		 *
+		 * End Bootloader commands
+		 *
+		 * */
 
 		case Cmd_GetBootloaderVersion:
 			pHolder->next_state = vRxSize;
@@ -181,6 +221,43 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			pHolder->parser = vGetFirmwareVersion;
 			pHolder->data_length = Length_GetFirmwareVersion;
 			break;
+
+		case Cmd_SaveToFlash:
+			break;
+
+		case Cmd_GetRegulatorData:
+			break;
+
+		case Cmd_SetRegulatorData:
+			break;
+
+		case Cmd_GetChannelMix:
+			break;
+
+		case Cmd_SetChannelMix:
+			break;
+
+		case Cmd_StartRCCalibration:
+			break;
+
+		case Cmd_StopRCCalibration:
+			break;
+
+		case Cmd_CalibrateRCCenters:
+			break;
+
+		case Cmd_GetRCCalibration:
+			break;
+
+		case Cmd_SetRCCalibration:
+			break;
+
+		case Cmd_GetRCValues:
+			break;
+
+		case Cmd_GetDataDump:
+			break;
+
 		/* *
 		 * Add new commands here!
 		 * */

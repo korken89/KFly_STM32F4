@@ -27,3 +27,4 @@ TODO List:
 [ ] Add support for all the communication interfaces
 [ ] Code the Quaternion based Extenden Kalman Filter
 [ ] Code the PI PI - and State Feedback regulator
+[ ] Code the motor mixer
