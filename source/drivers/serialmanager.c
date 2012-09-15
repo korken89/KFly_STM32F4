@@ -75,7 +75,7 @@ void vInitSerialManager(void)
 
 /* *
  *
- * The Serial Manager task will handle incomming
+ * The Serial Manager task will handle incoming
  * data and direct it for decode and processing.
  * The state machine can be seen in serial_state.png
  *

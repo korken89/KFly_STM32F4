@@ -2,8 +2,9 @@ This is the code for the new KFly PCB.
 
 HW Specs:
 * ARM Cortex-M4F STM32F405 CPU w/ FPU and DSP @ 168MHz
-* MPU-6050 accelerometer/gyro
+* MPU-6050 accelerometer/gyroscope
 * HMC5883L magnetometer
+* MS5611-01BA01 pressure sensor
 * 8 PWM outputs (50/400Hz)
 * 4 expansion connectors (3 UARTs & 1 CAN)
 * 6 slot RC input connector with support for (C)PPM up to 8 channels in and signal strength
@@ -24,6 +25,6 @@ TODO List:
 [ ] Add interrupts on pin change for sensor data avalible
 [ ] Add PWM out for motors
 [ ] Add support for all the communication interfaces
-[ ] Code the Quaternion based Extenden Kalman Filter
+[ ] Code the Quaternion based Extended Kalman Filter
 [ ] Code the PI PI- and State Feedback regulator
 [ ] Code the motor mixer

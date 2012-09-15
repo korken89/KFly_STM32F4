@@ -22,7 +22,7 @@ void vGetBootloaderVersion(Parser_Holder_Type *pHolder)
 	str[0] = SYNC_BYTE;
 	str[1] = Cmd_GetBootloaderVersion;
 
-	while (txt)
+	while (txt && (i < 60))
 	{
 		txt = *(msg + i);
 		str[i++] = txt;

@@ -140,7 +140,6 @@ retry:
 		if (TransferCfg->Retransmissions_Count > TransferCfg->Retransmissions_Max)
 		{ /* Maximum number of retransmissions reached, abort */
 			I2Cx->CR1 |= I2C_CR1_STOP;
-			xUSBSendData("3", 1);
 			return ERROR;
 		}
 		/* Reset all values to default state */
