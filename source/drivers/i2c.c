@@ -2,8 +2,8 @@
  *
  * Hardware Communication Layer for the I2C bus
  *
- * Many thanks to yigiter's example code that made this
- * implementation much easier to complete!
+ * Many thanks to yigiter's example code that made
+ * this implementation much easier to complete!
  *
  * */
 
@@ -86,15 +86,15 @@ void InitSensorBus(void)
 	/* Configure and Initialize the I2C */
 	I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
 	I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
-	I2C_InitStructure.I2C_OwnAddress1 = 0x00;
+	I2C_InitStructure.I2C_OwnAddress1 = 0x00; /* Unimportant, we are master */
 	I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
-	I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
-	I2C_InitStructure.I2C_ClockSpeed = 400000;
+	I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit; /* Unimportant, we are master */
+	I2C_InitStructure.I2C_ClockSpeed = 400000; /* 400kHz clock */
 
 	/* Initialize the Peripheral */
 	I2C_Init(I2CBus, &I2C_InitStructure);
 
-	//NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+	/* Initialize interrupts */
 	NVIC_InitStructure.NVIC_IRQChannel = I2C2_EV_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
@@ -456,7 +456,7 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 				}
 				break;
 
-			case I2C_SR1_ADDR: /* Address+W sent, ack received */
+			case I2C_SR1_ADDR: /* Address+W sent, ACK received */
 			case (I2C_SR1_ADDR | I2C_SR1_TXE):
 				(void)I2Cx->SR2; /* Read SR2 to clear ADDR */
 				/* Start sending the first byte */

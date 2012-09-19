@@ -3,8 +3,10 @@
  * OS layer for Serial Communication.
  * Handles package coding/decoding.
  *
+ * ----------!!!----------
  * A warning to those who wants to read the code:
  * This is an orgie of function pointers and buffers.
+ * ----------!!!----------
  *
  * Serial Communication Protocol
  * -----------------------------
@@ -32,7 +34,7 @@
  *
  * SYNC: 1 byte
  * 		Sent once = SYNC
- * 		Sent twice = data byte with the value of SYNC
+ * 		Sent twice = data byte with the value of SYNC ("escaping")
  *
  * CRC8: 1 byte
  * 		CRC-8 of SYNC and HEADER
@@ -117,13 +119,13 @@ void vTaskUSBSerialManager(void *pvParameters)
  *
  * ---------------- State machine functions ----------------
  * State machine's different states (functions) starts below.
- * !NO! other functions are allowed there!
+ * NO (!) other functions are allowed there!
  *
  * */
 
 
 /* *
- * Waiting for SYNC function. Will run this until a valid SYNC has occured.
+ * Waiting for SYNC function. Will run this until a valid SYNC has occurred.
  * */
 void vWaitingForSYNC(uint8_t data, Parser_Holder_Type *pHolder)
 {
@@ -291,7 +293,7 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 
 		case Cmd_SetRCCalibration:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_SetRCCalibrationRC;
+			pHolder->data_length = Length_SetRCCalibration;
 			break;
 
 		case Cmd_GetRCValues:

@@ -1,16 +1,16 @@
 /* *
  *
- * Hardware Abstraction Layer for all comunication
+ * Hardware Abstraction Layer for all communications
  *
  * TODO:
- * Add support for Serial Communication AUX1, AUX2 and AUX3
+ * Add support for Serial Communication AUX1, AUX2, AUX3 and CAN1
  *
  * */
 
 
 #include "comlink.h"
 
-/* Gobal variable defines */
+/* Global variable defines */
 volatile USB_QUEUE_Type xUSBQueue = {NULL, FALSE};
 
 /* Private function defines */
@@ -19,7 +19,7 @@ volatile USB_QUEUE_Type xUSBQueue = {NULL, FALSE};
 extern uint16_t cdc_DataTx(uint8_t *, uint32_t);
 
 /* *
- * vUSBQueueInit initializes the queue for USB recieved data
+ * vUSBQueueInit initializes the queue for USB received data
  * */
 void vUSBQueueInit(void)
 {
@@ -34,7 +34,7 @@ void vUSBQueueInit(void)
  * 115200 Baud is normal operating conditions. (Higher can be used)
  *
  * It's also important to send an entire message at a time, else
- * someone might send a message in between, corrupting the data.
+ * someone might send a message in between, corrupting the data stream.
  *
  * Please observe that this function is NOT ISR-safe for the RTOS.
  * If called from ISR it can break packages sent via the RTOS.
@@ -42,7 +42,7 @@ void vUSBQueueInit(void)
  * */
 ErrorStatus xUSBSendData(uint8_t *data, uint32_t size)
 {
-	/*  if USB is not avalible, signal with error. */
+	/*  if USB is not available, signal with error. */
 	if (xUSBQueue.bUSBAvalible == FALSE)
 		return ERROR;
 

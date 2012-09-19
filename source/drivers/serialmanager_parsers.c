@@ -14,15 +14,15 @@
 void vGetBootloaderVersion(Parser_Holder_Type *pHolder)
 {
 	uint8_t *msg;
-	msg = (uint8_t *)(BOOTLOADER_BASE + SW_VERSION_OFFSET);
-	uint8_t str[128] = {0};
+	msg = (uint8_t *)(BOOTLOADER_BASE + SW_VERSION_OFFSET); /* Text is at known location */
+	uint8_t str[128];
 	int i = 4;
 	uint8_t txt = *msg;
 	/* TODO: Add message holder */
 	str[0] = SYNC_BYTE;
 	str[1] = Cmd_GetBootloaderVersion;
 
-	while (txt && (i < 60))
+	while (txt && (i < 40)) /* In case there is something wrong with the string  */
 	{
 		txt = *(msg + i);
 		str[i++] = txt;
@@ -45,15 +45,15 @@ void vGetBootloaderVersion(Parser_Holder_Type *pHolder)
 void vGetFirmwareVersion(Parser_Holder_Type *pHolder)
 {
 	uint8_t *msg;
-	msg = (uint8_t *)(FIRMWARE_BASE + SW_VERSION_OFFSET);
-	uint8_t str[128] = {0};
+	msg = (uint8_t *)(FIRMWARE_BASE + SW_VERSION_OFFSET); /* Text is at known location */
+	uint8_t str[128];
 	int i = 4;
 	uint8_t txt = *msg;
 	/* TODO: Add message holder */
 	str[0] = SYNC_BYTE;
 	str[1] = Cmd_GetFirmwareVersion;
 
-	while (txt)
+	while (txt && (i < 40)) /* In case there is something wrong with the string  */
 	{
 		txt = *(msg + i);
 		str[i++] = txt;

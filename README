@@ -20,7 +20,7 @@ TODO List:
 [ ] Finish the bootloader
 [X] Add callback for I2C finished transfer
 [ ] Add SPI drivers for external Flash
-[ ] Add all comlink parsers
+[ ] Add all serial manager parsers
 [ ] Make sensor readings interrupt driven
 [ ] Finish the HMC5883L and pressure sensor code
 [ ] Add interrupts on pin change for sensor data avalible
