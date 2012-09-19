@@ -1,11 +1,10 @@
 /* *
  *
- * Hardware Abstraction Layer for Timers
+ * Hardware Abstraction Layer for PWMs
  *
  * */
 
-#include "timer.h"
-#define TIMER_RATE		1000000 /* Hz */
+#include "pwm.h"
 
 /* Global variable defines */
 
@@ -15,13 +14,14 @@
 
 
 /* *
+ * PWM Hz: 50 (5-10% duty)/400 (40-80% duty)
  *
- * Fast Counter
- * Initializes and sets up the TIM2 as a 1MHz counter.
- * Overflows every 4294 seconds.
- *
+ * Constant counter Method
+ * Counter rate: 1000000 per s => Prescaler = 83
+ * Period: 20000 (50Hz: 1000-2000)/2500 (400Hz: 1000-2000)
  * */
-void InitFastCounter(void)
+
+void InitPWM(void)
 {
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	uint16_t PrescalerValue = ((SystemCoreClock /2) / TIMER_RATE) - 1;
@@ -35,9 +35,4 @@ void InitFastCounter(void)
 
     TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
     TIM_Cmd(TIM2, ENABLE);
-}
-
-uint32_t GetFastCounterValue(void)
-{
-	return TIM_GetCounter(TIM2);
 }
