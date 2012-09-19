@@ -32,7 +32,7 @@
  *
  * SYNC: 1 byte
  * 		Sent once = SYNC
- * 		Sent twice = databyte with the value of SYNC
+ * 		Sent twice = data byte with the value of SYNC
  *
  * CRC8: 1 byte
  * 		CRC-8 of SYNC and HEADER
@@ -85,6 +85,7 @@ void vTaskUSBSerialManager(void *pvParameters)
 	char in_data;
 	Parser_Holder_Type data_holder;
 
+	/* Initialize data structure */
 	data_holder.Port = PORT_USB;
 	data_holder.current_state = NULL;
 	data_holder.next_state = vWaitingForSYNC;
@@ -95,6 +96,7 @@ void vTaskUSBSerialManager(void *pvParameters)
 	{
 		xQueueReceive(xUSBQueue.xUSBQueueHandle, &in_data, portMAX_DELAY);
 
+		/* State machine starts here */
 		if (in_data == SYNC_BYTE)
 		{
 			if ((data_holder.next_state != vWaitingForSYNC) && (data_holder.next_state != vWaitingForSYNCorCMD) \
@@ -112,11 +114,20 @@ void vTaskUSBSerialManager(void *pvParameters)
 }
 
 /* *
+ *
+ * ---------------- State machine functions ----------------
+ * State machine's different states (functions) starts below.
+ * !NO! other functions are allowed there!
+ *
+ * */
+
+
+/* *
  * Waiting for SYNC function. Will run this until a valid SYNC has occured.
  * */
 void vWaitingForSYNC(uint8_t data, Parser_Holder_Type *pHolder)
 {
-	xUSBSendData("1", 1);
+	xUSBSendData("1", 1); /* Debug message */
 
 	if (data == SYNC_BYTE)
 	{
@@ -134,7 +145,7 @@ void vWaitingForSYNC(uint8_t data, Parser_Holder_Type *pHolder)
  * */
 void vWaitingForSYNCorCMD(uint8_t data, Parser_Holder_Type *pHolder)
 {
-	xUSBSendData("2", 1);
+	xUSBSendData("2", 1); /* Debug message */
 
 	if (data == SYNC_BYTE) /* Byte with value of SYNC received,	send it to the function waiting for a byte */
 		pHolder->current_state(data, pHolder);
@@ -151,7 +162,7 @@ void vWaitingForSYNCorCMD(uint8_t data, Parser_Holder_Type *pHolder)
  * */
 void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 {
-	xUSBSendData("3", 1);
+	xUSBSendData("3", 1); /* Debug message */
 
 	pHolder->next_state = vRxSize;
 	pHolder->buffer[pHolder->buffer_count++] = data;
@@ -179,11 +190,8 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			pHolder->data_length = Length_GetRunningMode;
 			break;
 
-		/* *
-		 *
-		 * Start Bootloader specific commands
-		 *
-		 * */
+
+		/* ----- Start Bootloader specific commands ----- */
 
 		case Cmd_PrepareWriteFirmware:
 			pHolder->parser = NULL;
@@ -220,11 +228,8 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			pHolder->data_length = Length_ExitBootloader;
 			break;
 
-		/* *
-		 *
-		 * End Bootloader specific commands
-		 *
-		 * */
+		/* ----- End Bootloader specific commands ----- */
+
 
 		case Cmd_GetBootloaderVersion:
 			pHolder->parser = vGetBootloaderVersion;
@@ -236,11 +241,8 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			pHolder->data_length = Length_GetFirmwareVersion;
 			break;
 
-		/* *
-		 *
-		 * Start Firmware specific commands
-		 *
-		 * */
+
+		/* ----- Start Firmware specific commands ----- */
 
 		case Cmd_SaveToFlash:
 			pHolder->parser = NULL;
@@ -302,11 +304,7 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			pHolder->data_length = Length_GetDataDump;
 			break;
 
-		/* *
-		 *
-		 * End Firmware specific commands
-		 *
-		 * */
+		/* ----- End Firmware specific commands ----- */
 
 		/* *
 		 * Add new commands here!
@@ -326,7 +324,7 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
  * */
 void vRxSize(uint8_t data, Parser_Holder_Type *pHolder)
 {
-	xUSBSendData("4", 1);
+	xUSBSendData("4", 1); /* Debug message */
 
 	if ((pHolder->data_length == data) || (pHolder->data_length == 0xFF))
 	{	/* If correct length or unspecified length, go to CRC8 */
@@ -346,7 +344,7 @@ void vRxSize(uint8_t data, Parser_Holder_Type *pHolder)
  * */
 void vRxCRC8(uint8_t data, Parser_Holder_Type *pHolder)
 {
-	xUSBSendData("5", 1);
+	xUSBSendData("5", 1); /* Debug message */
 
 	pHolder->buffer[pHolder->buffer_count++] = data;
 
@@ -364,7 +362,7 @@ void vRxCRC8(uint8_t data, Parser_Holder_Type *pHolder)
 			if (pHolder->parser != NULL)
 				pHolder->parser(pHolder);
 
-			xUSBSendData("OK", 2);
+			xUSBSendData("OK", 2); /* Debug message */
 		}
 		else
 			pHolder->next_state = vRxData;
@@ -382,7 +380,7 @@ void vRxCRC8(uint8_t data, Parser_Holder_Type *pHolder)
  * */
 void vRxData(uint8_t data, Parser_Holder_Type *pHolder)
 {
-	xUSBSendData("6", 1);
+	xUSBSendData("6", 1); /* Debug message */
 
 	pHolder->buffer[pHolder->buffer_count++] = data;
 
@@ -397,7 +395,7 @@ void vRxData(uint8_t data, Parser_Holder_Type *pHolder)
  * */
 void vRxCRC16(uint8_t data, Parser_Holder_Type *pHolder)
 {
-	xUSBSendData("7", 1);
+	xUSBSendData("7", 1); /* Debug message */
 
 	pHolder->buffer[pHolder->buffer_count++] = data;
 
@@ -418,7 +416,7 @@ void vRxCRC16(uint8_t data, Parser_Holder_Type *pHolder)
 			if (pHolder->parser != NULL)
 				pHolder->parser(pHolder);
 
-			xUSBSendData("OK", 2);
+			xUSBSendData("OK", 2); /* Debug message */
 		}
 		else
 			pHolder->rx_error++;

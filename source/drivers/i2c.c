@@ -128,7 +128,7 @@ ErrorStatus I2C_MasterTransferData(I2C_TypeDef *I2Cx, I2C_MASTER_SETUP_Type *Tra
 	uint8_t *txdat;
 	uint8_t *rxdat;
 	uint8_t tmp;
-	/* Enable the ack and reset Pos */
+	/* Enable the ACK and reset Pos */
 	I2Cx->CR1 |= I2C_CR1_ACK;
 	I2Cx->CR1 &= ~I2C_CR1_POS;
 
