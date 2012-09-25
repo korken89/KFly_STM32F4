@@ -23,8 +23,9 @@ TODO List:
 [ ] Add all serial manager parsers
 [ ] Make sensor readings interrupt driven
 [ ] Finish the HMC5883L and pressure sensor code
-[ ] Add interrupts on pin change for sensor data avalible
+[ ] Add interrupts on pin change for sensor data available
 [ ] Add PWM out for motors
+[ ] Add (C)PPM/PWM in for controll
 [ ] Add support for all the communication interfaces
 [ ] Code the Quaternion based Extended Kalman Filter
 [ ] Code the PI PI- and State Feedback regulator

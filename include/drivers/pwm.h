@@ -16,8 +16,8 @@
 
 /* Defines */
 #define TIMER_RATE		1000000 /* Hz */
-#define PEROID_50HZ 	(20000-1)
-#define PEROID_400HZ 	(2500-1)
+#define PEROID_50HZ 	(20000 - 1)
+#define PEROID_400HZ 	(2500 - 1)
 
 /* Typedefs */
 typedef enum
@@ -28,9 +28,9 @@ typedef enum
 
 typedef enum
 {
-	OUT_1_TO_4,
-	OUT_5_TO_6,
-	OUT_7_TO_8
+	OUTPUT_1_TO_4,
+	OUTPUT_5_TO_6,
+	OUTPUT_7_TO_8
 } Output_Number_Type;
 
 void InitPWM(void);

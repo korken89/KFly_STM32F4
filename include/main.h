@@ -17,14 +17,13 @@
 
 /* KFly includes */
 
-/* Driver Incudes */
-#include "comlink.h"
+/* Driver Includes */
+#include "serialmanager.h"
 #include "timer.h"
 #include "i2c.h"
 #include "mpu6050.h"
 #include "hmc5883l.h"
 #include "crc.h"
-#include "serialmanager.h"
 
 /* Includes */
 #include "led.h"
@@ -34,8 +33,8 @@
 	#define DATE 		"no timestamp"
 #endif
 
-#define MAINVERSION	 	"1"
-#define SUBVERSION 		"23"
+#define MAINVERSION	 	"0"
+#define SUBVERSION 		".01 alpha"
 #define KFLY_VERSION	"KFly v" MAINVERSION "." SUBVERSION " (" DATE ")\0"
 
 

@@ -1,6 +1,6 @@
 /* *
  *
- * CRC8 and CRC16 (CCITT) generation code.
+ * CRC8 and CRC-CCITT generation code.
  * pycrc was used to make the base code.
  * Modified by Emil Fresk.
  *
@@ -78,7 +78,7 @@ uint8_t CRC8(uint8_t *data, uint32_t data_len)
     return crc;
 }
 
-uint16_t CRC16(uint8_t *data, uint32_t data_len)
+uint16_t CRC16(uint8_t *data, uint32_t data_len) /* CRC-CCITT */
 {
 	uint32_t tbl_idx;
     uint16_t crc = 0xffff;

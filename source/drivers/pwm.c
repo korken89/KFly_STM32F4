@@ -2,6 +2,15 @@
  *
  * Hardware Abstraction Layer for PWMs
  *
+ * The PWM driver consists of three Timers; TIM3, 4 and 8.
+ * With this setup they can have different period time so
+ * both 50 Hz and 400 Hz signals can be produced.
+ *
+ * PWM Hz: 50 (5-10% duty) / 400 (40-80% duty)
+ * Constant counter Method
+ * Counter rate: 1000000 per sec => Prescaler = 83
+ * Period: 20000 (50Hz: 1000-2000 CCR) / 2500 (400Hz: 1000-2000 CCR) gives 0.1% step size
+ *
  * */
 
 #include "pwm.h"
@@ -14,11 +23,7 @@
 
 
 /* *
- * PWM Hz: 50 (5-10% duty) / 400 (40-80% duty)
- *
- * Constant counter Method
- * Counter rate: 1000000 per s => Prescaler = 83
- * Period: 20000 (50Hz: 1000-2000 CCR) / 2500 (400Hz: 1000-2000 CCR)
+
  * */
 
 void InitPWM(void)
@@ -27,8 +32,6 @@ void InitPWM(void)
 
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef  TIM_OCInitStructure;
-
-	/* TIM config */
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 	/* *
@@ -45,7 +48,7 @@ void InitPWM(void)
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
 
 	/* Fastest PWM is 400Hz, 2MHz speed is enough */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Pin = (GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9);
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
