@@ -53,7 +53,7 @@ static uint16_t WaitLineIdle(I2C_TypeDef *);
 
 /* Private external functions */
 
-void InitSensorBus(void)
+void SensorBusInit(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	I2C_InitTypeDef  I2C_InitStructure;

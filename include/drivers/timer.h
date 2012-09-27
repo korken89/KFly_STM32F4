@@ -15,7 +15,7 @@
 /* Includes */
 
 
-void InitFastCounter(void);
+void FastCounterInit(void);
 uint32_t GetFastCounterValue(void);
 
 #endif

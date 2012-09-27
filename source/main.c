@@ -42,19 +42,19 @@ void main(void)
 	 * Initializes and sets up a timer as a 1MHz counter for timing.
 	 *
 	 * */
-	InitFastCounter();
+	FastCounterInit();
 
 	/* *
 	 *
 	 * Initializes the I2C-bus.
 	 *
 	 * */
-	InitSensorBus();
+	SensorBusInit();
 
 	/* *
 	 * Initialize all sensors
 	 * */
-	InitMPU6050();
+	MPU6050Init();
 
 	/* *
 	 *
@@ -70,7 +70,7 @@ void main(void)
 				&USBD_CDC_cb,
 				&USR_cb);
 
-	vInitSerialManager();
+	vSerialManagerInit();
 
 	xTaskCreate(vTaskPrintTimer,
 				"TIMER",

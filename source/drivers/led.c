@@ -7,7 +7,7 @@ const uint32_t 	GPIO_CLK[LEDn] 	= {LED0_GPIO_CLK, LED1_GPIO_CLK};
 
 void LEDInit(void)
 {
-  GPIO_InitTypeDef  GPIO_InitStructure;
+  GPIO_InitTypeDef GPIO_InitStructure;
 
   /* Enable the GPIO_LED Clock */
   RCC_AHB1PeriphClockCmd(LED0_GPIO_CLK, ENABLE);

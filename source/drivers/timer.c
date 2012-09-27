@@ -21,7 +21,7 @@
  * Overflows every 4294 seconds.
  *
  * */
-void InitFastCounter(void)
+void FastCounterInit(void)
 {
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	uint16_t PrescalerValue = ((SystemCoreClock /2) / TIMER_RATE) - 1;

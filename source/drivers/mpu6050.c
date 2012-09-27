@@ -16,7 +16,7 @@
 
 /* Private external functions */
 
-void InitMPU6050(void)
+void MPU6050Init(void)
 {
 	/* Setup the sensor */
 	uint8_t send[2];

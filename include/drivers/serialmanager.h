@@ -31,7 +31,7 @@
 /* Global variable defines */
 
 /* Global function defines */
-void vInitSerialManager(void);
+void vSerialManagerInit(void);
 void vTaskUSBSerialManager(void *);
 void vWaitingForSYNC(uint8_t, Parser_Holder_Type *);
 void vWaitingForSYNCorCMD(uint8_t, Parser_Holder_Type *);

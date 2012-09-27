@@ -26,8 +26,8 @@ void PWMInit(void)
 {
 	/* TODO: Add PWM setup  */
 
-	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-	TIM_OCInitTypeDef  TIM_OCInitStructure;
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	TIM_OCInitTypeDef TIM_OCInitStructure;
 	GPIO_InitTypeDef GPIO_InitStructure;
 	uint16_t PrescalerValue = ((SystemCoreClock /2) / TIMER_RATE) - 1;
 
@@ -128,8 +128,24 @@ void PWMInit(void)
 	TIM4->CCR2 = 2000; /* Output 3 */
 	TIM4->CCR3 = 2000; /* Output 2 */
 	TIM4->CCR4 = 2000; /* Output 1 */
-	TIM3->CCR1 = 2000; /* Output 6 */
-	TIM3->CCR2 = 2000; /* Output 5 */
-	TIM8->CCR3 = 2000; /* Output 8 */
-	TIM8->CCR4 = 2000; /* Output 7 */
+	TIM3->CCR1 = 2000; /* Output 8 */
+	TIM3->CCR2 = 2000; /* Output 7 */
+	TIM8->CCR3 = 2000; /* Output 6 */
+	TIM8->CCR4 = 2000; /* Output 5 */
+}
+
+void vSetRCOutput(Output_Channel_Type ch, uint32_t period)
+{
+	/* Constant array as lookup table for the PWM channel CCR register */
+	static const uint32_t PWM_CH[8] = { (uint32_t)&TIM4->CCR4, (uint32_t)&TIM4->CCR3,
+										(uint32_t)&TIM4->CCR2, (uint32_t)&TIM4->CCR1,
+										(uint32_t)&TIM8->CCR4, (uint32_t)&TIM8->CCR3,
+										(uint32_t)&TIM3->CCR2, (uint32_t)&TIM3->CCR1};
+
+	if (period > RC_MAX) /* If above 2ms, set it to 2ms */
+		period = RC_MAX;
+	else if (period < RC_MIN) /* If below 1ms, set it to 1ms */
+		period = RC_MIN;
+
+	*((uint32_t *)PWM_CH[ch]) = period; /* Instead of big switch/if statement */
 }

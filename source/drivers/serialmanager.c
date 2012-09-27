@@ -61,7 +61,7 @@
  * Initializes all communication.
  *
  * */
-void vInitSerialManager(void)
+void vSerialManagerInit(void)
 {
 	vUSBQueueInit();
 

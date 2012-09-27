@@ -18,6 +18,8 @@
 #define TIMER_RATE		1000000 /* Hz */
 #define PEROID_50HZ 	(TIMER_RATE/50 - 1)
 #define PEROID_400HZ 	(TIMER_RATE/400 - 1)
+#define RC_MIN			1000
+#define RC_MAX			1999
 
 /* Typedefs */
 typedef enum
@@ -31,8 +33,21 @@ typedef enum
 	OUTPUT_1_TO_4,
 	OUTPUT_5_TO_6,
 	OUTPUT_7_TO_8
-} Output_Number_Type;
+} Output_Group_Type;
+
+typedef enum
+{
+	RC_CHANNEL1 = 0,
+	RC_CHANNEL2,
+	RC_CHANNEL3,
+	RC_CHANNEL4,
+	RC_CHANNEL5,
+	RC_CHANNEL6,
+	RC_CHANNEL7,
+	RC_CHANNEL8
+} Output_Channel_Type;
 
 void PWMInit(void);
+void vSetRCOutput(Output_Channel_Type, uint32_t);
 
 #endif

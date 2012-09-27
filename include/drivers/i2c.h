@@ -56,7 +56,7 @@ typedef struct
 
 
 /* Global function defines */
-void InitSensorBus(void);
+void SensorBusInit(void);
 ErrorStatus I2C_MasterTransferData(I2C_TypeDef *, I2C_MASTER_SETUP_Type *, I2C_TRANSFER_OPTION_Type);
 
 #endif
