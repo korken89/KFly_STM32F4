@@ -7,9 +7,10 @@
  * both 50 Hz and 400 Hz signals can be produced.
  *
  * PWM Hz: 50 (5-10% duty) / 400 (40-80% duty)
- * Constant counter Method
- * Counter rate: 1000000 per sec => Prescaler = 83
- * Period: 20000 (50Hz: 1000-2000 CCR) / 2500 (400Hz: 1000-2000 CCR) gives 0.1% step size
+ * Constant Counter method:
+ * Counter rate: 1000000 ticks per second
+ * Period 50 Hz: 20000 (1000-2000 CCR) gives 0.1% step size
+ * Period 400 Hz: 2500 (1000-2000 CCR) gives 0.1% step size
  *
  * */
 
@@ -21,18 +22,14 @@
 
 /* Private external functions */
 
-
-/* *
-
- * */
-
-void InitPWM(void)
+void PWMInit(void)
 {
 	/* TODO: Add PWM setup  */
 
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef  TIM_OCInitStructure;
 	GPIO_InitTypeDef GPIO_InitStructure;
+	uint16_t PrescalerValue = ((SystemCoreClock /2) / TIMER_RATE) - 1;
 
 	/* *
 	 * Timer setup starts here!
@@ -71,6 +68,68 @@ void InitPWM(void)
 	 * PWM setup starts here!
 	 * */
 
+	/* Time base configuration */
+	TIM_TimeBaseStructure.TIM_Period = PEROID_50HZ; /* Start at 50 Hz PWM */
+	TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
 
+	/* Apply time base configuration */
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
+	PrescalerValue = ((SystemCoreClock) / TIMER_RATE) - 1; /* Runs on APB2 (84 MHz) */
+	TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
+	TIM_TimeBaseInit(TIM8, &TIM_TimeBaseStructure);
 
+	/* PWM1 Mode configuration */
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+	TIM_OCInitStructure.TIM_Pulse = 0;
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;
+
+	/* PWM1 Mode configuration: Channel 1 */
+	TIM_OC1Init(TIM4, &TIM_OCInitStructure);
+	TIM_OC1PreloadConfig(TIM4, TIM_OCPreload_Enable);
+	TIM_OC1Init(TIM3, &TIM_OCInitStructure);
+	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
+
+	/* PWM1 Mode configuration: Channel 2 */
+	TIM_OC2Init(TIM4, &TIM_OCInitStructure);
+	TIM_OC2PreloadConfig(TIM4, TIM_OCPreload_Enable);
+	TIM_OC2Init(TIM3, &TIM_OCInitStructure);
+	TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);
+
+	/* PWM1 Mode configuration: Channel 3 */
+	TIM_OC3Init(TIM4, &TIM_OCInitStructure);
+	TIM_OC3PreloadConfig(TIM4, TIM_OCPreload_Enable);
+	TIM_OC3Init(TIM8, &TIM_OCInitStructure);
+	TIM_OC3PreloadConfig(TIM8, TIM_OCPreload_Enable);
+
+	/* PWM1 Mode configuration: Channel 4 */
+	TIM_OC4Init(TIM4, &TIM_OCInitStructure);
+	TIM_OC4PreloadConfig(TIM4, TIM_OCPreload_Enable);
+	TIM_OC4Init(TIM8, &TIM_OCInitStructure);
+	TIM_OC4PreloadConfig(TIM8, TIM_OCPreload_Enable);
+
+	/* Enable preload */
+	TIM_ARRPreloadConfig(TIM3, ENABLE);
+	TIM_ARRPreloadConfig(TIM4, ENABLE);
+	TIM_ARRPreloadConfig(TIM8, ENABLE);
+	TIM_CtrlPWMOutputs(TIM8, ENABLE);
+
+	/* Enable timers */
+	TIM_Cmd(TIM3, ENABLE);
+	TIM_Cmd(TIM4, ENABLE);
+	TIM_Cmd(TIM8, ENABLE);
+
+	/* Set start PWM value at 1ms pulse width */
+	TIM4->CCR1 = 2000; /* Output 4 */
+	TIM4->CCR2 = 2000; /* Output 3 */
+	TIM4->CCR3 = 2000; /* Output 2 */
+	TIM4->CCR4 = 2000; /* Output 1 */
+	TIM3->CCR1 = 2000; /* Output 6 */
+	TIM3->CCR2 = 2000; /* Output 5 */
+	TIM8->CCR3 = 2000; /* Output 8 */
+	TIM8->CCR4 = 2000; /* Output 7 */
 }

@@ -24,6 +24,7 @@
 #include "mpu6050.h"
 #include "hmc5883l.h"
 #include "crc.h"
+#include "pwm.h"
 
 /* Includes */
 #include "led.h"

@@ -23,6 +23,14 @@ void main(void)
 
 	/* *
 	 *
+	 * PWM init.
+	 * Initializes and sets up the PWMs.
+	 *
+	 * */
+	PWMInit();
+
+	/* *
+	 *
 	 * USB recieve queue init
 	 *
 	 * */
