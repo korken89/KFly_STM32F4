@@ -134,9 +134,15 @@ void PWMInit(void)
 	TIM8->CCR4 = 2000; /* Output 5 */
 }
 
+/* *
+ *
+ * vSetRCOutput(channel, period [in us]):
+ * Sets a new PWM match value.
+ *
+ * */
 void vSetRCOutput(Output_Channel_Type ch, uint32_t period)
 {
-	/* Constant array as lookup table for the PWM channel CCR register */
+	/* Constant array as lookup table for the PWM channel's CCR register */
 	static const uint32_t PWM_CH[8] = { (uint32_t)&TIM4->CCR4, (uint32_t)&TIM4->CCR3,
 										(uint32_t)&TIM4->CCR2, (uint32_t)&TIM4->CCR1,
 										(uint32_t)&TIM8->CCR4, (uint32_t)&TIM8->CCR3,
@@ -148,4 +154,20 @@ void vSetRCOutput(Output_Channel_Type ch, uint32_t period)
 		period = RC_MIN;
 
 	*((uint32_t *)PWM_CH[ch]) = period; /* Instead of big switch/if statement */
+}
+
+/* *
+ *
+ * vSetOutputRate(group, rate):
+ * Changes the rate of the PWM between 50 and 400 Hz.
+ *
+ * */
+void vSetOutputRate(Output_Group_Type group, PWM_Rate_Type rate)
+{
+	if (group == OUTPUT_1_TO_4)
+		TIM4->ARR = rate;
+	else if (group == OUTPUT_5_TO_6)
+		TIM8->ARR = rate;
+	else if (group == OUTPUT_7_TO_8)
+		TIM3->ARR = rate;
 }

@@ -24,8 +24,8 @@
 /* Typedefs */
 typedef enum
 {
-	PWM_50Hz,
-	PWM_400Hz
+	PWM_50Hz = PEROID_50HZ,
+	PWM_400Hz = PEROID_400HZ
 } PWM_Rate_Type;
 
 typedef enum
@@ -49,5 +49,6 @@ typedef enum
 
 void PWMInit(void);
 void vSetRCOutput(Output_Channel_Type, uint32_t);
+void vSetOutputRate(Output_Group_Type, PWM_Rate_Type);
 
 #endif
