@@ -1,5 +1,6 @@
 #include "main.h"
 #include <stdlib.h>
+#include <math.h>
 
 __attribute__((section(".sw_version"))) __I char build_version[] = KFLY_VERSION;
 USB_OTG_CORE_HANDLE USB_OTG_dev;
