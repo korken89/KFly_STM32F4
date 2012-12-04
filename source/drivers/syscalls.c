@@ -20,3 +20,9 @@ caddr_t _sbrk ( int incr )
 
   return (caddr_t) prev_heap;
 }
+
+void _exit(void) {
+    while(1) {
+        // Loop until reset
+    }
+}
