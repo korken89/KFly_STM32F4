@@ -25,7 +25,7 @@ DATE = 20$(shell date +'%y%m%d-%H%M')
 MCU     = -mcpu=cortex-m4 -mthumb -g -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -fsingle-precision-constant
 CFLAGS  = $(COMMON) -std=gnu99 -O$(OPTIMIZATION) $(INCLUDE)
 AFLAGS  = $(COMMON) $(INCLUDE)
-LDFLAGS = $(COMMON) -Tstm32f4x_flash.ld -Wl,--build-id=none,-Map=main.map
+LDFLAGS = $(COMMON) -Tstm32f4x_flash.ld -lm -Wl,--build-id=none,-Map=main.map
 
 # StdLibs to use if wanted
 STDLIBDIR = Libraries/STM32F4xx_StdPeriph_Driver/src/

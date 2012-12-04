@@ -6,7 +6,7 @@ USB_OTG_CORE_HANDLE USB_OTG_dev;
 
 void main(void)
 {
-	//for (volatile uint32_t i = 0; i < 0xFFFFFF; i++);
+	for (volatile uint32_t i = 0; i < 0xFFFFF; i++);
 	/* *
 	 *
 	 * Initialization of peripherals and I/O-ports
@@ -31,7 +31,7 @@ void main(void)
 
 	/* *
 	 *
-	 * USB recieve queue init
+	 * USB receive queue init
 	 *
 	 * */
 	vUSBQueueInit();
