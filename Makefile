@@ -76,9 +76,10 @@ OBJECTS = $(ASRCS:.s=.o) $(CSRCS:.c=.o)
 BINPLACE = -j.isr_vector -j.sw_version -j.text -j.ARM.extab -j.ARM 
 BINPLACE += -j.preinit_array -j.init_array -j.fini_array -j.data
 
+CTEST = $(wildcard */*/*.c)
+
 test:
-	@echo $(USBLIB)
-	@echo $(CSRCS)
+	@echo $(CTEST)
 
 dump: main.elf
 	@$(OBJDUMP) -D main.elf > main.dump

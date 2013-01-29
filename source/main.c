@@ -52,7 +52,9 @@ void main(void)
 	SensorBusInit();
 
 	/* *
+	 *
 	 * Initialize all sensors
+	 *
 	 * */
 	MPU6050Init();
 	HMC5883LInit();
@@ -87,6 +89,11 @@ void main(void)
 	while(1);
 }
 
+void TestCallback(void)
+{
+	LEDToggle(LED_RED);
+}
+
 void vTaskPrintTimer(void *pvParameters)
 {
 	extern volatile uint8_t dataholder;
@@ -102,15 +109,15 @@ void vTaskPrintTimer(void *pvParameters)
 	Setup.RX_Data = data;
 	Setup.RX_Length = 14;
 	Setup.Retransmissions_Max = 0;
-	Setup.Callback = NULL;
+	Setup.Callback = TestCallback;
 
 	while(1)
 	{
-		vTaskDelay(5000);
+		vTaskDelay(1000);
 		//GetMPU6050ID((uint8_t *)&dataholder);
-		GetHMC5883LID(data);
+		//GetHMC5883LID(data);
 		//xUSBSendData(msg, 8);
-		//I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_INTERRUPT);
+		I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_INTERRUPT);
 	}
 }
 
