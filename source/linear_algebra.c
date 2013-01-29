@@ -1,6 +1,24 @@
 #include "linear_algebra.h"
+#include <math.h>
+#define MAT_SIZE	9
 
-#define MAT_SIZE	6
+/**
+ * Sine of an angle in radians
+ */
+float sine(float x)
+{
+	const float pi = 3.14159265359f;
+	const float B = 4/pi;
+	const float C = -4/(pi*pi);
+
+	float y = B * x + C * x * fabs(x);
+
+	const float P = 0.225;
+
+	y = P * (y * fabs(y) - y) + y;
+
+	return y;
+}
 
 void InvertMatrix(float *M)
 {

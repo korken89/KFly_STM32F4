@@ -22,6 +22,7 @@
 /* Global variable defines */
 
 /* Global function defines */
+float sine(float);
 void InvertMatrix(float *);
 void LUFactorize(float *, float *, float *);
 void InvertLMatrix(float *);

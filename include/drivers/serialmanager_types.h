@@ -22,13 +22,13 @@ typedef enum
 	Cmd_Ping,
 	Cmd_DebugMessage,
 	Cmd_GetRunningMode,
-	Cmd_PrepareWriteFirmware,		/* Bootloader specific, shall allways require ACK */
-	Cmd_WriteFirmwarePackage,		/* Bootloader specific, shall allways require ACK */
-	Cmd_WriteLastFirmwarePackage,	/* Bootloader specific, shall allways require ACK */
-	Cmd_ReadFirmwarePackage,		/* Bootloader specific, shall allways require ACK */
-	Cmd_ReadLastFirmwarePackage,	/* Bootloader specific, shall allways require ACK */
-	Cmd_NextPackage,				/* Bootloader specific, shall allways require ACK */
-	Cmd_ExitBootloader,				/* Bootloader specific, shall allways require ACK */
+	Cmd_PrepareWriteFirmware,		/* Bootloader specific, shall always require ACK */
+	Cmd_WriteFirmwarePackage,		/* Bootloader specific, shall always require ACK */
+	Cmd_WriteLastFirmwarePackage,	/* Bootloader specific, shall always require ACK */
+	Cmd_ReadFirmwarePackage,		/* Bootloader specific, shall always require ACK */
+	Cmd_ReadLastFirmwarePackage,	/* Bootloader specific, shall always require ACK */
+	Cmd_NextPackage,				/* Bootloader specific, shall always require ACK */
+	Cmd_ExitBootloader,				/* Bootloader specific, shall always require ACK */
 	Cmd_GetBootloaderVersion,
 	Cmd_GetFirmwareVersion,
 	Cmd_SaveToFlash,
@@ -42,7 +42,7 @@ typedef enum
 	Cmd_GetRCCalibration,
 	Cmd_SetRCCalibration,
 	Cmd_GetRCValues,
-	Cmd_GetDataDump,
+	Cmd_GetSensorData,
 	EndOfCommands
 } KFly_Command_Type;
 

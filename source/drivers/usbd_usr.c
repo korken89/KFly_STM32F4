@@ -72,7 +72,7 @@ void USBD_USR_DeviceConfigured (void)
 	xUSBQueue.bUSBAvalible = TRUE;
 
 	// Debug LED
-	LEDOn(GREEN);
+	LEDOn(LED_GREEN);
 }
 
 /**
@@ -86,7 +86,7 @@ void USBD_USR_DeviceSuspended(void)
 	xUSBQueue.bUSBAvalible = FALSE;
 
 	// Debug LED
-	LEDOff(GREEN);
+	LEDOff(LED_GREEN);
 	/* Users can do their application actions here for the USB-Reset */
 }
 
@@ -102,7 +102,7 @@ void USBD_USR_DeviceResumed(void)
 	xUSBQueue.bUSBAvalible = TRUE;
 
 	// Debug LED
-	LEDOn(GREEN);
+	LEDOn(LED_GREEN);
     /* Users can do their application actions here for the USB-Reset */
 }
 

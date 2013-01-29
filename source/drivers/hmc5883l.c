@@ -3,21 +3,21 @@
  * Hardware Abstraction Layer for HMC5883L Magnetometer
  *
  * TODO:
- * ...
+ * Everything
  *
  * */
 
 
 #include "hmc5883l.h"
 
-/* Gobal variable defines */
+/* Global variable defines */
 
 /* Private function defines */
 
 /* Private external functions */
 
 
-void InitHMC5883L(void)
+void HMC5883LInit(void)
 {
 	/* Setup the sensor */
 	uint8_t send[2];
@@ -42,7 +42,7 @@ void InitHMC5883L(void)
 	send[1] = 0b00100000; /* Default gain of 1090 LSB/Gauss*/
 	I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_POLLING);
 
-    /* Set the mode, continous or single */
+    /* Set the mode, continuous or single */
 	send[0] = HMC5883L_RA_MODE;
 	send[1] = 0; /* Continuous measurement mode */
 	I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_POLLING);

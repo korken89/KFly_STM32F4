@@ -301,7 +301,7 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			pHolder->data_length = Length_GetRCValues;
 			break;
 
-		case Cmd_GetDataDump:
+		case Cmd_GetSensorData:
 			pHolder->parser = NULL;
 			pHolder->data_length = Length_GetDataDump;
 			break;

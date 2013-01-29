@@ -36,7 +36,7 @@
 /* Typedefs */
 
 /* Global function defines */
-void InitHMC5883L(void);
+void HMC5883LInit(void);
 ErrorStatus GetHMC5883LID(uint8_t *);
 
 

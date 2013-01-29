@@ -12,21 +12,24 @@ HW Specs:
 SW Specs:
 * Runs FreeRTOS (with FPU support) with an Hardware Abstraction Layer on top for fast application development
 * USB Bootloader - no need for an external programmer!
-* Quaternion based Extended Kalman Filter provides attitude estimation
+* Quaternion based Extended Kalman Filter (EKF) provides attitude estimation
 * "Control signal to Motor"-mixing for different types of frames
 * Flight control: Rate mode, Attitude mode and more to come
 
 TODO List:
+[ ] Fix catalog structure
+[ ] Migrate comments to Doxygen
+---
 [ ] Finish the bootloader
 [X] Add callback for I2C finished transfer
 [ ] Add SPI drivers for external Flash
 [ ] Add all serial manager parsers
-[ ] Make sensor readings interrupt driven
-[ ] Finish the HMC5883L and pressure sensor code
-[ ] Add interrupts on pin change for sensor data available
+[ ] Make sensor readings interrupt driven - Priority!
+[ ] Finish the HMC5883L and pressure sensor code - Priority!
+[ ] Add interrupts on pin change for sensor data available - Priority!
 [X] Add PWM out for motors
 [ ] Add (C)PPM/PWM in for control
 [ ] Add support for all the communication interfaces
-[ ] Code the Quaternion based Extended Kalman Filter
-[ ] Code the PI PI- and State Feedback regulator
+[ ] Code the EKF/Complementary Filter - Priority!
+[ ] Code the controller  - Priority!
 [ ] Code the motor mixer
