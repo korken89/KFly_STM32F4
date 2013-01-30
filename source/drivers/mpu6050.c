@@ -98,3 +98,19 @@ ErrorStatus GetMPU6050Rates(uint8_t *data)
 
 	return I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_POLLING);
 }
+
+ErrorStatus GetMPU6050DataInterrupt(uint8_t *data, void (*Callback)(void))
+{
+	static uint8_t send = MPU6050_RA_ACCEL_XOUT_H;
+	I2C_MASTER_SETUP_Type Setup;
+
+	Setup.Slave_Address_7bit = MPU6050_ADDRESS;
+	Setup.TX_Data = &send;
+	Setup.TX_Length = 1;
+	Setup.RX_Data = data;
+	Setup.RX_Length = 14;
+	Setup.Retransmissions_Max = 0;
+	Setup.Callback = Callback;
+
+	return I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_INTERRUPT);
+}

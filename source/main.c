@@ -53,18 +53,18 @@ void main(void)
 
 	/* *
 	 *
-	 * Initializes the sensor interrupts
-	 *
-	 * */
-	EXTI_SensorInit();
-
-	/* *
-	 *
 	 * Initialize all sensors
 	 *
 	 * */
 	MPU6050Init();
 	HMC5883LInit();
+
+	/* *
+	 *
+	 * Initializes the sensor interrupts
+	 *
+	 * */
+	SensorsInterruptReadInit();
 
 	/* *
 	 *
@@ -80,8 +80,18 @@ void main(void)
 				&USBD_CDC_cb,
 				&USR_cb);
 
+	/* *
+	 *
+	 * Start the serial communication manager.
+	 *
+	 * */
 	vSerialManagerInit();
 
+	/* *
+	 *
+	 * Start the scheduler.
+	 *
+	 * */
 	xTaskCreate(vTaskPrintTimer,
 				"TIMER",
 				256,
@@ -94,11 +104,6 @@ void main(void)
 	/* We only get here if there was insufficient memory to start the Scheduler */
 
 	while(1);
-}
-
-void TestCallback(void)
-{
-	LEDToggle(LED_RED);
 }
 
 void vTaskPrintTimer(void *pvParameters)
@@ -116,7 +121,7 @@ void vTaskPrintTimer(void *pvParameters)
 	Setup.RX_Data = data;
 	Setup.RX_Length = 14;
 	Setup.Retransmissions_Max = 0;
-	Setup.Callback = TestCallback;
+	Setup.Callback = NULL;
 
 	while(1)
 	{
@@ -124,7 +129,7 @@ void vTaskPrintTimer(void *pvParameters)
 		//GetMPU6050ID((uint8_t *)&dataholder);
 		//GetHMC5883LID(data);
 		//xUSBSendData(msg, 8);
-		I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_INTERRUPT);
+		//I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_INTERRUPT);
 	}
 }
 

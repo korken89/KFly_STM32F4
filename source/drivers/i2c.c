@@ -30,12 +30,15 @@ typedef struct
 	I2C_DIRECTION_Type Direction;			/* Current direction phase */
 } I2C_INT_CFG_Type;
 
-/* Gobal variable defines */
+/* Global variable defines */
 volatile I2C_INT_CFG_Type I2Ctmp[3];		/* Pointer to I2C Config Setup */
-volatile xQueueHandle I2CMutex[3]; 			/* Mutexes for the I2C */
 volatile uint8_t dataholder = 0;
 volatile uint16_t status = 0;
 volatile uint8_t whereami = 0;
+
+xSemaphoreHandle I2C1Mutex; 				/* Mutexes for the I2C */
+xSemaphoreHandle I2C2Mutex;
+xSemaphoreHandle I2C3Mutex;
 
 /* I2C Interrupt handlers */
 void I2C_MasterHandler(I2C_TypeDef *);

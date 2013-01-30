@@ -149,5 +149,6 @@
 void MPU6050Init(void);
 ErrorStatus GetMPU6050ID(uint8_t *);
 ErrorStatus GetMPU6050Rates(uint8_t *);
+ErrorStatus GetMPU6050DataInterrupt(uint8_t *, void (*)(void));
 
 #endif
