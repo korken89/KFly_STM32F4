@@ -25,6 +25,7 @@
 #include "hmc5883l.h"
 #include "crc.h"
 #include "pwm.h"
+#include "exti.h"
 
 /* Includes */
 #include "led.h"

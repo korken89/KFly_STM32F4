@@ -53,6 +53,13 @@ void main(void)
 
 	/* *
 	 *
+	 * Initializes the sensor interrupts
+	 *
+	 * */
+	EXTI_SensorInit();
+
+	/* *
+	 *
 	 * Initialize all sensors
 	 *
 	 * */

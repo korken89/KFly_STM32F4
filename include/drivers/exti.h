@@ -5,8 +5,13 @@
 #include "stm32f4xx.h"
 
 /* System includes */
+#include "led.h"
 
 /* Scheduler includes. */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
 
 /* KFly includes */
 
@@ -19,7 +24,9 @@
 /* Typedefs */
 
 /* Global function defines */
-void EXTI_SensorInit(void);
-void EXTI_RCInputInit(void);
+void SensorInterruptInit(void);
+xSemaphoreHandle GetMPUSyncHandle(void);
+xSemaphoreHandle GetHMCSyncHandle(void);
+void EXTI15_10_IRQHandler(void);
 
 #endif
