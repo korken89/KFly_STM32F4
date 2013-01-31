@@ -35,6 +35,7 @@ volatile I2C_INT_CFG_Type I2Ctmp[3];		/* Pointer to I2C Config Setup */
 volatile uint8_t dataholder = 0;
 volatile uint16_t status = 0;
 volatile uint8_t whereami = 0;
+volatile uint32_t i2c_fail = 0;
 
 xSemaphoreHandle I2C1Mutex; 				/* Mutexes for the I2C */
 xSemaphoreHandle I2C2Mutex;
@@ -99,13 +100,12 @@ void SensorBusInit(void)
 
 	/* Initialize interrupts */
 	NVIC_InitStructure.NVIC_IRQChannel = I2C2_EV_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 5;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
-	/*NVIC_InitStructure.NVIC_IRQChannel = I2C2_ER_IRQn;
-	NVIC_Init(&NVIC_InitStructure);*/
+	//NVIC_InitStructure.NVIC_IRQChannel = I2C2_ER_IRQn;
+	//NVIC_Init(&NVIC_InitStructure);
 
 	/* I2C Peripheral Enable */
 	I2C_Cmd(I2CBus, ENABLE);
@@ -427,7 +427,7 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 		{ 	/* Maximum number of retransmissions reached, abort */
 			I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
 			I2Cx->CR1 |= I2C_CR1_STOP;
-
+			i2c_fail++;
 			I2Ctmp[I2C_num].RXTX_Setup->Status |= I2C_ERROR_BIT; /* Set error bit */
 		}
 		else

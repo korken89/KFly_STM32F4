@@ -25,7 +25,6 @@
 #define I2C_ERROR_BIT			((uint16_t)(1<<13)) /* One of the reserved bits is used as timeout error bit */
 
 /* Global variable defines */
-extern volatile xQueueHandle 	I2CMutex[3]; /* Mutexes for the I2C */
 
 /* Typedefs */
 typedef enum

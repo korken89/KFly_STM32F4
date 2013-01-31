@@ -39,7 +39,7 @@ void HMC5883LInit(void)
 
 	/* Set the gain */
 	send[0] = HMC5883L_RA_CONFIG_B;
-	send[1] = 0b00100000; /* Default gain of 1090 LSB/Gauss*/
+	send[1] = 0b00100000; /* Default gain of 1090 LSB/Gauss */
 	I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_POLLING);
 
     /* Set the mode, continuous or single */

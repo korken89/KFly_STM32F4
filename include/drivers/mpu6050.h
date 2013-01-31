@@ -18,7 +18,7 @@
 #include "i2c.h"
 
 /* Defines */
-/* Convertions */
+/* Conversions */
 #define DPS250_TO_RADPS 				(0.0174532925f / 131.0f)
 #define DPS500_TO_RADPS 				(0.0174532925f / 65.5f)
 #define DPS1000_TO_RADPS				(0.0174532925f / 32.8f)

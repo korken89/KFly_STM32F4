@@ -6,12 +6,14 @@ USB_OTG_CORE_HANDLE USB_OTG_dev;
 
 void main(void)
 {
-	for (volatile uint32_t i = 0; i < 0xFFFFF; i++);
+	for (volatile uint32_t i = 0; i < 0xFFFFFF; i++);
 	/* *
 	 *
 	 * Initialization of peripherals and I/O-ports
 	 *
 	 * */
+
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 
 	/* *
 	 *
@@ -92,12 +94,12 @@ void main(void)
 	 * Start the scheduler.
 	 *
 	 * */
-	xTaskCreate(vTaskPrintTimer,
+	/*xTaskCreate(vTaskPrintTimer,
 				"TIMER",
 				256,
 				0,
 				tskIDLE_PRIORITY + 1,
-				0);
+				0);*/
 
 	vTaskStartScheduler();
 
