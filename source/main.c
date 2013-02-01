@@ -110,28 +110,13 @@ void main(void)
 
 void vTaskPrintTimer(void *pvParameters)
 {
-	extern volatile uint8_t dataholder;
-	uint8_t data[14];
-	uint8_t send = MPU6050_RA_ACCEL_XOUT_H;
-	I2C_MASTER_SETUP_Type Setup;
-
 	uint8_t msg[] = {0xa6, 0x01, 0x00, CRC8(msg, 3), 0xaa, 0xbb, (uint8_t)(CRC16(msg,6)>>8), (uint8_t)(CRC16(msg,6))};
-
-	Setup.Slave_Address_7bit = MPU6050_ADDRESS;
-	Setup.TX_Data = &send;
-	Setup.TX_Length = 1;
-	Setup.RX_Data = data;
-	Setup.RX_Length = 14;
-	Setup.Retransmissions_Max = 0;
-	Setup.Callback = NULL;
 
 	while(1)
 	{
 		vTaskDelay(1000);
-		//GetMPU6050ID((uint8_t *)&dataholder);
-		//GetHMC5883LID(data);
 		//xUSBSendData(msg, 8);
-		//I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_INTERRUPT);
+
 	}
 }
 

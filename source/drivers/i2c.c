@@ -32,14 +32,8 @@ typedef struct
 
 /* Global variable defines */
 volatile I2C_INT_CFG_Type I2Ctmp[3];		/* Pointer to I2C Config Setup */
-volatile uint8_t dataholder = 0;
 volatile uint16_t status = 0;
-volatile uint8_t whereami = 0;
-volatile uint32_t i2c_fail = 0;
-
-xSemaphoreHandle I2C1Mutex; 				/* Mutexes for the I2C */
-xSemaphoreHandle I2C2Mutex;
-xSemaphoreHandle I2C3Mutex;
+volatile int whereami = 0;
 
 /* I2C Interrupt handlers */
 void I2C_MasterHandler(I2C_TypeDef *);
@@ -100,7 +94,7 @@ void SensorBusInit(void)
 
 	/* Initialize interrupts */
 	NVIC_InitStructure.NVIC_IRQChannel = I2C2_EV_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 5;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 5; /* Lowest possible when using FreeRTOS */
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
@@ -134,6 +128,7 @@ ErrorStatus I2C_MasterTransferData(I2C_TypeDef *I2Cx, I2C_MASTER_SETUP_Type *Tra
 	/* Enable the ACK and reset Pos */
 	I2Cx->CR1 |= I2C_CR1_ACK;
 	I2Cx->CR1 &= ~I2C_CR1_POS;
+	whereami = 0;
 
 	if (Opt == I2C_TRANSFER_POLLING)
 	{
@@ -155,6 +150,7 @@ retry:
 		TransferCfg->Status = 0;
 
 		/* Send start */
+		whereami = 1;
 		TransferCfg->Status = I2C_Start(I2Cx);
 		if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 		{
@@ -166,6 +162,7 @@ retry:
 		if ((TransferCfg->TX_Length != 0) && (TransferCfg->TX_Data != NULL))
 		{
 			/* Send slave address + W direction bit = 0 */
+			whereami = 2;
 			TransferCfg->Status = I2C_Addr(I2Cx, TransferCfg->Slave_Address_7bit, 0);
 			if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 			{
@@ -177,6 +174,7 @@ retry:
 			/* Send a number of data bytes */
 			while (TransferCfg->TX_Count < TransferCfg->TX_Length)
 			{
+				whereami = 3;
 				TransferCfg->Status = I2C_SendByte(I2Cx, *(txdat++));
 				if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 				{
@@ -186,6 +184,7 @@ retry:
 				TransferCfg->TX_Count++;
 			}
 
+			whereami = 4;
 			TransferCfg->Status = WaitSR1FlagsSet(I2Cx, I2C_SR1_BTF);
 			if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 			{
@@ -197,6 +196,7 @@ retry:
 			if ((TransferCfg->RX_Length == 0) || (TransferCfg->RX_Data == NULL))
 			{
 				I2Cx->CR1 |= I2C_CR1_STOP;
+				whereami = 5;
 				TransferCfg->Status = WaitLineIdle(I2Cx);
 				return SUCCESS;
 			}
@@ -206,6 +206,7 @@ retry:
 		if ((TransferCfg->TX_Length != 0) && (TransferCfg->TX_Data != NULL) && \
 			(TransferCfg->RX_Length != 0) && (TransferCfg->RX_Data != NULL))
 		{
+			whereami = 6;
 			TransferCfg->Status = I2C_Start(I2Cx);
 			if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 			{
@@ -229,6 +230,7 @@ retry:
 		if ((TransferCfg->RX_Length != 0) && (TransferCfg->RX_Data != NULL))
 		{
 			/* Send slave address + RD direction bit = 1 */
+			whereami = 7;
 			TransferCfg->Status = I2C_Addr(I2Cx, TransferCfg->Slave_Address_7bit, 1);
 			if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 			{
@@ -254,6 +256,7 @@ retry:
 				 * even if a NACK is generated after the next received byte. */
 
 				/* Read the next byte */
+				whereami = 8;
 				TransferCfg->Status = I2C_Read(I2Cx, rxdat);
 				if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 				{
@@ -263,6 +266,7 @@ retry:
 				TransferCfg->RX_Count++;
 
 				/* Make Sure Stop bit is cleared and Line is now Idle */
+				whereami = 9;
 				TransferCfg->Status = WaitLineIdle(I2Cx);
 
 				/* Enable the Acknowledgment again */
@@ -278,6 +282,7 @@ retry:
 				/* Read the SR2 to clear ADDR */
 				(void)I2Cx->SR2;
 
+				whereami = 10;
 				/* Wait for the next 2 bytes to be received (1st in the DR, 2nd in the shift register) */
 				TransferCfg->Status = WaitSR1FlagsSet(I2Cx, I2C_SR1_BTF);
 				/* As we don't read anything from the DR, the clock is now being stretched. */
@@ -286,6 +291,7 @@ retry:
 				I2Cx->CR1 |= I2C_CR1_STOP;
 
 				/* Read the next two bytes */
+				whereami = 11;
 				TransferCfg->Status = I2C_Read(I2Cx, rxdat++);
 				if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 				{
@@ -294,6 +300,7 @@ retry:
 				}
 				TransferCfg->RX_Count++;
 
+				whereami = 12;
 				TransferCfg->Status = I2C_Read(I2Cx, rxdat);
 				if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 				{
@@ -303,6 +310,7 @@ retry:
 				TransferCfg->RX_Count++;
 
 				/* Make Sure Stop bit is cleared and Line is now Idle */
+				whereami = 13;
 				TransferCfg->Status = WaitLineIdle(I2Cx);
 
 				/* Enable the ack and reset Pos */
@@ -316,6 +324,7 @@ retry:
 
 				while((TransferCfg->RX_Length - TransferCfg->RX_Count) > 3) /* Read till the last 3 bytes */
 				{
+					whereami = 14;
 					TransferCfg->Status = I2C_Read(I2Cx, rxdat++);
 					if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 					{
@@ -326,6 +335,7 @@ retry:
 				}
 
 				/* 3 more bytes to read. Wait till the next to is actually received */
+				whereami = 15;
 				TransferCfg->Status = WaitSR1FlagsSet(I2Cx, I2C_SR1_BTF);
 				if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 				{
@@ -338,6 +348,7 @@ retry:
 				I2Cx->CR1 &= ~I2C_CR1_ACK;
 
 				/* Read N-2 */
+				whereami = 16;
 				TransferCfg->Status = I2C_Read(I2Cx, rxdat++);
 				if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 				{
@@ -349,6 +360,7 @@ retry:
 				/* Once we read this, N is going to be read to the shift register and NACK is generated */
 
 				/* Wait for the BTF */
+				whereami = 17;
 				TransferCfg->Status = WaitSR1FlagsSet(I2Cx, I2C_SR1_BTF); /* N-1 is in DR, N is in shift register */
 				if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 				{
@@ -361,6 +373,7 @@ retry:
 				I2Cx->CR1 |= I2C_CR1_STOP;
 
 				/* Read the last two bytes (N-1 and N) */
+				whereami = 18;
 				TransferCfg->Status = I2C_Read(I2Cx, rxdat++);
 				if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 				{
@@ -369,6 +382,7 @@ retry:
 				}
 				TransferCfg->RX_Count++;
 
+				whereami = 19;
 				TransferCfg->Status = I2C_Read(I2Cx, rxdat);
 				if (TransferCfg->Status & (I2C_ERROR_BIT | I2C_ERROR_BITMASK)) /* Check for errors */
 				{
@@ -377,6 +391,7 @@ retry:
 				}
 				TransferCfg->RX_Count++;
 
+				whereami = 20;
 				/* Make Sure Stop bit is cleared and Line is now Idle  */
 				TransferCfg->Status = WaitLineIdle(I2Cx);
 
@@ -427,7 +442,6 @@ void I2C_MasterHandler(I2C_TypeDef *I2Cx)
 		{ 	/* Maximum number of retransmissions reached, abort */
 			I2C_ITConfig(I2Cx, (I2C_IT_BUF | I2C_IT_EVT | I2C_IT_ERR), DISABLE);
 			I2Cx->CR1 |= I2C_CR1_STOP;
-			i2c_fail++;
 			I2Ctmp[I2C_num].RXTX_Setup->Status |= I2C_ERROR_BIT; /* Set error bit */
 		}
 		else
@@ -682,11 +696,13 @@ static uint16_t I2C_Start(I2C_TypeDef *I2Cx)
 	return WaitSR1FlagsSet(I2Cx, I2C_SR1_SB);  /* Wait till SB is set */
 }
 
+volatile uint32_t TimeOut = 0;
+
 static uint16_t WaitSR1FlagsSet(I2C_TypeDef *I2Cx, uint16_t Flags)
 {
 	/* Wait till the specified SR1 Bits are set */
 	/* More than 1 Flag can be "or"ed. This routine reads only SR1. */
-	uint32_t TimeOut = HSI_VALUE;
+	TimeOut = HSI_VALUE/2;
 
 	while(((I2Cx->SR1) & Flags) != Flags)
 		if (!(TimeOut--))

@@ -28,8 +28,10 @@ static void EXTI_HMC5883LInit(void);
 static void RevMPU6050Data(uint8_t *);
 static void RevHMC5883LData(uint8_t *);
 
-xSemaphoreHandle MPU6050_DataAvailable, HMC5883L_DataAvailable;
+xTaskHandle MPU6050Handle, HMC5883LHandle;
 xSemaphoreHandle I2C_Available;
+xSemaphoreHandle NewMeasurementAvaiable;
+
 
 /* Conversion union for sensor data */
 MPU6050_Data_Union MPU6050_Data;
@@ -37,17 +39,10 @@ HMC5883L_Data_Union HMC5883L_Data;
 
 void SensorsInterruptReadInit(void)
 {
-	vSemaphoreCreateBinary(MPU6050_DataAvailable);
-	vSemaphoreCreateBinary(HMC5883L_DataAvailable);
 	vSemaphoreCreateBinary(I2C_Available);
+	vSemaphoreCreateBinary(NewMeasurementAvaiable);
 
 	/* If an error occurs halt the execution */
-	if (MPU6050_DataAvailable == NULL)
-		while(1);
-
-	if (HMC5883L_DataAvailable == NULL)
-		while(1);
-
 	if (I2C_Available == NULL)
 		while(1);
 
@@ -56,30 +51,30 @@ void SensorsInterruptReadInit(void)
 	EXTI_SensorInit();
 
 	/* Zero Sensor_Data */
-	Sensor_Data.acc_x = 0.0f;
-	Sensor_Data.acc_y = 0.0f;
-	Sensor_Data.acc_z = 0.0f;
-	Sensor_Data.gyro_x = 0.0f;
-	Sensor_Data.gyro_y = 0.0f;
-	Sensor_Data.gyro_z = 0.0f;
-	Sensor_Data.mag_x = 0.0f;
-	Sensor_Data.mag_y = 0.0f;
-	Sensor_Data.mag_z = 0.0f;
-	Sensor_Data.pressure = 0.0f;
+	Sensor_Data.acc_x = 0;
+	Sensor_Data.acc_y = 0;
+	Sensor_Data.acc_z = 0;
+	Sensor_Data.gyro_x = 0;
+	Sensor_Data.gyro_y = 0;
+	Sensor_Data.gyro_z = 0;
+	Sensor_Data.mag_x = 0;
+	Sensor_Data.mag_y = 0;
+	Sensor_Data.mag_z = 0;
+	Sensor_Data.pressure = 0;
 
 	xTaskCreate(vTaskGetMPU6050Data,
 				"GetMPUData",
-				configMINIMAL_STACK_SIZE,
+				256,
 				0,
-				configMAX_PRIORITIES - 2, // Highest priority available
-				0);
+				configMAX_PRIORITIES - 1, // Highest priority available
+				&MPU6050Handle);
 
 	xTaskCreate(vTaskGetHMC5883LData,
 				"GetHMCData",
-				configMINIMAL_STACK_SIZE,
+				256,
 				0,
-				configMAX_PRIORITIES - 2, // Highest priority available
-				0);
+				configMAX_PRIORITIES - 1, // Highest priority available
+				&HMC5883LHandle);
 }
 
 /* *
@@ -103,8 +98,8 @@ void vTaskGetMPU6050Data(void *pvParameters)
 
 	while(1)
 	{
-		xSemaphoreTake(MPU6050_DataAvailable, portMAX_DELAY); 	/* See if there is data available */
-		xSemaphoreTake(I2C_Available, portMAX_DELAY);			/* Wait until I2C bus is free, then claim it */
+		vTaskSuspend(NULL);								/* Suspend until there is data available */
+		xSemaphoreTake(I2C_Available, portMAX_DELAY);	/* Wait until I2C bus is free, then claim it */
 		I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_INTERRUPT);
 	}
 }
@@ -124,16 +119,21 @@ static void MPU6050ParseData(void)
 	LEDToggle(LED_GREEN);
 
 	/* Move the data to the public data holder and convert signs */
-	Sensor_Data.acc_x = (float)MPU6050_Data.value.acc_x;
-	Sensor_Data.acc_y = (float)MPU6050_Data.value.acc_y;
-	Sensor_Data.acc_z = -(float)MPU6050_Data.value.acc_z;
+	Sensor_Data.acc_x = MPU6050_Data.value.acc_x;
+	Sensor_Data.acc_y = MPU6050_Data.value.acc_y;
+	Sensor_Data.acc_z = -MPU6050_Data.value.acc_z;
 
-	Sensor_Data.gyro_x = (float)MPU6050_Data.value.gyro_x;
-	Sensor_Data.gyro_y = (float)MPU6050_Data.value.gyro_y;
-	Sensor_Data.gyro_z = (float)MPU6050_Data.value.gyro_z;
+	Sensor_Data.gyro_x = MPU6050_Data.value.gyro_x;
+	Sensor_Data.gyro_y = MPU6050_Data.value.gyro_y;
+	Sensor_Data.gyro_z = MPU6050_Data.value.gyro_z;
+
+	xSemaphoreGiveFromISR(NewMeasurementAvaiable, &xHigherPriorityTaskWoken);
+	if (xHigherPriorityTaskWoken != pdFALSE)
+		vPortYieldFromISR();
+
+	xHigherPriorityTaskWoken = pdFALSE;
 
 	xSemaphoreGiveFromISR(I2C_Available, &xHigherPriorityTaskWoken);
-
 	if (xHigherPriorityTaskWoken != pdFALSE)
 		vPortYieldFromISR();
 }
@@ -159,8 +159,8 @@ void vTaskGetHMC5883LData(void *pvParameters)
 
 	while(1)
 	{
-		xSemaphoreTake(HMC5883L_DataAvailable, portMAX_DELAY); 	/* See if there is data available */
-		xSemaphoreTake(I2C_Available, portMAX_DELAY);			/* Wait until I2C bus is free, then claim it */
+		vTaskSuspend(NULL);								/* Suspend until there is data available */
+		xSemaphoreTake(I2C_Available, portMAX_DELAY);	/* Wait until I2C bus is free, then claim it */
 		I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_INTERRUPT);
 	}
 }
@@ -180,9 +180,9 @@ static void HMC5883LParseData(void)
 	LEDToggle(LED_RED);
 
 	/* Move the data to the public data holder and convert signs */
-	Sensor_Data.mag_x = (float)HMC5883L_Data.value.mag_x;
-	Sensor_Data.mag_y = (float)HMC5883L_Data.value.mag_y;
-	Sensor_Data.mag_z = (float)HMC5883L_Data.value.mag_z;
+	Sensor_Data.mag_x = HMC5883L_Data.value.mag_x;
+	Sensor_Data.mag_y = HMC5883L_Data.value.mag_y;
+	Sensor_Data.mag_z = HMC5883L_Data.value.mag_z;
 
 	xSemaphoreGiveFromISR(I2C_Available, &xHigherPriorityTaskWoken);
 
@@ -207,7 +207,7 @@ static void EXTI_MPU6050Init(void)
 	/* Enable SYSCFG clock */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
 
-	/* Configure PC14 pin as input floating */
+	/* Configure PC14 pin as input */
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
@@ -224,7 +224,7 @@ static void EXTI_MPU6050Init(void)
 	EXTI_Init(&EXTI_InitStructure);
 
 	NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY+1;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY+2;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 
@@ -242,7 +242,7 @@ static void EXTI_HMC5883LInit(void)
 	/* Enable SYSCFG clock */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
 
-	/* Configure PC13 pin as input floating */
+	/* Configure PC13 pin as input */
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
@@ -259,7 +259,7 @@ static void EXTI_HMC5883LInit(void)
 	EXTI_Init(&EXTI_InitStructure);
 
 	NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY+1;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY+2;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 
@@ -267,7 +267,7 @@ static void EXTI_HMC5883LInit(void)
 }
 
 /* *
- * This handler executes when the data available lines on the sensors
+ * This handler executes when the data ready from the sensors
  * fires. Line 14 is the MPU 6050 and Line 13 is the HMC5883L.
  * */
 void EXTI15_10_IRQHandler(void)
@@ -276,8 +276,8 @@ void EXTI15_10_IRQHandler(void)
 
 	if(EXTI_GetITStatus(EXTI_Line13) != RESET)
 	{
-		/* Data available, set HMC Sync */
-		xSemaphoreGiveFromISR(HMC5883L_DataAvailable, &xHigherPriorityTaskWoken);
+		/* Data available, resume HMC5883L data receiving task */
+		xHigherPriorityTaskWoken = xTaskResumeFromISR(HMC5883LHandle);
 
 		if (xHigherPriorityTaskWoken != pdFALSE)
 			vPortYieldFromISR();
@@ -290,8 +290,8 @@ void EXTI15_10_IRQHandler(void)
 
 	if(EXTI_GetITStatus(EXTI_Line14) != RESET)
 	{
-		/* Data available, set MPU Sync */
-		xSemaphoreGiveFromISR(MPU6050_DataAvailable, &xHigherPriorityTaskWoken);
+		/* Data available, resume MPU6050 data receiving task */
+		xHigherPriorityTaskWoken = xTaskResumeFromISR(MPU6050Handle);
 
 		if (xHigherPriorityTaskWoken != pdFALSE)
 			vPortYieldFromISR();
