@@ -26,7 +26,7 @@
 #include "hmc5883l.h"
 #include "crc.h"
 #include "pwm.h"
-#include "exti.h"
+#include "sensor_read.h"
 #include "estimation.h"
 
 /* Includes */

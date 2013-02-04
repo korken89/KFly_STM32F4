@@ -65,7 +65,6 @@ void vSerialManagerInit(void)
 {
 	vUSBQueueInit();
 
-
 	xTaskCreate(vTaskUSBSerialManager,
 				"SerialManager (USB)",
 				512,
@@ -251,14 +250,14 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			pHolder->data_length = Length_SaveToFlash;
 			break;
 
-		case Cmd_GetRegulatorData:
+		case Cmd_GetControllerData:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_GetRegulatorData;
+			pHolder->data_length = Length_GetControllerData;
 			break;
 
-		case Cmd_SetRegulatorData:
+		case Cmd_SetControllerData:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_SetRegulatorData;
+			pHolder->data_length = Length_SetControllerData;
 			break;
 
 		case Cmd_GetChannelMix:

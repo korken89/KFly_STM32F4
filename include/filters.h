@@ -31,6 +31,6 @@ typedef struct
 
 /* Global function defines */
 void IIR_LP_Filter_Init(IIR_LP_Settings *, float, float);
-void IIR_LP_Filter(IIR_LP_Settings *);
+float IIR_LP_Filter(IIR_LP_Settings *, float);
 
 #endif

@@ -32,8 +32,8 @@ typedef enum
 	Cmd_GetBootloaderVersion,
 	Cmd_GetFirmwareVersion,
 	Cmd_SaveToFlash,
-	Cmd_GetRegulatorData,
-	Cmd_SetRegulatorData,
+	Cmd_GetControllerData,
+	Cmd_SetControllerData,
 	Cmd_GetChannelMix,
 	Cmd_SetChannelMix,
 	Cmd_StartRCCalibration,
@@ -62,8 +62,8 @@ typedef enum {
 	Length_GetBootloaderVersion = 0,
 	Length_GetFirmwareVersion = 0,
 	Length_SaveToFlash = 0,
-	Length_GetRegulatorData = 0,
-	Length_SetRegulatorData,
+	Length_GetControllerData = 0,
+	Length_SetControllerData,
 	Length_GetChannelMix = 0,
 	Length_SetChannelMix,
 	Length_StartRCCalibration = 0,
@@ -86,5 +86,11 @@ typedef struct _parser_holder
 	void (*next_state)(uint8_t, struct _parser_holder *);
 	void (*parser)(struct _parser_holder *);
 } Parser_Holder_Type;
+
+typedef union
+{
+	uint8_t data[4];
+	float value;
+} f2bArray;
 
 #endif

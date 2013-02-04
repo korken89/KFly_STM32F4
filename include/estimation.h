@@ -5,7 +5,8 @@
 #include "stm32f4xx.h"
 
 /* System includes */
-#include "exti.h"
+#include "sensor_read.h"
+#include "filters.h"
 #include <math.h>
 
 /* Scheduler includes */

@@ -1,5 +1,5 @@
-#ifndef __EXTI_H
-#define __EXTI_H
+#ifndef __SENSOR_READ_H
+#define __SENSOR_READ_H
 
 /* Standard includes */
 #include "stm32f4xx.h"

@@ -6,7 +6,7 @@ USB_OTG_CORE_HANDLE USB_OTG_dev;
 
 void main(void)
 {
-	/* Give the debugger time to halt the processor ~ 1s delay */
+	/* Give the debugger time to halt the processor ~1s delay */
 	for (volatile uint32_t i = 0; i < 0xFFFFFF; i++);
 
 	/* *

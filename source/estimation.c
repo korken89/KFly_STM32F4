@@ -12,7 +12,6 @@
 
 /* Global variable defines */
 volatile Estimation_State_Struct Estimation_State;
-volatile float deg[3] = {0.0f, 0.0f, 0.0f};
 
 /* Private function defines */
 
@@ -31,7 +30,7 @@ void EstimationInit(void)
 
 	xTaskCreate(vTaskRunEstimation,
 				"Estimation",
-				(1024 * 32) / 4, // 32kB - half of all available
+				(1024 * 16) / 4, // 16kB
 				0,
 				configMAX_PRIORITIES - 1,
 				0);
@@ -41,13 +40,20 @@ void vTaskRunEstimation(void *pvParameters)
 {
 	LEDOn(LED_GREEN);
 
+	IIR_LP_Settings wx_filter, wy_filter, wz_filter;
+
+	IIR_LP_Filter_Init(&wx_filter, 200.0f, 50.0f);
+	IIR_LP_Filter_Init(&wy_filter, 200.0f, 50.0f);
+	IIR_LP_Filter_Init(&wz_filter, 200.0f, 50.0f);
+
 	while(1)
 	{
-		xSemaphoreTake(NewMeasurementAvaiable, portMAX_DELAY); /* Wait until the sensors have delivered new data */
+		/* Wait until the sensors have delivered new data */
+		xSemaphoreTake(NewMeasurementAvaiable, portMAX_DELAY);
 
-		Estimation_State.wx = (float)(Sensor_Data.gyro_x)*DPS2000_TO_RADPS;
-		Estimation_State.wy = (float)(Sensor_Data.gyro_y)*DPS2000_TO_RADPS;
-		Estimation_State.wz = (float)(Sensor_Data.gyro_z)*DPS2000_TO_RADPS;
+		Estimation_State.wx = IIR_LP_Filter(&wx_filter, (float)(Sensor_Data.gyro_x)*DPS2000_TO_RADPS);
+		Estimation_State.wy = IIR_LP_Filter(&wy_filter, (float)(Sensor_Data.gyro_y)*DPS2000_TO_RADPS);
+		Estimation_State.wz = IIR_LP_Filter(&wz_filter, (float)(Sensor_Data.gyro_z)*DPS2000_TO_RADPS);
 
 		MadgwickAHRSupdate(	Estimation_State.wx,
 							Estimation_State.wy,
@@ -63,10 +69,6 @@ void vTaskRunEstimation(void *pvParameters)
 		Estimation_State.q1 = q1;
 		Estimation_State.q2 = q2;
 		Estimation_State.q3 = q3;
-
-		deg[0] = atan2f(2*(q0*q1 + q2*q3), 1 - 2*(q1*q1 + q2*q2))*57.2958f;
-		deg[1] = asin(2*(q0*q2 + q1*q3))*57.2958f;
-		deg[2] = atan2f(2*(q0*q3 + q2*q1), 1 - 2*(q3*q3 + q2*q2))*57.2958f;
 
 		LEDToggle(LED_GREEN);
 	}
