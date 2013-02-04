@@ -92,7 +92,7 @@ extern uint32_t SystemCoreClock;
 #define configCPU_CLOCK_HZ					( SystemCoreClock )
 #define configTICK_RATE_HZ					( ( portTickType ) 1000 )
 #define configMAX_PRIORITIES				( ( unsigned portBASE_TYPE ) 5 )
-#define configMINIMAL_STACK_SIZE			( ( unsigned short ) 130 )
+#define configMINIMAL_STACK_SIZE			( ( unsigned short ) 128 )
 #define configTOTAL_HEAP_SIZE				( ( size_t ) ( 64 * 1024 ) ) // The heap is the entire CCM memory of the STM32F4xx
 #define configMAX_TASK_NAME_LEN				( 20 )
 #define configUSE_TRACE_FACILITY			0
@@ -129,6 +129,7 @@ to exclude the API function. */
 #define INCLUDE_vTaskSuspend				1
 #define INCLUDE_vTaskDelayUntil				1
 #define INCLUDE_vTaskDelay					1
+#define INCLUDE_uxTaskGetStackHighWaterMark	0
 
 /* Cortex-M specific definitions. */
 #ifdef __NVIC_PRIO_BITS

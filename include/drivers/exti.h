@@ -64,6 +64,7 @@ typedef struct
 
 /* Global variable defines */
 extern volatile Raw_Sensor_Data_Struct Sensor_Data;
+extern xSemaphoreHandle NewMeasurementAvaiable;
 
 /* Global function defines */
 void SensorsInterruptReadInit(void);

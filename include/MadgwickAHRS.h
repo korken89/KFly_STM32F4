@@ -7,7 +7,7 @@
 //
 // Date			Author          Notes
 // 29/09/2011	SOH Madgwick    Initial release
-// 02/10/2011	SOH Madgwick	Optimised for reduced CPU load
+// 02/10/2011	SOH Madgwick	Optimized for reduced CPU load
 //
 //=====================================================================================================
 #ifndef MadgwickAHRS_h

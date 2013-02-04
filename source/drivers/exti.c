@@ -45,6 +45,8 @@ void SensorsInterruptReadInit(void)
 	/* If an error occurs halt the execution */
 	if (I2C_Available == NULL)
 		while(1);
+	if (NewMeasurementAvaiable == NULL)
+		while(1);
 
 	xSemaphoreGive(I2C_Available);
 
@@ -63,18 +65,18 @@ void SensorsInterruptReadInit(void)
 	Sensor_Data.pressure = 0;
 
 	xTaskCreate(vTaskGetMPU6050Data,
-				"GetMPUData",
-				256,
-				0,
-				configMAX_PRIORITIES - 1, // Highest priority available
-				&MPU6050Handle);
+			"Get MPU6050 Data",
+			configMINIMAL_STACK_SIZE,
+			0,
+			configMAX_PRIORITIES - 1, // Highest priority available
+			&MPU6050Handle);
 
 	xTaskCreate(vTaskGetHMC5883LData,
-				"GetHMCData",
-				256,
-				0,
-				configMAX_PRIORITIES - 1, // Highest priority available
-				&HMC5883LHandle);
+			"Get HMC5883L Data",
+			configMINIMAL_STACK_SIZE,
+			0,
+			configMAX_PRIORITIES - 1, // Highest priority available
+			&HMC5883LHandle);
 }
 
 /* *
@@ -110,18 +112,17 @@ void vTaskGetMPU6050Data(void *pvParameters)
  * Notice that this is still in the interrupt.
  *
  * */
+
 static void MPU6050ParseData(void)
 {
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
 	RevMPU6050Data(MPU6050_Data.data);
 
-	LEDToggle(LED_GREEN);
-
 	/* Move the data to the public data holder and convert signs */
 	Sensor_Data.acc_x = MPU6050_Data.value.acc_x;
 	Sensor_Data.acc_y = MPU6050_Data.value.acc_y;
-	Sensor_Data.acc_z = -MPU6050_Data.value.acc_z;
+	Sensor_Data.acc_z = -MPU6050_Data.value.acc_z; /* The Z-axis is positive down, flip sign to fix */
 
 	Sensor_Data.gyro_x = MPU6050_Data.value.gyro_x;
 	Sensor_Data.gyro_y = MPU6050_Data.value.gyro_y;

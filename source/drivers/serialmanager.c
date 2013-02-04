@@ -67,7 +67,7 @@ void vSerialManagerInit(void)
 
 
 	xTaskCreate(vTaskUSBSerialManager,
-				"SerialManager(USB)",
+				"SerialManager (USB)",
 				512,
 				0,
 				tskSerialManagerPRIORITY,

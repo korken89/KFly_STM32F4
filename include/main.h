@@ -27,6 +27,7 @@
 #include "crc.h"
 #include "pwm.h"
 #include "exti.h"
+#include "estimation.h"
 
 /* Includes */
 #include "led.h"

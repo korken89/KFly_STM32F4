@@ -6,10 +6,12 @@ USB_OTG_CORE_HANDLE USB_OTG_dev;
 
 void main(void)
 {
+	/* Give the debugger time to halt the processor ~ 1s delay */
 	for (volatile uint32_t i = 0; i < 0xFFFFFF; i++);
+
 	/* *
 	 *
-	 * Initialization of peripherals and I/O-ports
+	 * Set interrupt priority to 4 priority bits and 0 sub-priority bits.
 	 *
 	 * */
 
@@ -63,10 +65,17 @@ void main(void)
 
 	/* *
 	 *
-	 * Initializes the sensor interrupts
+	 * Initializes the sensor interrupts.
 	 *
 	 * */
 	SensorsInterruptReadInit();
+
+	/* *
+	 *
+	 * Estimation init.
+	 *
+	 * */
+	EstimationInit();
 
 	/* *
 	 *
@@ -94,12 +103,12 @@ void main(void)
 	 * Start the scheduler.
 	 *
 	 * */
-	/*xTaskCreate(vTaskPrintTimer,
-				"TIMER",
+	xTaskCreate(vTaskPrintTimer,
+				"RTS",
 				256,
 				0,
 				tskIDLE_PRIORITY + 1,
-				0);*/
+				0);
 
 	vTaskStartScheduler();
 
@@ -108,14 +117,17 @@ void main(void)
 	while(1);
 }
 
+volatile char RTStats[1024];
+
 void vTaskPrintTimer(void *pvParameters)
 {
-	uint8_t msg[] = {0xa6, 0x01, 0x00, CRC8(msg, 3), 0xaa, 0xbb, (uint8_t)(CRC16(msg,6)>>8), (uint8_t)(CRC16(msg,6))};
+	//uint8_t msg[] = {0xa6, 0x01, 0x00, CRC8(msg, 3), 0xaa, 0xbb, (uint8_t)(CRC16(msg,6)>>8), (uint8_t)(CRC16(msg,6))};
 
 	while(1)
 	{
 		vTaskDelay(1000);
 		//xUSBSendData(msg, 8);
+		//vTaskGetRunTimeStats(RTStats);
 
 	}
 }

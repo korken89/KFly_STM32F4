@@ -16,6 +16,11 @@ local.properties
 .settings/
 .loadpath
 
+# GCC
+*.o
+*.elf
+*.map
+
 # External tool builders
 .externalToolBuilders/
 

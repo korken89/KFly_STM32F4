@@ -2,8 +2,21 @@
 
 /* for caddr_t (typedef char * caddr_t;) */
 #include <sys/types.h>
+#include <sys/stat.h>
 
 extern int  __HEAP_START;
+
+int _kill(int pid, int sig)
+{
+	(void)pid;
+	(void)sig; /* avoid warnings */
+	return -1;
+}
+
+int _getpid(void)
+{
+	return 1;
+}
 
 caddr_t _sbrk ( int incr )
 {
