@@ -1,3 +1,4 @@
+target remote :3333
 monitor reset halt
 monitor sleep 100
 monitor flash write_image erase unlock main.elf 0 elf

@@ -55,10 +55,14 @@ void MadgwickAHRSupdate(float gx, float gy, float gz, float ax, float ay, float 
 	}
 
 	// Rate of change of quaternion from gyroscope
-	qDot1 = 0.5f * (-q1 * gx - q2 * gy - q3 * gz);
-	qDot2 = 0.5f * (q0 * gx + q2 * gz - q3 * gy);
-	qDot3 = 0.5f * (q0 * gy - q1 * gz + q3 * gx);
-	qDot4 = 0.5f * (q0 * gz + q1 * gy - q2 * gx);
+//	qDot1 = 0.5f * (-q1 * gx - q2 * gy - q3 * gz);
+//	qDot2 = 0.5f * (q0 * gx + q2 * gz - q3 * gy);
+//	qDot3 = 0.5f * (q0 * gy - q1 * gz + q3 * gx);
+//	qDot4 = 0.5f * (q0 * gz + q1 * gy - q2 * gx);
+	qDot1 = -0.5f * (- q1 * gx - q2 * gy - q3 * gz);
+	qDot2 = -0.5f * (q0 * gx + q3 * gy - q2 * gz);
+	qDot3 = -0.5f * (- q3 * gx + q0 * gy + q1 * gz);
+	qDot4 = -0.5f * (q2 * gx - q1 * gy + q0 * gz);
 
 	// Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalization)
 	if(!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f))) {
@@ -147,10 +151,14 @@ void MadgwickAHRSupdateIMU(float gx, float gy, float gz, float ax, float ay, flo
 	float _2q0, _2q1, _2q2, _2q3, _4q0, _4q1, _4q2 ,_8q1, _8q2, q0q0, q1q1, q2q2, q3q3;
 
 	// Rate of change of quaternion from gyroscope
-	qDot1 = 0.5f * (-q1 * gx - q2 * gy - q3 * gz);
-	qDot2 = 0.5f * (q0 * gx + q2 * gz - q3 * gy);
-	qDot3 = 0.5f * (q0 * gy - q1 * gz + q3 * gx);
-	qDot4 = 0.5f * (q0 * gz + q1 * gy - q2 * gx);
+	//qDot1 = 0.5f * (-q1 * gx - q2 * gy - q3 * gz);
+	//qDot2 = 0.5f * (q0 * gx + q2 * gz - q3 * gy);
+	//qDot3 = 0.5f * (q0 * gy - q1 * gz + q3 * gx);
+	//qDot4 = 0.5f * (q0 * gz + q1 * gy - q2 * gx);
+	qDot1 = -0.5f * (- q1 * gx - q2 * gy - q3 * gz);
+	qDot2 = -0.5f * (q0 * gx + q3 * gy - q2 * gz);
+	qDot3 = -0.5f * (- q3 * gx + q0 * gy + q1 * gz);
+	qDot4 = -0.5f * (q2 * gx - q1 * gy + q0 * gz);
 
 	// Compute feedback only if accelerometer measurement valid (avoids NaN in accelerometer normalisation)
 	if(!((ax == 0.0f) && (ay == 0.0f) && (az == 0.0f))) {

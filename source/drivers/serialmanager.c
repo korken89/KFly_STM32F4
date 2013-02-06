@@ -78,7 +78,6 @@ void vSerialManagerInit(void)
  *
  * The Serial Manager task will handle incoming
  * data and direct it for decode and processing.
- * The state machine can be seen in serial_state.png
  *
  * */
 void vTaskUSBSerialManager(void *pvParameters)

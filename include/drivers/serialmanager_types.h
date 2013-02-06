@@ -93,4 +93,16 @@ typedef union
 	float value;
 } f2bArray;
 
+typedef union
+{
+	uint8_t data[2];
+	int16_t value;
+} sint2bArray;
+
+typedef union
+{
+	uint8_t data[2];
+	int32_t value;
+} int2bArray;
+
 #endif

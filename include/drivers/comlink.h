@@ -15,6 +15,7 @@
 /* KFly includes */
 
 /* Includes */
+#include "serialmanager.h"
 
 /* Defines */
 #define xUSBQueueSize		256

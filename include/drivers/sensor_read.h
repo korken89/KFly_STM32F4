@@ -43,8 +43,8 @@ typedef union
 	struct
 	{
 		int16_t mag_x;
-		int16_t mag_y;
-		int16_t mag_z;
+		int16_t mag_z; // For some reason the HMC5883L has stored
+		int16_t mag_y; // its axises in the order X, Z, Y
 	} value;
 } HMC5883L_Data_Union;
 

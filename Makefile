@@ -17,6 +17,7 @@ GCC     = arm-none-eabi-gcc
 SIZE    = arm-none-eabi-size
 OBJDUMP = arm-none-eabi-objdump
 OBJCOPY = arm-none-eabi-objcopy
+GDB     = arm-none-eabi-gdb
 
 # Make date
 DATE = 20$(shell date +'%y%m%d-%H%M')
@@ -78,8 +79,8 @@ BINPLACE += -j.preinit_array -j.init_array -j.fini_array -j.data
 
 CTEST = $(wildcard */*/*.c)
 
-test:
-	@echo $(CTEST)
+load: clean all
+	$(GDB) --command=script
 
 dump: main.elf
 	@$(OBJDUMP) -D main.elf > main.dump
