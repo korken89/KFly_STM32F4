@@ -97,6 +97,16 @@ float tangent(float x)
 	return (sine(x) / cosine(x));
 }
 
+float bound(float max, float min, float x)
+{
+	if (x > max)
+		return max;
+	else if (x < min)
+		return min;
+	else
+		return x;
+}
+
 float invSqrt(float x)
 {
 	float halfx = 0.5f * x;

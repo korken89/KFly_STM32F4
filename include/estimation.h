@@ -21,6 +21,7 @@
 /* KFly includes */
 
 /* Includes */
+#include "control.h"
 #include "MadgwickAHRS.h"
 
 /* Defines */

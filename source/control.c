@@ -11,22 +11,24 @@
 /* Private Typedefs */
 
 /* Global variable defines */
-volatile Control_Reference_Struct ControlReference;
+volatile Control_Reference_Struct Control_Reference;
 
 /* Private function defines */
 
 void ControlInit(void)
 {
-	ControlReference.mode = FLIGHTMODE_RATE;
+	Control_Reference.mode = FLIGHTMODE_RATE;
 
-	ControlReference.q.q0 = 1.0f;
-	ControlReference.q.q1 = 0.0f;
-	ControlReference.q.q2 = 0.0f;
-	ControlReference.q.q3 = 0.0f;
+	Control_Reference.q.q0 = 1.0f;
+	Control_Reference.q.q1 = 0.0f;
+	Control_Reference.q.q2 = 0.0f;
+	Control_Reference.q.q3 = 0.0f;
 
-	ControlReference.w.x = 0.0f;
-	ControlReference.w.y = 0.0f;
-	ControlReference.w.z = 0.0f;
+	Control_Reference.w.x = 0.0f;
+	Control_Reference.w.y = 0.0f;
+	Control_Reference.w.z = 0.0f;
+
+	Control_Reference.throttle = 0.5f;
 }
 
 void vTaskRunControl(void *pvParameters)
@@ -36,6 +38,8 @@ void vTaskRunControl(void *pvParameters)
 		vTaskSuspend(NULL);
 	}
 }
+
+volatile quaternion_t q_err;
 
 void CalcControl(void)
 {
@@ -50,12 +54,32 @@ void CalcControl(void)
 	 *  u_a
 	 *
 	 * */
-	float P_q = 100.0f;
-	float P_w = 100.0f;
 
+	const float P_q = 5.0f;
+	const float P_w = 0.1f;
 
+	quaternion_t qc_m = {Estimation_State.q.q0,
+						-Estimation_State.q.q1,
+						-Estimation_State.q.q2,
+						-Estimation_State.q.q3};
 
-	uint32_t u_r = (uint32_t)(P_w * (Estimation_State.w.x - ControlReference.w.x));
+	/* Calculate quaternion error */
+	qmult(&Control_Reference.q, &qc_m, &q_err);
 
+	Control_Reference.w.x = P_q * q_err.q1;
 
+	float u_f = Control_Reference.throttle;
+	float u_r = u_f;
+	u_f += (-P_w * (Estimation_State.w.x - Control_Reference.w.x));
+	u_r -= (-P_w * (Estimation_State.w.x - Control_Reference.w.x));
+
+	vSetRCOutput(RC_CHANNEL1, ControlSignal2PWMPeriod(u_f));
+	vSetRCOutput(RC_CHANNEL2, ControlSignal2PWMPeriod(u_f));
+	vSetRCOutput(RC_CHANNEL3, ControlSignal2PWMPeriod(u_r));
+	vSetRCOutput(RC_CHANNEL4, ControlSignal2PWMPeriod(u_r));
+}
+
+uint32_t ControlSignal2PWMPeriod(float u)
+{
+	return (uint32_t)(1000.0f * bound(1.0f, 0.0f, u));
 }

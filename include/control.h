@@ -37,12 +37,16 @@ typedef struct
 	Flight_Mode_Type mode;
 	quaternion_t q;
 	vector_t w;
+	float throttle;
 } Control_Reference_Struct;
 
 /* Global variable defines */
+extern volatile Control_Reference_Struct Control_Reference;
 
 /* Global function defines */
 void ControlInit(void);
 void vTaskRunControl(void *);
+void CalcControl(void);
+uint32_t ControlSignal2PWMPeriod(float);
 
 #endif

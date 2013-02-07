@@ -59,6 +59,7 @@ void qvqc(quaternion_t *, vector_t *, vector_t *);
 float sine(float);
 float cosine(float);
 float tangent(float);
+float bound(float, float, float);
 float invSqrt(float);
 
 

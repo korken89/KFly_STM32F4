@@ -57,14 +57,16 @@ void vTaskRunEstimation(void *pvParameters)
 							-(float)Sensor_Data.acc_x, 	// The Madgwick algorithm uses a NED-frame
 							(float)Sensor_Data.acc_y,
 							-(float)Sensor_Data.acc_z, 	// The Madgwick algorithm uses a NED-frame
-							-(float)Sensor_Data.mag_x,	// The Madgwick algorithm uses a NED-frame
-							(float)Sensor_Data.mag_y,
-							-(float)Sensor_Data.mag_z);	// The Madgwick algorithm uses a NED-frame
+							0.0f,//-(float)Sensor_Data.mag_x,	// The Madgwick algorithm uses a NED-frame
+							0.0f,//(float)Sensor_Data.mag_y,
+							0.0f);//-(float)Sensor_Data.mag_z);	// The Madgwick algorithm uses a NED-frame
 
 		Estimation_State.q.q0 = q0;
 		Estimation_State.q.q1 = q1;
 		Estimation_State.q.q2 = q2;
 		Estimation_State.q.q3 = q3;
+
+		CalcControl();
 
 		if (i > 4)
 		{
