@@ -19,14 +19,14 @@ void ControlInit(void)
 {
 	ControlReference.mode = FLIGHTMODE_RATE;
 
-	ControlReference.q0 = 1.0f;
-	ControlReference.q1 = 0.0f;
-	ControlReference.q2 = 0.0f;
-	ControlReference.q3 = 0.0f;
+	ControlReference.q.q0 = 1.0f;
+	ControlReference.q.q1 = 0.0f;
+	ControlReference.q.q2 = 0.0f;
+	ControlReference.q.q3 = 0.0f;
 
-	ControlReference.wx = 0.0f;
-	ControlReference.wy = 0.0f;
-	ControlReference.wz = 0.0f;
+	ControlReference.w.x = 0.0f;
+	ControlReference.w.y = 0.0f;
+	ControlReference.w.z = 0.0f;
 }
 
 void vTaskRunControl(void *pvParameters)
@@ -55,7 +55,7 @@ void CalcControl(void)
 
 
 
-	uint32_t u_r = (uint32_t)(P_w * (Estimation_State.wx - ControlReference.wx));
+	uint32_t u_r = (uint32_t)(P_w * (Estimation_State.w.x - ControlReference.w.x));
 
 
 }

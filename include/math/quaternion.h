@@ -26,9 +26,9 @@ typedef struct
 
 typedef struct
 {
-	float v0;
-	float v1;
-	float v2;
+	float x;
+	float y;
+	float z;
 } vector_t;
 
 /* Global variable defines */

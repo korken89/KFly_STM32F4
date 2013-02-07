@@ -58,15 +58,15 @@ void qvqc(quaternion_t *q, vector_t *v, vector_t *vr)
 	 *
 	 * */
 	quaternion_t qc = {q->q0, - q->q1, - q->q2, - q->q3};
-	quaternion_t qv = {0.0f, v->v0, v->v1, v->v2};
+	quaternion_t qv = {0.0f, v->x, v->y, v->z};
 	quaternion_t qr1, qr2;
 
 	qmult(q, &qv, &qr1);
 	qmult(&qr1, &qc, &qr2);
 
-	vr->v0 = qr2.q1;
-	vr->v1 = qr2.q2;
-	vr->v2 = qr2.q3;
+	vr->x = qr2.q1;
+	vr->y = qr2.q2;
+	vr->z = qr2.q3;
 }
 
 /* *

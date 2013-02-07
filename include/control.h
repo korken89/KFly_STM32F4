@@ -11,6 +11,7 @@
 #include "crc.h"
 #include "estimation.h"
 #include "pwm.h"
+#include "quaternion.h"
 
 /* Scheduler includes */
 #include "FreeRTOS.h"
@@ -34,13 +35,8 @@ typedef enum
 typedef struct
 {
 	Flight_Mode_Type mode;
-	float q0;
-	float q1;
-	float q2;
-	float q3;
-	float wx;
-	float wy;
-	float wz;
+	quaternion_t q;
+	vector_t w;
 } Control_Reference_Struct;
 
 /* Global variable defines */

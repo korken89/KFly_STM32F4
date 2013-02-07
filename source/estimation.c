@@ -19,16 +19,16 @@ static void CreateMessage(KFly_Command_Type cmd, uint8_t *message, uint8_t size)
 
 void EstimationInit(void)
 {
-	Estimation_State.q0 = 1.0f;
-	Estimation_State.q1 = 0.0f;
-	Estimation_State.q2 = 0.0f;
-	Estimation_State.q3 = 0.0f;
-	Estimation_State.wx = 0.0f;
-	Estimation_State.wy = 0.0f;
-	Estimation_State.wz = 0.0f;
-	Estimation_State.wxb = 0.0f;
-	Estimation_State.wyb = 0.0f;
-	Estimation_State.wzb = 0.0f;
+	Estimation_State.q.q0 = 1.0f;
+	Estimation_State.q.q1 = 0.0f;
+	Estimation_State.q.q2 = 0.0f;
+	Estimation_State.q.q3 = 0.0f;
+	Estimation_State.w.x = 0.0f;
+	Estimation_State.w.y = 0.0f;
+	Estimation_State.w.z = 0.0f;
+	Estimation_State.wb.x = 0.0f;
+	Estimation_State.wb.y = 0.0f;
+	Estimation_State.wb.z = 0.0f;
 
 	xTaskCreate(vTaskRunEstimation,
 			"Estimation",
@@ -40,11 +40,6 @@ void EstimationInit(void)
 
 void vTaskRunEstimation(void *pvParameters)
 {
-	IIR_LP_Settings wx_filter, wy_filter, wz_filter;
-
-	IIR_LP_Filter_Init(&wx_filter, 200.0f, 50.0f);
-	IIR_LP_Filter_Init(&wy_filter, 200.0f, 50.0f);
-	IIR_LP_Filter_Init(&wz_filter, 200.0f, 50.0f);
 	int i = 0;
 
 	while(1)
@@ -52,13 +47,13 @@ void vTaskRunEstimation(void *pvParameters)
 		/* Wait until the sensors have delivered new data */
 		xSemaphoreTake(NewMeasurementAvaiable, portMAX_DELAY);
 
-		Estimation_State.wx = (float)(Sensor_Data.gyro_x)*DPS2000_TO_RADPS;
-		Estimation_State.wy = (float)(Sensor_Data.gyro_y)*DPS2000_TO_RADPS;
-		Estimation_State.wz = (float)(Sensor_Data.gyro_z)*DPS2000_TO_RADPS;
+		Estimation_State.w.x = (float)(Sensor_Data.gyro_x)*DPS2000_TO_RADPS;
+		Estimation_State.w.y = (float)(Sensor_Data.gyro_y)*DPS2000_TO_RADPS;
+		Estimation_State.w.z = (float)(Sensor_Data.gyro_z)*DPS2000_TO_RADPS;
 
-		MadgwickAHRSupdate(	-Estimation_State.wx,		// The Madgwick algorithm uses a NED-frame
-							Estimation_State.wy,
-							-Estimation_State.wz,		// The Madgwick algorithm uses a NED-frame
+		MadgwickAHRSupdate(	-Estimation_State.w.x,		// The Madgwick algorithm uses a NED-frame
+							Estimation_State.w.y,
+							-Estimation_State.w.z,		// The Madgwick algorithm uses a NED-frame
 							-(float)Sensor_Data.acc_x, 	// The Madgwick algorithm uses a NED-frame
 							(float)Sensor_Data.acc_y,
 							-(float)Sensor_Data.acc_z, 	// The Madgwick algorithm uses a NED-frame
@@ -66,10 +61,10 @@ void vTaskRunEstimation(void *pvParameters)
 							(float)Sensor_Data.mag_y,
 							-(float)Sensor_Data.mag_z);	// The Madgwick algorithm uses a NED-frame
 
-		Estimation_State.q0 = q0;
-		Estimation_State.q1 = q1;
-		Estimation_State.q2 = q2;
-		Estimation_State.q3 = q3;
+		Estimation_State.q.q0 = q0;
+		Estimation_State.q.q1 = q1;
+		Estimation_State.q.q2 = q2;
+		Estimation_State.q.q3 = q3;
 
 		if (i > 4)
 		{

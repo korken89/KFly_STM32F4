@@ -9,6 +9,7 @@
 #include "filters.h"
 #include "comlink.h"
 #include "crc.h"
+#include "quaternion.h"
 #include <math.h>
 
 /* Scheduler includes */
@@ -27,16 +28,9 @@
 /* Typedefs */
 typedef struct
 {
-	float q0;
-	float q1;
-	float q2;
-	float q3;
-	float wx;
-	float wy;
-	float wz;
-	float wxb;
-	float wyb;
-	float wzb;
+	quaternion_t q;
+	vector_t w;
+	vector_t wb;
 } Estimation_State_Struct;
 
 /* Global variable defines */
