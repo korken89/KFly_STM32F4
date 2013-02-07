@@ -20,6 +20,7 @@ local.properties
 *.o
 *.elf
 *.map
+.goutputstream*
 
 # External tool builders
 .externalToolBuilders/
