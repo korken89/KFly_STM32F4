@@ -29,7 +29,7 @@ void PWMInit(void)
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef TIM_OCInitStructure;
 	GPIO_InitTypeDef GPIO_InitStructure;
-	uint16_t PrescalerValue = ((SystemCoreClock /2) / TIMER_RATE) - 1;
+	uint16_t PrescalerValue = ((SystemCoreClock / 2) / TIMER_RATE) - 1;
 
 	/* *
 	 * Timer setup starts here!
@@ -69,7 +69,7 @@ void PWMInit(void)
 	 * */
 
 	/* Time base configuration */
-	TIM_TimeBaseStructure.TIM_Period = PEROID_50HZ; /* Start at 50 Hz PWM */
+	TIM_TimeBaseStructure.TIM_Period = PEROID_400HZ; /* Start at 400 Hz PWM */
 	TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
@@ -124,14 +124,14 @@ void PWMInit(void)
 	TIM_Cmd(TIM8, ENABLE);
 
 	/* Set start PWM value at 1ms pulse width */
-	TIM4->CCR1 = 2000; /* Output 4 */
-	TIM4->CCR2 = 2000; /* Output 3 */
-	TIM4->CCR3 = 2000; /* Output 2 */
-	TIM4->CCR4 = 2000; /* Output 1 */
-	TIM3->CCR1 = 2000; /* Output 8 */
-	TIM3->CCR2 = 2000; /* Output 7 */
-	TIM8->CCR3 = 2000; /* Output 6 */
-	TIM8->CCR4 = 2000; /* Output 5 */
+	TIM4->CCR1 = 1000; /* Output 4 */
+	TIM4->CCR2 = 1000; /* Output 3 */
+	TIM4->CCR3 = 1000; /* Output 2 */
+	TIM4->CCR4 = 1000; /* Output 1 */
+	TIM3->CCR1 = 1000; /* Output 8 */
+	TIM3->CCR2 = 1000; /* Output 7 */
+	TIM8->CCR3 = 1000; /* Output 6 */
+	TIM8->CCR4 = 1000; /* Output 5 */
 }
 
 /* *
@@ -153,7 +153,7 @@ void vSetRCOutput(Output_Channel_Type ch, uint32_t period)
 	else if (period < RC_MIN) /* If below 1ms, set it to 1ms */
 		period = RC_MIN;
 
-	*((uint32_t *)PWM_CH[ch]) = period; /* Instead of big switch/if statement */
+	*((uint32_t *)PWM_CH[ch]) = period + 1200; /* Instead of big switch/if statement */
 }
 
 /* *

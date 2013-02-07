@@ -13,6 +13,8 @@
 #ifndef MadgwickAHRS_h
 #define MadgwickAHRS_h
 
+#include "quaternion.h"
+
 //----------------------------------------------------------------------------------------------------
 // Variable declaration
 

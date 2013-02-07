@@ -9,6 +9,7 @@
 // 29/09/2011	SOH Madgwick    Initial release
 // 02/10/2011	SOH Madgwick	Optimized for reduced CPU load
 // 19/02/2012	SOH Madgwick	Magnetometer measurement is normalized
+// 07/02/2013	Emil Fresk		Fixed error in math, wrong derivative direction and wrong frame
 //
 //=====================================================================================================
 
@@ -214,20 +215,6 @@ void MadgwickAHRSupdateIMU(float gx, float gy, float gz, float ax, float ay, flo
 	q1 *= recipNorm;
 	q2 *= recipNorm;
 	q3 *= recipNorm;
-}
-
-//---------------------------------------------------------------------------------------------------
-// Fast inverse square-root
-// See: http://en.wikipedia.org/wiki/Fast_inverse_square_root
-
-float invSqrt(float x) {
-	float halfx = 0.5f * x;
-	float y = x;
-	long i = *(long*)&y;
-	i = 0x5f3759df - (i>>1);
-	y = *(float*)&i;
-	y = y * (1.5f - (halfx * y * y));
-	return y;
 }
 
 //====================================================================================================

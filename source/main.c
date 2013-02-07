@@ -125,7 +125,10 @@ void vTaskPrintTimer(void *pvParameters)
 
 	while(1)
 	{
-		vTaskDelay(1000);
+		vTaskDelay(2000);
+		vSetRCOutput(RC_CHANNEL2, 0);
+		vTaskDelay(2000);
+		vSetRCOutput(RC_CHANNEL2, 999);
 		//xUSBSendData(msg, 8);
 		//vTaskGetRunTimeStats(RTStats);
 

@@ -41,8 +41,10 @@ CSTD += $(STDLIBDIR)misc.c
 
 
 # Sources
-INCLUDE = -I./include -I./include/drivers -I./CMSIS -I./Libraries/STM32F4xx_StdPeriph_Driver/inc
+INCLUDE = -I./include -I./include/drivers -I./include/math 
+INCLUDE += -I./CMSIS -I./Libraries/STM32F4xx_StdPeriph_Driver/inc
 CSRCS = $(wildcard CMSIS/*.c) $(wildcard source/*.c) $(wildcard source/drivers/*.c) 
+CSRCS += $(wildcard source/math/*.c) 
 
 # FreeRTOS includes and source files
 RTOS_DIR = FreeRTOS/

@@ -18,8 +18,8 @@
 #define TIMER_RATE		1000000 /* Hz */
 #define PEROID_50HZ 	(TIMER_RATE/50 - 1)
 #define PEROID_400HZ 	(TIMER_RATE/400 - 1)
-#define RC_MIN			1000
-#define RC_MAX			1999
+#define RC_MIN			0
+#define RC_MAX			999
 
 /* Typedefs */
 typedef enum
