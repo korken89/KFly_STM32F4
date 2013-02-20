@@ -123,15 +123,17 @@ void PWMInit(void)
 	TIM_Cmd(TIM4, ENABLE);
 	TIM_Cmd(TIM8, ENABLE);
 
+	const uint32_t per = 1000;
+
 	/* Set start PWM value at 1ms pulse width */
-	TIM4->CCR1 = 1000; /* Output 4 */
-	TIM4->CCR2 = 1000; /* Output 3 */
-	TIM4->CCR3 = 1000; /* Output 2 */
-	TIM4->CCR4 = 1000; /* Output 1 */
-	TIM3->CCR1 = 1000; /* Output 8 */
-	TIM3->CCR2 = 1000; /* Output 7 */
-	TIM8->CCR3 = 1000; /* Output 6 */
-	TIM8->CCR4 = 1000; /* Output 5 */
+	TIM4->CCR1 = per; /* Output 4 */
+	TIM4->CCR2 = per; /* Output 3 */
+	TIM4->CCR3 = per; /* Output 2 */
+	TIM4->CCR4 = per; /* Output 1 */
+	TIM3->CCR1 = per; /* Output 8 */
+	TIM3->CCR2 = per; /* Output 7 */
+	TIM8->CCR3 = per; /* Output 6 */
+	TIM8->CCR4 = per; /* Output 5 */
 }
 
 /* *
@@ -153,7 +155,7 @@ void vSetRCOutput(Output_Channel_Type ch, uint32_t period)
 	else if (period < RC_MIN) /* If below 1ms, set it to 1ms */
 		period = RC_MIN;
 
-	*((uint32_t *)PWM_CH[ch]) = period + 1200; /* Instead of big switch/if statement */
+	*((uint32_t *)PWM_CH[ch]) = period + 1000; /* Instead of big switch/if statement */
 }
 
 /* *

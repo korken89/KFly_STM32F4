@@ -28,7 +28,7 @@ void ControlInit(void)
 	Control_Reference.w.y = 0.0f;
 	Control_Reference.w.z = 0.0f;
 
-	Control_Reference.throttle = 0.5f;
+	Control_Reference.throttle = 0.45f;
 }
 
 void vTaskRunControl(void *pvParameters)
@@ -38,8 +38,6 @@ void vTaskRunControl(void *pvParameters)
 		vTaskSuspend(NULL);
 	}
 }
-
-volatile quaternion_t q_err;
 
 void CalcControl(void)
 {
@@ -58,6 +56,7 @@ void CalcControl(void)
 	const float P_q = 5.0f;
 	const float P_w = 0.1f;
 
+	quaternion_t q_err;
 	quaternion_t qc_m = {Estimation_State.q.q0,
 						-Estimation_State.q.q1,
 						-Estimation_State.q.q2,

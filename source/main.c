@@ -7,7 +7,7 @@ USB_OTG_CORE_HANDLE USB_OTG_dev;
 void main(void)
 {
 	/* Give the debugger time to halt the processor ~1s delay */
-	for (volatile uint32_t i = 0; i < 0xFFFFFF; i++);
+	for (volatile uint32_t i = 0; i < 0xFFFFF; i++);
 
 	/* *
 	 *
@@ -77,6 +77,7 @@ void main(void)
 	 * */
 	EstimationInit();
 	ControlInit();
+
 	/* *
 	 *
 	 * 	USB init.
@@ -118,16 +119,24 @@ void main(void)
 }
 
 volatile char RTStats[1024];
+volatile int cont_on = 0;
 
 void vTaskPrintTimer(void *pvParameters)
 {
 	//uint8_t msg[] = {0xa6, 0x01, 0x00, CRC8(msg, 3), 0xaa, 0xbb, (uint8_t)(CRC16(msg,6)>>8), (uint8_t)(CRC16(msg,6))};
 
+	vTaskDelay(15000);
+	cont_on = 1;
+
 	while(1)
 	{
-		vTaskDelay(2000);
+		Control_Reference.q.q0 = 1.0f;
+		Control_Reference.q.q1 = 0.0f;
+		vTaskDelay(5000);
+		Control_Reference.q.q0 = 0.9578f;
+		Control_Reference.q.q1 = 0.2873f;
 		//vSetRCOutput(RC_CHANNEL2, 0);
-		vTaskDelay(2000);
+		vTaskDelay(5000);
 		//vSetRCOutput(RC_CHANNEL2, 999);
 		//xUSBSendData(msg, 8);
 		//vTaskGetRunTimeStats(RTStats);

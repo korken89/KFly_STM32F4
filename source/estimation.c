@@ -38,6 +38,8 @@ void EstimationInit(void)
 			0);
 }
 
+extern volatile int cont_on;
+
 void vTaskRunEstimation(void *pvParameters)
 {
 	int i = 0;
@@ -66,7 +68,8 @@ void vTaskRunEstimation(void *pvParameters)
 		Estimation_State.q.q2 = q2;
 		Estimation_State.q.q3 = q3;
 
-		CalcControl();
+		if (cont_on > 0)
+			CalcControl();
 
 		if (i > 4)
 		{
