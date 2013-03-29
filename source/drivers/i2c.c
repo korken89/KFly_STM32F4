@@ -94,7 +94,7 @@ void SensorBusInit(void)
 
 	/* Initialize interrupts */
 	NVIC_InitStructure.NVIC_IRQChannel = I2C2_EV_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 5; /* Lowest possible when using FreeRTOS */
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 6; /* Lowest possible when using FreeRTOS */
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 

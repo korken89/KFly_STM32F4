@@ -46,7 +46,7 @@ void CalcControl(void)
 	 * Control scheme:
 	 *
 	 * - Rate mode: P-controller
-	 *	u_r = P_w *(w
+	 *	u_r = P_w *(w_e - w_ref)
 	 *
 	 * - Attitude mode: P-controller
 	 *  u_a
@@ -63,15 +63,21 @@ void CalcControl(void)
 						-Estimation_State.q.q3};
 
 	/* Calculate quaternion error */
-	qmult(&Control_Reference.q, &qc_m, &q_err);
+	qmult((quaternion_t *)&Control_Reference.q, &qc_m, &q_err);
 
+	/* Calculate attitude control signal */
 	Control_Reference.w.x = P_q * q_err.q1;
 
+	/* Calculate rate control signal */
+	float rate_signal = -P_w * (Estimation_State.w.x - Control_Reference.w.x);
+
+	/* Convert control signal to throttle */
 	float u_f = Control_Reference.throttle;
 	float u_r = u_f;
-	u_f += (-P_w * (Estimation_State.w.x - Control_Reference.w.x));
-	u_r -= (-P_w * (Estimation_State.w.x - Control_Reference.w.x));
+	u_f += rate_signal;
+	u_r -= rate_signal;
 
+	/* Send control commands to outputs */
 	vSetRCOutput(RC_CHANNEL1, ControlSignal2PWMPeriod(u_f));
 	vSetRCOutput(RC_CHANNEL2, ControlSignal2PWMPeriod(u_f));
 	vSetRCOutput(RC_CHANNEL3, ControlSignal2PWMPeriod(u_r));

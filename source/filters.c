@@ -14,23 +14,19 @@
 
 /* Private function defines */
 
-void IIR_LP_Filter_Init(IIR_LP_Settings *settings, float sampling_freq, float cutoff_freq)
+void IIR_LP_Filter_Init(IIR_LP_Settings *settings, float f_c, float f_s)
 {
 	/* *
-	 * Simple two pole IIR low-pass filter.
+	 * Simple single pole IIR low-pass filter.
 	 *
 	 * y[n] = 	b0*x[n] + a1*y[n-1] =
-	 * 			hf/(Tf + hf)*x[n] + Tf/(Tf + hf)*y[n-1]
-	 * 	where 	hf = sampling time
-	 * 			Tf = cut off time (1/(cut off frequency)
+	 * 			f_c/(f_s+f_c)*x[n] + f_s/(f_s+f_c)*y[n-1]
+	 * 	where 	f_s = sampling frequency
+	 * 			f_c = cut off frequency
 	 *
 	 * */
-
-	float hf = 1.0f / sampling_freq;
-	float Tf = 1.0f / cutoff_freq;
-
-	settings->b0 = hf/(hf+Tf);
-	settings->a1 = Tf/(hf+Tf);
+	settings->b0 = f_c/(f_s+f_c);
+	settings->a1 = f_s/(f_s+f_c);
 	settings->y_old = 0.0f;
 }
 

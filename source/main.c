@@ -87,10 +87,10 @@ void main(void)
 	 *
 	 * */
 	USBD_Init(	&USB_OTG_dev,
-				USB_OTG_FS_CORE_ID,
-				&USR_desc,
-				&USBD_CDC_cb,
-				&USR_cb);
+			USB_OTG_FS_CORE_ID,
+			&USR_desc,
+			&USBD_CDC_cb,
+			&USR_cb);
 
 	/* *
 	 *
@@ -105,11 +105,11 @@ void main(void)
 	 *
 	 * */
 	xTaskCreate(vTaskPrintTimer,
-				"RTS",
-				256,
-				0,
-				tskIDLE_PRIORITY + 1,
-				0);
+			"RTS",
+			256,
+			0,
+			tskIDLE_PRIORITY + 1,
+			0);
 
 	vTaskStartScheduler();
 
@@ -133,13 +133,30 @@ void vTaskPrintTimer(void *pvParameters)
 		Control_Reference.q.q0 = 1.0f;
 		Control_Reference.q.q1 = 0.0f;
 		vTaskDelay(5000);
-		Control_Reference.q.q0 = 0.9578f;
-		Control_Reference.q.q1 = 0.2873f;
-		//vSetRCOutput(RC_CHANNEL2, 0);
+
+		Control_Reference.q.q0 = 0.9095f;
+		Control_Reference.q.q1 = 0.2425f;
 		vTaskDelay(5000);
-		//vSetRCOutput(RC_CHANNEL2, 999);
-		//xUSBSendData(msg, 8);
-		//vTaskGetRunTimeStats(RTStats);
+
+		Control_Reference.q.q0 = 0.9095f;
+		Control_Reference.q.q1 = -0.2425f;
+		vTaskDelay(5000);
+
+		Control_Reference.q.q0 = 1.0f;
+		Control_Reference.q.q1 = 0.0f;
+		vTaskDelay(5000);
+
+		Control_Reference.q.q0 = 0.9786f;
+		Control_Reference.q.q1 = 0.1191f;
+		vTaskDelay(5000);
+
+		Control_Reference.q.q0 = 0.9786f;
+		Control_Reference.q.q1 = -0.1191f;
+		vTaskDelay(5000);
+
+		Control_Reference.q.q0 = 1.0f;
+		Control_Reference.q.q1 = 0.0f;
+		vTaskDelay(5000);
 
 	}
 }

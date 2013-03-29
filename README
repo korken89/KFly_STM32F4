@@ -17,19 +17,19 @@ SW Specs:
 * Flight control: Rate mode, Attitude mode and more to come
 
 TODO List:
-[ ] Fix catalog structure
+[ ] Fix catalog structure to Modules
 [ ] Migrate comments to Doxygen
 ---
 [ ] Finish the bootloader
 [X] Add callback for I2C finished transfer
 [ ] Add SPI drivers for external Flash
 [ ] Add all serial manager parsers
-[ ] Make sensor readings interrupt driven - Priority!
+[X] Make sensor readings interrupt driven - Priority!
 [ ] Finish the HMC5883L and pressure sensor code - Priority!
-[ ] Add interrupts on pin change for sensor data available - Priority!
+[X] Add interrupts on pin change for sensor data available - Priority!
 [X] Add PWM out for motors
 [ ] Add (C)PPM/PWM in for control
 [ ] Add support for all the communication interfaces
 [ ] Code the EKF/Complementary Filter - Priority!
-[ ] Code the controller  - Priority!
+[X] Code the controller  - Priority!
 [ ] Code the motor mixer

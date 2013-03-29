@@ -10,7 +10,7 @@
 
 #include "mpu6050.h"
 
-/* Gobal variable defines */
+/* Global variable defines */
 
 /* Private function defines */
 
@@ -48,7 +48,7 @@ void MPU6050Init(void)
 
 	/* Set Digital Low-Pass Filter */
 	send[0] = MPU6050_RA_CONFIG; /* Configuration register */
-	send[1] = 0b00000010; /* DLP level = 2 -> DLP cutoff = ~95Hz*/
+	send[1] = 0b00000011; /* DLP level = 3 -> DLP cutoff = ~44Hz*/
 	I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_POLLING);
 
 	/* Set Sample Rate */

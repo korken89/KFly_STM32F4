@@ -3,6 +3,24 @@
 # Author: (C) Emil Fresk
 #-------------------------------------------
 
+WHEREAMI := $(dir $(lastword $(MAKEFILE_LIST)))
+TOP      := $(realpath $(WHEREAMI)/../../../)
+
+# Target same	
+TARGET ?= kfly
+
+# Verbose
+V0 = @
+V1 =
+
+# Where the build will be located and create the folder
+OBJDIR = ./build
+ifdef ComSpec
+$(shell md $(subst /,\\,$(OBJDIR)) 2>NUL)
+else
+$(shell mkdir -p $(OBJDIR) 2>/dev/null)
+endif
+
 # External high speed crystal frequency
 F_HSE = 12000000
 
@@ -12,21 +30,8 @@ USE_STD_LIBS = 1
 # Optimization
 OPTIMIZATION = 2
 
-# Build tools
-GCC     = arm-none-eabi-gcc
-SIZE    = arm-none-eabi-size
-OBJDUMP = arm-none-eabi-objdump
-OBJCOPY = arm-none-eabi-objcopy
-GDB     = arm-none-eabi-gdb
-
 # Make date
 DATE = 20$(shell date +'%y%m%d-%H%M')
-
-# Flags
-MCU     = -mcpu=cortex-m4 -mthumb -g -mfpu=fpv4-sp-d16 -mfloat-abi=hard -fsingle-precision-constant
-CFLAGS  = $(COMMON) -std=gnu99 -O$(OPTIMIZATION) $(INCLUDE)
-AFLAGS  = $(COMMON) $(INCLUDE)
-LDFLAGS = $(COMMON) -Tstm32f4x_flash.ld -Wl,--build-id=none,-Map=main.map
 
 # StdLibs to use if wanted
 STDLIBDIR = Libraries/STM32F4xx_StdPeriph_Driver/src/
@@ -75,39 +80,48 @@ endif
 
 
 ASRCS   = $(wildcard CMSIS/*.s) $(wildcard source/*.s) $(wildcard source/drivers/*.s) 
-OBJECTS = $(ASRCS:.s=.o) $(CSRCS:.c=.o)
+ALLSRC = $(ASRCS) $(CSRCS)
+ALLSRCBASE = $(notdir $(basename $(ALLSRC)))
+ALLOBJECTS = $(addprefix $(OBJDIR)/, $(addsuffix .o, $(ALLSRCBASE)))
 BINPLACE = -j.isr_vector -j.sw_version -j.text -j.ARM.extab -j.ARM 
 BINPLACE += -j.preinit_array -j.init_array -j.fini_array -j.data
 
-CTEST = $(wildcard */*/*.c)
+# Include defenitions
+include make/defs.mk
 
-load: clean all
-	$(GDB) --command=script
+all: build
 
-dump: main.elf
-	@$(OBJDUMP) -D main.elf > main.dump
-	@echo "main.dump created"
+build: elf bin hex lss sym
+
+# Link: create ELF output file from object files.
+$(eval $(call LINK_TEMPLATE, $(OBJDIR)/$(TARGET).elf, $(ALLOBJECTS)))
+
+# Assemble: create object files from assembler source files.
+$(foreach src, $(ASRCS), $(eval $(call ASSEMBLE_TEMPLATE, $(src))))
+
+# Compile: create object files from C source files.
+$(foreach src, $(CSRCS), $(eval $(call COMPILE_C_TEMPLATE, $(src))))
+
+elf: $(OBJDIR)/$(TARGET).elf
+lss: $(OBJDIR)/$(TARGET).lss
+sym: $(OBJDIR)/$(TARGET).sym
+hex: $(OBJDIR)/$(TARGET).hex
+bin: $(OBJDIR)/$(TARGET).bin
+
+size: $(TARGET).elf
+	$(call SIZE_MSG, $(TARGET).elf)
+	$(V0) $(SIZE) -A $(TARGET).elf		
+
 	
-bin: main.elf
-	@$(OBJCOPY) main.elf $(BINPLACE) -O binary main.bin
-	@echo "main.bin created"
-
-all: main.elf
-	@echo
-	@echo "Size:"
-	@$(SIZE) main.elf		
-
-main.elf: $(OBJECTS)
-	$(GCC) $(LDFLAGS) $(OBJECTS) -lm -lc -o main.elf
+clean: clean_list
 	
-clean:
-	rm -f $(OBJECTS) *.elf *.bin *.dump *.map *.*~
-	@echo
+clean_list:
+	$(V0) echo $(MSG_CLEANING)
+	$(V0) rm -f $(ALLOBJECTS)
+	$(V0) rm -f $(OBJDIR)/$(TARGET).map
+	$(V0) rm -f $(OBJDIR)/$(TARGET).elf
+	$(V0) rm -f $(OBJDIR)/$(TARGET).hex
+	$(V0) rm -f $(OBJDIR)/$(TARGET).bin
+	$(V0) rm -f $(OBJDIR)/$(TARGET).sym
+	$(V0) rm -f $(OBJDIR)/$(TARGET).lss
 	
-.c.o:
-	$(GCC) $(CFLAGS) -c $< -o $(<:.c=.o)
-	@echo
-
-.s.o:
-	$(GCC) -c $(AFLAGS) -o $(<:.s=.o) $<
-	@echo
