@@ -17,8 +17,10 @@ V1 =
 OBJDIR = ./build
 ifdef ComSpec
 $(shell md $(subst /,\\,$(OBJDIR)) 2>NUL)
+REMOVE = del
 else
 $(shell mkdir -p $(OBJDIR) 2>/dev/null)
+REMOVE = rm -f
 endif
 
 # External high speed crystal frequency
@@ -93,13 +95,13 @@ all: build
 
 build: elf bin hex lss sym
 
-# Link: create ELF output file from object files.
+# Link: Create elf output file from object files.
 $(eval $(call LINK_TEMPLATE, $(OBJDIR)/$(TARGET).elf, $(ALLOBJECTS)))
 
-# Assemble: create object files from assembler source files.
+# Assemble: Create object files from assembler source files.
 $(foreach src, $(ASRCS), $(eval $(call ASSEMBLE_TEMPLATE, $(src))))
 
-# Compile: create object files from C source files.
+# Compile: Create object files from C source files.
 $(foreach src, $(CSRCS), $(eval $(call COMPILE_C_TEMPLATE, $(src))))
 
 elf: $(OBJDIR)/$(TARGET).elf
@@ -109,19 +111,18 @@ hex: $(OBJDIR)/$(TARGET).hex
 bin: $(OBJDIR)/$(TARGET).bin
 
 size: $(TARGET).elf
-	$(call SIZE_MSG, $(TARGET).elf)
+	@echo $(MSG_SIZE) $@
 	$(V0) $(SIZE) -A $(TARGET).elf		
 
-	
 clean: clean_list
 	
 clean_list:
 	$(V0) echo $(MSG_CLEANING)
-	$(V0) rm -f $(ALLOBJECTS)
-	$(V0) rm -f $(OBJDIR)/$(TARGET).map
-	$(V0) rm -f $(OBJDIR)/$(TARGET).elf
-	$(V0) rm -f $(OBJDIR)/$(TARGET).hex
-	$(V0) rm -f $(OBJDIR)/$(TARGET).bin
-	$(V0) rm -f $(OBJDIR)/$(TARGET).sym
-	$(V0) rm -f $(OBJDIR)/$(TARGET).lss
+	$(V0) $(REMOVE) $(ALLOBJECTS)
+	$(V0) $(REMOVE) $(OBJDIR)/$(TARGET).map
+	$(V0) $(REMOVE) $(OBJDIR)/$(TARGET).elf
+	$(V0) $(REMOVE) $(OBJDIR)/$(TARGET).hex
+	$(V0) $(REMOVE) $(OBJDIR)/$(TARGET).bin
+	$(V0) $(REMOVE) $(OBJDIR)/$(TARGET).sym
+	$(V0) $(REMOVE) $(OBJDIR)/$(TARGET).lss
 	

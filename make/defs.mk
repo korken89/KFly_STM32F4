@@ -47,13 +47,14 @@ toprel = $(subst $(realpath $(TOP))/,,$(abspath $(1)))
 	@echo $(MSG_SYMBOL_TABLE) $@
 	$(V0) $(NM) -n $< > $@
 
+# Compile: Create object files from ASM source files.
 define ASSEMBLE_TEMPLATE
 $(OBJDIR)/$(notdir $(basename $(1))).o : $(1)
 	@echo $(MSG_ASSEMBLING) $$<
 	$(V0) $(GCC) -c $$(AFLAGS) $$< -o $$@
 endef
 
-# Compile: create object files from C source files.
+# Compile: Create object files from C source files.
 define COMPILE_C_TEMPLATE
 $(OBJDIR)/$(notdir $(basename $(1))).o : $(1)
 	@echo $(MSG_COMPILING) $$<

@@ -25,11 +25,11 @@ TODO List:
 [ ] Add SPI drivers for external Flash
 [ ] Add all serial manager parsers
 [X] Make sensor readings interrupt driven - Priority!
-[ ] Finish the HMC5883L and pressure sensor code - Priority!
+[X] Finish the HMC5883L code - Priority!
 [X] Add interrupts on pin change for sensor data available - Priority!
 [X] Add PWM out for motors
 [ ] Add (C)PPM/PWM in for control
 [ ] Add support for all the communication interfaces
-[ ] Code the EKF/Complementary Filter - Priority!
-[X] Code the controller  - Priority!
+[ ] Code the CKF/Complementary Filter - Priority!
+[X] Code the controller - Priority!
 [ ] Code the motor mixer
