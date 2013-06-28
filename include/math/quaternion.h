@@ -34,13 +34,9 @@ typedef struct
 /* Global variable defines */
 
 /* Global function defines */
-/* *
- *
- *
- * */
 
 /* Includes */
-#include "quaternion.h"
+#include "trig.h"
 
 /* Private Defines */
 
@@ -56,11 +52,6 @@ void qconj(quaternion_t *);
 float qnorm(quaternion_t *);
 void qnormalize(quaternion_t *);
 void qvqc(quaternion_t *, vector_t *, vector_t *);
-float sine(float);
-float cosine(float);
-float tangent(float);
-float bound(float, float, float);
-float invSqrt(float);
-
+void euler2quat(float, float, float, quaternion_t *);
 
 #endif

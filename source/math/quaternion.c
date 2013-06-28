@@ -69,51 +69,14 @@ void qvqc(quaternion_t *q, vector_t *v, vector_t *vr)
 	vr->z = qr2.q3;
 }
 
-/* *
- * Sine of an angle in radians.
- * Very fast and accurate approximation.
- * */
-float sine(float x)
+/*
+ * euler2quat - Convert Pitch, Roll and Yaw to quaternion
+ * @param[in] r	    Roll [rad]
+ * @param[in] p     Pitch [rad]
+ * @param[in] y     Yaw [rad]
+ * @param[out] q    Quaternion
+ */
+void euler2quat(float r, float p, float y, quaternion_t *q)
 {
-	const float B = 4.0f/PI;
-	const float C = - 4.0f/(PI*PI);
 
-	float y = B * x + C * x * fabsf(x);
-
-	const float P = 0.225f;
-
-	y = P * (y * fabsf(y) - y) + y;
-
-	return y;
-}
-
-float cosine(float x)
-{
-	return sine(PI/2.0f - x);
-}
-
-float tangent(float x)
-{
-	return (sine(x) / cosine(x));
-}
-
-float bound(float max, float min, float x)
-{
-	if (x > max)
-		return max;
-	else if (x < min)
-		return min;
-	else
-		return x;
-}
-
-float invSqrt(float x)
-{
-	float halfx = 0.5f * x;
-	float y = x;
-	long i = *(long*)&y;
-	i = 0x5f3759df - (i>>1);
-	y = *(float*)&i;
-	y = y * (1.5f - (halfx * y * y));
-	return y;
 }

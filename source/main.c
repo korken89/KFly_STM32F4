@@ -4,6 +4,8 @@
 __attribute__((section(".sw_version"))) __I char build_version[] = KFLY_VERSION;
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 
+volatile Bool test = TRUE;
+
 void main(void)
 {
 	/* Give the debugger time to halt the processor ~1s delay */

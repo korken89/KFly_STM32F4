@@ -14,11 +14,13 @@ GDB     = arm-none-eabi-gdb
 NM      = arm-none-eabi-nm
 
 # Flags
-MCU     = -mcpu=cortex-m4 -mthumb -g -mfpu=fpv4-sp-d16 -mfloat-abi=hard
-CFLAGS  = $(COMMON) -std=gnu99 -O$(OPTIMIZATION) $(INCLUDE) -ffast-math -fsingle-precision-constant
-AFLAGS  = $(COMMON) $(INCLUDE)
+MCU     = -mcpu=cortex-m4 -mthumb -g -mfpu=fpv4-sp-d16 -mfloat-abi=hard 
+CFLAGS  = $(COMMON) -std=gnu99 -fno-builtin-exit -O$(OPTIMIZATION) $(INCLUDE) -ffast-math -fsingle-precision-constant
+AFLAGS  = $(COMMON) $(INCLUDE) 
 LDFLAGS = $(COMMON) -Tstm32f4x_flash.ld -Wl,--build-id=none,-Map=$(OBJDIR)/$(TARGET).map
-
+BINPLACE = -j.isr_vector -j.sw_version -j.text -j.ARM.extab -j.ARM 
+BINPLACE += -j.preinit_array -j.init_array -j.fini_array -j.data
+ 
 MSG_BINARY_HEX       = ${quote} BIN/HEX  ${quote}
 MSG_DUMP             = ${quote} DUMP     ${quote}
 MSG_SIZE             = ${quote} SIZE     ${quote}
@@ -37,7 +39,7 @@ toprel = $(subst $(realpath $(TOP))/,,$(abspath $(1)))
 
 %.bin: %.elf
 	@echo $(MSG_BINARY_HEX) $@
-	$(V0) $(OBJCOPY) -O binary $< $@
+	$(V0) $(OBJCOPY) $(BINPLACE) -O binary $< $@
 	
 %.lss: %.elf
 	@echo $(MSG_EXTENDED_LISTING) $@
