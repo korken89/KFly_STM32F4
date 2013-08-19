@@ -11,7 +11,7 @@ TARGET ?= kfly
 
 # Verbose
 V0 = @
-V1 =
+V1 = 
 
 # Where the build will be located and create the folder
 OBJDIR = ./build
@@ -30,7 +30,7 @@ F_HSE = 12000000
 USE_STD_LIBS = 1
 
 # Optimization
-OPTIMIZATION = 2
+OPTIMIZATION = s
 
 # Make date
 DATE = 20$(shell date +'%y%m%d-%H%M')
@@ -75,9 +75,9 @@ CSTD    += $(USBLIB)
 
 ifeq ($(USE_STD_LIBS),1)
 	CSRCS += $(CSTD)
-	COMMON = $(MCU) -DHSE_VALUE=$(F_HSE) -DUSE_STDPERIPH_DRIVER -DUSE_USB_OTG_FS -DDATE="\"$(DATE)\""
+	COMMON = -DHSE_VALUE=$(F_HSE) -DUSE_STDPERIPH_DRIVER -DUSE_USB_OTG_FS -DDATE="\"$(DATE)\""
 else
-	COMMON = $(MCU) -DHSE_VALUE=$(F_HSE)
+	COMMON = -DHSE_VALUE=$(F_HSE)
 endif
 
 
@@ -93,7 +93,7 @@ include make/defs.mk
 
 all: build
 
-build: elf bin hex lss sym
+build: elf bin hex lss sym dump size
 
 # Link: Create elf output file from object files.
 $(eval $(call LINK_TEMPLATE, $(OBJDIR)/$(TARGET).elf, $(ALLOBJECTS)))
@@ -110,9 +110,14 @@ sym: $(OBJDIR)/$(TARGET).sym
 hex: $(OBJDIR)/$(TARGET).hex
 bin: $(OBJDIR)/$(TARGET).bin
 
-size: $(TARGET).elf
-	@echo $(MSG_SIZE) $@
-	$(V0) $(SIZE) -A $(TARGET).elf		
+size: $(OBJDIR)/$(TARGET).elf
+	$(V0) echo $(MSG_SIZE) $(TARGET).elf
+	$(V0) $(SIZE) -A $(OBJDIR)/$(TARGET).elf	
+
+dump: $(OBJDIR)/$(TARGET).elf
+	$(V0) echo $(MSG_DUMP) $(TARGET).elf
+	$(V0) $(OBJDUMP) -D $(OBJDIR)/$(TARGET).elf > $(OBJDIR)/$(TARGET)_dump.txt
+	
 
 clean: clean_list
 	

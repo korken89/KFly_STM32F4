@@ -15,9 +15,9 @@ NM      = arm-none-eabi-nm
 
 # Flags
 MCU     = -mcpu=cortex-m4 -mthumb -g -mfpu=fpv4-sp-d16 -mfloat-abi=hard 
-CFLAGS  = $(COMMON) -std=gnu99 -fno-builtin-exit -O$(OPTIMIZATION) $(INCLUDE) -ffast-math -fsingle-precision-constant
-AFLAGS  = $(COMMON) $(INCLUDE) 
-LDFLAGS = $(COMMON) -Tstm32f4x_flash.ld -Wl,--build-id=none,-Map=$(OBJDIR)/$(TARGET).map
+CFLAGS  = $(MCU) $(COMMON) -std=gnu99 -fno-builtin-exit -O$(OPTIMIZATION) $(INCLUDE) -ffast-math -fsingle-precision-constant
+AFLAGS  = $(MCU) $(COMMON) $(INCLUDE) 
+LDFLAGS = $(MCU) $(COMMON) -Tstm32f4x_flash.ld -Wl,--build-id=none,-Map=$(OBJDIR)/$(TARGET).map
 BINPLACE = -j.isr_vector -j.sw_version -j.text -j.ARM.extab -j.ARM 
 BINPLACE += -j.preinit_array -j.init_array -j.fini_array -j.data
  
