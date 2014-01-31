@@ -89,10 +89,10 @@ void main(void)
 	 *
 	 * */
 	USBD_Init(	&USB_OTG_dev,
-			USB_OTG_FS_CORE_ID,
-			&USR_desc,
-			&USBD_CDC_cb,
-			&USR_cb);
+				USB_OTG_FS_CORE_ID,
+				&USR_desc,
+				&USBD_CDC_cb,
+				&USR_cb);
 
 	/* *
 	 *
@@ -121,45 +121,13 @@ void main(void)
 }
 
 volatile char RTStats[1024];
-volatile int cont_on = 0;
 
 void vTaskPrintTimer(void *pvParameters)
 {
 	//uint8_t msg[] = {0xa6, 0x01, 0x00, CRC8(msg, 3), 0xaa, 0xbb, (uint8_t)(CRC16(msg,6)>>8), (uint8_t)(CRC16(msg,6))};
 
-	vTaskDelay(15000);
-	cont_on = 1;
-
 	while(1)
 	{
-		Control_Reference.q.q0 = 1.0f;
-		Control_Reference.q.q1 = 0.0f;
-		vTaskDelay(5000);
-
-		Control_Reference.q.q0 = 0.9095f;
-		Control_Reference.q.q1 = 0.2425f;
-		vTaskDelay(5000);
-
-		Control_Reference.q.q0 = 0.9095f;
-		Control_Reference.q.q1 = -0.2425f;
-		vTaskDelay(5000);
-
-		Control_Reference.q.q0 = 1.0f;
-		Control_Reference.q.q1 = 0.0f;
-		vTaskDelay(5000);
-
-		Control_Reference.q.q0 = 0.9786f;
-		Control_Reference.q.q1 = 0.1191f;
-		vTaskDelay(5000);
-
-		Control_Reference.q.q0 = 0.9786f;
-		Control_Reference.q.q1 = -0.1191f;
-		vTaskDelay(5000);
-
-		Control_Reference.q.q0 = 1.0f;
-		Control_Reference.q.q1 = 0.0f;
-		vTaskDelay(5000);
-
 	}
 }
 

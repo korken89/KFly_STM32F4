@@ -14,7 +14,9 @@ V0 = @
 V1 = 
 
 # Where the build will be located and create the folder
-OBJDIR = ./build
+OBJDIR = ./build/obj
+ELFDIR = ./build
+
 ifdef ComSpec
 $(shell md $(subst /,\\,$(OBJDIR)) 2>NUL)
 REMOVE = del
@@ -30,7 +32,7 @@ F_HSE = 12000000
 USE_STD_LIBS = 1
 
 # Optimization
-OPTIMIZATION = s
+OPTIMIZATION = 2
 
 # Make date
 DATE = 20$(shell date +'%y%m%d-%H%M')
@@ -52,6 +54,7 @@ INCLUDE = -I./include -I./include/drivers -I./include/math
 INCLUDE += -I./CMSIS -I./Libraries/STM32F4xx_StdPeriph_Driver/inc
 CSRCS = $(wildcard CMSIS/*.c) $(wildcard source/*.c) $(wildcard source/drivers/*.c) 
 CSRCS += $(wildcard source/math/*.c) 
+
 
 # FreeRTOS includes and source files
 RTOS_DIR = FreeRTOS/
@@ -85,18 +88,26 @@ ASRCS   = $(wildcard CMSIS/*.s) $(wildcard source/*.s) $(wildcard source/drivers
 ALLSRC = $(ASRCS) $(CSRCS)
 ALLSRCBASE = $(notdir $(basename $(ALLSRC)))
 ALLOBJECTS = $(addprefix $(OBJDIR)/, $(addsuffix .o, $(ALLSRCBASE)))
-BINPLACE = -j.isr_vector -j.sw_version -j.text -j.ARM.extab -j.ARM 
-BINPLACE += -j.preinit_array -j.init_array -j.fini_array -j.data
+
+
+MODULES = $(wildcard ./Modules/*)
+$(foreach dir, $(MODULES), $(eval MODULES_INCLUDE += -I$(dir)/include))
+$(foreach dir, $(MODULES), $(eval MODULES_SOURCE += $(wildcard $(dir)/source/*.c)))
 
 # Include defenitions
 include make/defs.mk
 
+
+
 all: build
+	@echo $(MODULES)
+	@echo $(MODULES_INCLUDE)
+	@echo $(MODULES_SOURCE)
 
 build: elf bin hex lss sym dump size
 
 # Link: Create elf output file from object files.
-$(eval $(call LINK_TEMPLATE, $(OBJDIR)/$(TARGET).elf, $(ALLOBJECTS)))
+$(eval $(call LINK_TEMPLATE, $(ELFDIR)/$(TARGET).elf, $(ALLOBJECTS)))
 
 # Assemble: Create object files from assembler source files.
 $(foreach src, $(ASRCS), $(eval $(call ASSEMBLE_TEMPLATE, $(src))))
@@ -104,19 +115,19 @@ $(foreach src, $(ASRCS), $(eval $(call ASSEMBLE_TEMPLATE, $(src))))
 # Compile: Create object files from C source files.
 $(foreach src, $(CSRCS), $(eval $(call COMPILE_C_TEMPLATE, $(src))))
 
-elf: $(OBJDIR)/$(TARGET).elf
-lss: $(OBJDIR)/$(TARGET).lss
-sym: $(OBJDIR)/$(TARGET).sym
-hex: $(OBJDIR)/$(TARGET).hex
-bin: $(OBJDIR)/$(TARGET).bin
+elf: $(ELFDIR)/$(TARGET).elf
+lss: $(ELFDIR)/$(TARGET).lss
+sym: $(ELFDIR)/$(TARGET).sym
+hex: $(ELFDIR)/$(TARGET).hex
+bin: $(ELFDIR)/$(TARGET).bin
 
-size: $(OBJDIR)/$(TARGET).elf
+size: $(ELFDIR)/$(TARGET).elf
 	$(V0) echo $(MSG_SIZE) $(TARGET).elf
-	$(V0) $(SIZE) -A $(OBJDIR)/$(TARGET).elf	
+	$(V0) $(SIZE) -A $(ELFDIR)/$(TARGET).elf	
 
-dump: $(OBJDIR)/$(TARGET).elf
+dump: $(ELFDIR)/$(TARGET).elf
 	$(V0) echo $(MSG_DUMP) $(TARGET).elf
-	$(V0) $(OBJDUMP) -D $(OBJDIR)/$(TARGET).elf > $(OBJDIR)/$(TARGET)_dump.txt
+	$(V0) $(OBJDUMP) -D $(ELFDIR)/$(TARGET).elf > $(ELFDIR)/$(TARGET)_dump.txt
 	
 
 clean: clean_list
@@ -124,10 +135,10 @@ clean: clean_list
 clean_list:
 	$(V0) echo $(MSG_CLEANING)
 	$(V0) $(REMOVE) $(ALLOBJECTS)
-	$(V0) $(REMOVE) $(OBJDIR)/$(TARGET).map
-	$(V0) $(REMOVE) $(OBJDIR)/$(TARGET).elf
-	$(V0) $(REMOVE) $(OBJDIR)/$(TARGET).hex
-	$(V0) $(REMOVE) $(OBJDIR)/$(TARGET).bin
-	$(V0) $(REMOVE) $(OBJDIR)/$(TARGET).sym
-	$(V0) $(REMOVE) $(OBJDIR)/$(TARGET).lss
+	$(V0) $(REMOVE) $(ELFDIR)/$(TARGET).map
+	$(V0) $(REMOVE) $(ELFDIR)/$(TARGET).elf
+	$(V0) $(REMOVE) $(ELFDIR)/$(TARGET).hex
+	$(V0) $(REMOVE) $(ELFDIR)/$(TARGET).bin
+	$(V0) $(REMOVE) $(ELFDIR)/$(TARGET).sym
+	$(V0) $(REMOVE) $(ELFDIR)/$(TARGET).lss
 	

@@ -38,8 +38,6 @@ void EstimationInit(void)
 			0);
 }
 
-extern volatile int cont_on;
-
 void vTaskRunEstimation(void *pvParameters)
 {
 	int i = 0;
@@ -49,35 +47,7 @@ void vTaskRunEstimation(void *pvParameters)
 		/* Wait until the sensors have delivered new data */
 		xSemaphoreTake(NewMeasurementAvaiable, portMAX_DELAY);
 
-		Estimation_State.w.x = (float)(Sensor_Data.gyro_x)*DPS2000_TO_RADPS;
-		Estimation_State.w.y = (float)(Sensor_Data.gyro_y)*DPS2000_TO_RADPS;
-		Estimation_State.w.z = (float)(Sensor_Data.gyro_z)*DPS2000_TO_RADPS;
-
-		MadgwickAHRSupdate(	-Estimation_State.w.x,		// The Madgwick algorithm uses a NED-frame
-							Estimation_State.w.y,
-							-Estimation_State.w.z,		// The Madgwick algorithm uses a NED-frame
-							-(float)Sensor_Data.acc_x, 	// The Madgwick algorithm uses a NED-frame
-							(float)Sensor_Data.acc_y,
-							-(float)Sensor_Data.acc_z, 	// The Madgwick algorithm uses a NED-frame
-							0.0f,//-(float)Sensor_Data.mag_x,	// The Madgwick algorithm uses a NED-frame
-							0.0f,//(float)Sensor_Data.mag_y,
-							0.0f);//-(float)Sensor_Data.mag_z);	// The Madgwick algorithm uses a NED-frame
-
-		Estimation_State.q.q0 = q0;
-		Estimation_State.q.q1 = q1;
-		Estimation_State.q.q2 = q2;
-		Estimation_State.q.q3 = q3;
-
-		if (cont_on > 0)
-			CalcControl();
-
-		if (i > 4)
-		{
-			sendSensordata();
-			i = 0;
-		}
-		else
-			i++;
+		sendSensordata();
 
 	}
 }

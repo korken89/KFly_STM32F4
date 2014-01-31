@@ -11,7 +11,7 @@ typedef enum
 	PORT_AUX1,
 	PORT_AUX2,
 	PORT_AUX3,
-	PORT_CAN
+	PORT_AUX4
 } Reveiver_Source_Type;
 
 /* These are all the commands for the serial protocol. */
@@ -101,7 +101,7 @@ typedef union
 
 typedef union
 {
-	uint8_t data[2];
+	uint8_t data[4];
 	int32_t value;
 } int2bArray;
 

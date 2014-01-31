@@ -6,6 +6,7 @@
  *
  * */
 
+#include "stdint.h"
 #include "serialmanager_parsers.h"
 
 /* *
