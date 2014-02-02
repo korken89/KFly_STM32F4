@@ -38,7 +38,7 @@ OPTIMIZATION = 2
 DATE = 20$(shell date +'%y%m%d-%H%M')
 
 # StdLibs to use if wanted
-STDLIBDIR = Libraries/STM32F4xx_StdPeriph_Driver/src/
+STDLIBDIR = ./Libraries/STM32F4xx_StdPeriph_Driver/src/
 CSTD = $(STDLIBDIR)stm32f4xx_gpio.c
 CSTD += $(STDLIBDIR)stm32f4xx_exti.c
 CSTD += $(STDLIBDIR)stm32f4xx_rcc.c
@@ -49,15 +49,20 @@ CSTD += $(STDLIBDIR)stm32f4xx_flash.c
 CSTD += $(STDLIBDIR)misc.c
 
 
+# Create include paths and find sources in all the modules
+MODULES = $(wildcard ./Modules/*)
+$(foreach dir, $(MODULES) , $(eval MODULES_INC += -I$(dir)/include))
+$(foreach dir, $(MODULES), $(eval MODULES_CSRCS += $(wildcard $(dir)/source/*.c)))
+$(foreach dir, $(MODULES), $(eval MODULES_ASRCS += $(wildcard $(dir)/source/*.s)))
+
 # Sources
-INCLUDE = -I./include -I./include/drivers -I./include/math 
+INCLUDE = $(MODULES_INC) 
 INCLUDE += -I./CMSIS -I./Libraries/STM32F4xx_StdPeriph_Driver/inc
-CSRCS = $(wildcard CMSIS/*.c) $(wildcard source/*.c) $(wildcard source/drivers/*.c) 
-CSRCS += $(wildcard source/math/*.c) 
+CSRCS = $(wildcard ./CMSIS/*.c) $(MODULES_CSRCS)
 
 
 # FreeRTOS includes and source files
-RTOS_DIR = FreeRTOS/
+RTOS_DIR = ./FreeRTOS/
 RTOS_PORT = $(RTOS_DIR)portable/GCC/ARM_CM4F/
 RTOS_MEM = $(RTOS_DIR)portable/MemMang/
 INCLUDE += -I$(RTOS_PORT) -I$(RTOS_DIR)include/
@@ -65,9 +70,9 @@ CSRCS += $(RTOS_DIR)list.c $(RTOS_DIR)tasks.c $(RTOS_DIR)queue.c $(RTOS_PORT)por
 
 
 # USB Libraries
-USBLIB = $(wildcard Libraries/STM32_USB_Device_Library/Class/cdc/src/*.c)
-USBLIB += $(wildcard Libraries/STM32_USB_Device_Library/Core/src/*.c)
-USBLIB += $(wildcard Libraries/STM32_USB_OTG_Driver/src/*.c)
+USBLIB = $(wildcard ./Libraries/STM32_USB_Device_Library/Class/cdc/src/*.c)
+USBLIB += $(wildcard ./Libraries/STM32_USB_Device_Library/Core/src/*.c)
+USBLIB += $(wildcard ./Libraries/STM32_USB_OTG_Driver/src/*.c)
 
 INCLUDE += -I./Libraries/STM32_USB_Device_Library/Class/cdc/inc
 INCLUDE += -I./Libraries/STM32_USB_Device_Library/Core/inc
@@ -84,15 +89,13 @@ else
 endif
 
 
-ASRCS   = $(wildcard CMSIS/*.s) $(wildcard source/*.s) $(wildcard source/drivers/*.s) 
+ASRCS   = $(wildcard ./CMSIS/*.s) $(MODULES_ASRCS) 
 ALLSRC = $(ASRCS) $(CSRCS)
 ALLSRCBASE = $(notdir $(basename $(ALLSRC)))
 ALLOBJECTS = $(addprefix $(OBJDIR)/, $(addsuffix .o, $(ALLSRCBASE)))
 
 
-MODULES = $(wildcard ./Modules/*)
-$(foreach dir, $(MODULES), $(eval MODULES_INCLUDE += -I$(dir)/include))
-$(foreach dir, $(MODULES), $(eval MODULES_SOURCE += $(wildcard $(dir)/source/*.c)))
+
 
 # Include defenitions
 include make/defs.mk
@@ -100,9 +103,6 @@ include make/defs.mk
 
 
 all: build
-	@echo $(MODULES)
-	@echo $(MODULES_INCLUDE)
-	@echo $(MODULES_SOURCE)
 
 build: elf bin hex lss sym dump size
 
