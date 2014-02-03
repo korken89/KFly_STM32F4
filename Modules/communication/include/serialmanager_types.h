@@ -3,7 +3,7 @@
 
 #define SYNC_BYTE						(0xa6)
 #define ACK_BIT							(0x40)
-#define SERIAL_BUFFER_SIZE				256
+#define SERIAL_BUFFER_SIZE				128
 
 typedef enum
 {	/* This will help the parser function to identity the Port receiving data */
@@ -80,7 +80,7 @@ typedef struct _parser_holder
 {
 	Reveiver_Source_Type Port; 									/* Which port the data came from */
 	KFly_Data_Length_Type data_length;							/* The length of the data */
-	uint8_t buffer[SERIAL_BUFFER_SIZE];							/* The buffer storing the data */
+	uint8_t *buffer;											/* Pointer to the buffer storing the data */
 	uint32_t buffer_count;										/* The current location in the buffer */
 	uint32_t rx_error;											/* The number of receive errors */
 	void (*current_state)(uint8_t, struct _parser_holder *);	/* Current state in the state machine */

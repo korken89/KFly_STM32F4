@@ -67,7 +67,7 @@ void vSerialManagerInit(void)
 
 	xTaskCreate(vTaskUSBSerialManager,
 				"SerialManager (USB)",
-				512,
+				256,
 				0,
 				tskSerialManagerPRIORITY,
 			    0);
@@ -84,9 +84,11 @@ void vTaskUSBSerialManager(void *pvParameters)
 {
 	char in_data;
 	Parser_Holder_Type data_holder;
+	static uint8_t buffer[SERIAL_BUFFER_SIZE]; /* Buffer for serial USB commands */
 
 	/* Initialize data structure */
 	data_holder.Port = PORT_USB;
+	data_holder.buffer = buffer;
 	data_holder.current_state = NULL;
 	data_holder.next_state = vWaitingForSYNC;
 	data_holder.parser = NULL;
@@ -96,20 +98,7 @@ void vTaskUSBSerialManager(void *pvParameters)
 	{
 		xQueueReceive(xUSBQueue.xUSBQueueHandle, &in_data, portMAX_DELAY);
 
-		/* State machine starts here */
-		if (in_data == SYNC_BYTE)
-		{
-			if ((data_holder.next_state != vWaitingForSYNC) && (data_holder.next_state != vWaitingForSYNCorCMD) \
-				&& (data_holder.next_state != vRxCmd))
-			{
-				data_holder.current_state = data_holder.next_state;
-				data_holder.next_state = vWaitingForSYNCorCMD;
-			}
-			else
-				data_holder.next_state(in_data, &data_holder);
-		}
-		else
-			data_holder.next_state(in_data, &data_holder);
+		vStatemachineDataEntry(in_data, &data_holder);
 	}
 }
 
@@ -120,6 +109,27 @@ void vTaskUSBSerialManager(void *pvParameters)
  * NO (!) other functions are allowed there!
  *
  * */
+
+/* *
+ * The entry point of serial data.
+ * */
+void vStatemachineDataEntry(uint8_t data, Parser_Holder_Type *pHolder)
+{
+	if (data == SYNC_BYTE)
+	{
+		if ((pHolder->next_state != vWaitingForSYNC) && \
+		    (pHolder->next_state != vWaitingForSYNCorCMD) && \
+		    (pHolder->next_state != vRxCmd))
+		{
+			pHolder->current_state = pHolder->next_state;
+			pHolder->next_state = vWaitingForSYNCorCMD;
+		}
+		else
+			pHolder->next_state(data, pHolder);
+	}
+	else
+		pHolder->next_state(data, pHolder);
+}
 
 
 /* *

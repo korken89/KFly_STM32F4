@@ -33,6 +33,7 @@
 /* Global function defines */
 void vSerialManagerInit(void);
 void vTaskUSBSerialManager(void *);
+void vStatemachineDataEntry(uint8_t, Parser_Holder_Type *);
 void vWaitingForSYNC(uint8_t, Parser_Holder_Type *);
 void vWaitingForSYNCorCMD(uint8_t, Parser_Holder_Type *);
 void vRxCmd(uint8_t, Parser_Holder_Type *);
