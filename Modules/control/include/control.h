@@ -38,10 +38,15 @@ typedef struct
 	quaternion_t q;
 	vector_t w;
 	float throttle;
-} Control_Reference_Struct;
+} Control_Reference_Type;
+
+typedef struct
+{
+	float mix[8][4];
+} Output_Mixer_Type;
 
 /* Global variable defines */
-extern volatile Control_Reference_Struct Control_Reference;
+extern volatile Control_Reference_Type Control_Reference;
 
 /* Global function defines */
 void ControlInit(void);

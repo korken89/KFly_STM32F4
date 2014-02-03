@@ -11,7 +11,7 @@
 /* Private Typedefs */
 
 /* Global variable defines */
-volatile Control_Reference_Struct Control_Reference;
+volatile Control_Reference_Type Control_Reference;
 
 /* Private function defines */
 
