@@ -24,10 +24,6 @@
 
 /* Typedefs */
 
-/* These are all the commands for the serial protocol. */
-
-/* Length of commands */
-
 /* Global variable defines */
 
 /* Global function defines */

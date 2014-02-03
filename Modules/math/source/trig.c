@@ -17,10 +17,8 @@
 
 /*
  * fast_sin - Sine approximation
- * @param[in] r	    Roll [rad]
- * @param[in] p     Pitch [rad]
- * @param[in] y     Yaw [rad]
- * @param[out] q    Quaternion
+ * @param[in] x	    Angle [rad]
+ * @param[out] y    Sine
  */
 float fast_sin(float x)
 {
@@ -86,6 +84,8 @@ float fmodf(float x, float m)
 
 float myfloor(float x)
 {
-	if (x > 0) return (int)x;
-	return (int)(x - 0.9999999999999999f);
+	if (x > 0.0f)
+		return (int)x;
+	else
+		return (int)(x - 0.9999999999999999f);
 }
