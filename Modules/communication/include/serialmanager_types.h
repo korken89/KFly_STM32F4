@@ -6,12 +6,12 @@
 #define SERIAL_BUFFER_SIZE				256
 
 typedef enum
-{	/* This will help the parser function to identiy the Port receving data */
+{	/* This will help the parser function to identity the Port receiving data */
 	PORT_USB = 0,
 	PORT_AUX1,
 	PORT_AUX2,
 	PORT_AUX3,
-	PORT_AUX4
+	PORT_AUX4		/* CAN port */
 } Reveiver_Source_Type;
 
 /* These are all the commands for the serial protocol. */
@@ -46,7 +46,7 @@ typedef enum
 	EndOfCommands
 } KFly_Command_Type;
 
-/* Length of commands */
+/* Length of data packets */
 typedef enum {
 	Length_ACK = 0,
 	Length_Ping = 0,
@@ -54,10 +54,10 @@ typedef enum {
 	Length_GetRunningMode = 0,
 	Length_PrepareWriteFirmware,			/* Bootloader specific, tells bootloader to erase and prepare the flash for write */
 	Length_WriteFirmwarePackage = 66,		/* Bootloader specific, package of 2 bytes Package no, 64 bytes data */
-	Length_WriteLastFirmwarePackage = 0xFF,	/* Bootloader specific, package of 2 bytes Package no, unknow number of bytes */
+	Length_WriteLastFirmwarePackage = 0xFF,	/* Bootloader specific, package of 2 bytes Package no, unknown number of bytes */
 	Length_ReadFirmwarePackage = 66,		/* Bootloader specific, package of 2 bytes Package no, 64 bytes data */
-	Length_ReadLastFirmwarePackage = 0xFF,	/* Bootloader specific, package of 2 bytes Package no, unknow number of bytes */
-	Length_NextPackage = 0,					/* Bootloader specific, tells the sender that Flash write is complete and is redy for next package */
+	Length_ReadLastFirmwarePackage = 0xFF,	/* Bootloader specific, package of 2 bytes Package no, unknown number of bytes */
+	Length_NextPackage = 0,					/* Bootloader specific, tells the sender that Flash write is complete and is ready for next package */
 	Length_ExitBootloader = 0,				/* Bootloader specific, exits bootloader */
 	Length_GetBootloaderVersion = 0,
 	Length_GetFirmwareVersion = 0,
@@ -72,19 +72,20 @@ typedef enum {
 	Length_GetRCCalibration = 0,
 	Length_SetRCCalibration,
 	Length_GetRCValues,
-	Length_GetDataDump
+	Length_GetSensorData
 } KFly_Data_Length_Type;
 
+/* The structure to keep track of transfers through the state machine */
 typedef struct _parser_holder
 {
-	Reveiver_Source_Type Port;
-	KFly_Data_Length_Type data_length;
-	uint8_t buffer[SERIAL_BUFFER_SIZE];
-	uint32_t buffer_count;
-	uint32_t rx_error;
-	void (*current_state)(uint8_t, struct _parser_holder *);
-	void (*next_state)(uint8_t, struct _parser_holder *);
-	void (*parser)(struct _parser_holder *);
+	Reveiver_Source_Type Port; 									/* Which port the data came from */
+	KFly_Data_Length_Type data_length;							/* The length of the data */
+	uint8_t buffer[SERIAL_BUFFER_SIZE];							/* The buffer storing the data */
+	uint32_t buffer_count;										/* The current location in the buffer */
+	uint32_t rx_error;											/* The number of receive errors */
+	void (*current_state)(uint8_t, struct _parser_holder *);	/* Current state in the state machine */
+	void (*next_state)(uint8_t, struct _parser_holder *);		/* Next state in the state machine */
+	void (*parser)(struct _parser_holder *);					/* Parser to parse the data after a successful transfer */
 } Parser_Holder_Type;
 
 typedef union
