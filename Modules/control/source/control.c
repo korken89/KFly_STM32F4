@@ -10,8 +10,11 @@
 
 /* Private Typedefs */
 
+/* Private variable defines */
+static Control_Reference_Type Control_Reference;
+static Output_Mixer_Type Output_Mixer;
+
 /* Global variable defines */
-volatile Control_Reference_Type Control_Reference;
 
 /* Private function defines */
 
@@ -46,6 +49,16 @@ void CalcControl(void)
 	//vSetRCOutput(RC_CHANNEL2, ControlSignal2PWMPeriod(u_f));
 	//vSetRCOutput(RC_CHANNEL3, ControlSignal2PWMPeriod(u_r));
 	//vSetRCOutput(RC_CHANNEL4, ControlSignal2PWMPeriod(u_r));
+}
+
+Control_Reference_Type *ptrGetControlReference(void)
+{
+	return &Control_Reference;
+}
+
+Output_Mixer_Type *ptrGetOutputMixer(void)
+{
+	return &Output_Mixer;
 }
 
 uint32_t ControlSignal2PWMPeriod(float u)

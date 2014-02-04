@@ -61,14 +61,14 @@ typedef struct
 	float mag_y;
 	float mag_z;
 	int32_t pressure;
-} Raw_Sensor_Data_Struct;
+} Sensor_Data_Type;
 
 /* Global variable defines */
-extern volatile Raw_Sensor_Data_Struct Sensor_Data;
 extern xSemaphoreHandle NewMeasurementAvaiable;
 
 /* Global function defines */
 void SensorsInterruptReadInit(void);
+Sensor_Data_Type *ptrGetSensorDataPointer(void);
 void vTaskGetMPU6050Data(void *);
 void vTaskGetHMC5883LData(void *);
 void EXTI15_10_IRQHandler(void);

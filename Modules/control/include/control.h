@@ -46,12 +46,13 @@ typedef struct
 } Output_Mixer_Type;
 
 /* Global variable defines */
-extern volatile Control_Reference_Type Control_Reference;
 
 /* Global function defines */
 void ControlInit(void);
 void vTaskRunControl(void *);
 void CalcControl(void);
+Control_Reference_Type *ptrGetControlReference(void);
+Output_Mixer_Type *ptrGetOutputMixer(void);
 uint32_t ControlSignal2PWMPeriod(float);
 
 #endif

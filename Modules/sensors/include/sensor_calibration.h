@@ -26,10 +26,10 @@ typedef struct
 } Sensor_Calibration_Type;
 
 /* Global variable defines */
-extern volatile Sensor_Calibration_Type sensor_calibration;
 
 /* Global function defines */
 void vInitSensorCalibration(Sensor_Calibration_Type *);
 void vLoadSensorCalibration(Sensor_Calibration_Type *);
+Sensor_Calibration_Type *ptrGetSensorCalibrationPointer(void);
 
 #endif

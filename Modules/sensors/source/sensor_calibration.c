@@ -11,7 +11,7 @@
 /* Private Typedefs */
 
 /* Global variable defines */
-volatile Sensor_Calibration_Type sensor_calibration;
+static Sensor_Calibration_Type sensor_calibration;
 
 /* Private function defines */
 
@@ -41,4 +41,9 @@ void vInitSensorCalibration(Sensor_Calibration_Type *cal)
 void vLoadSensorCalibration(Sensor_Calibration_Type *cal)
 {
 
+}
+
+Sensor_Calibration_Type *ptrGetSensorCalibrationPointer(void)
+{
+	return &sensor_calibration;
 }

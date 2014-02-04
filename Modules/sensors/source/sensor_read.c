@@ -14,10 +14,10 @@
 
 /* Private Typedefs */
 
-/* Global variable defines */
-volatile Raw_Sensor_Data_Struct Sensor_Data;
+/* Private variable defines */
+static Sensor_Data_Type Sensor_Data;
 
-/* I2C Interrupt handlers */
+/* Global variable defines */
 
 /* Private function defines */
 static void MPU6050ParseData(void);
@@ -31,11 +31,11 @@ static void RevHMC5883LData(uint8_t *);
 xTaskHandle MPU6050Handle, HMC5883LHandle;
 xSemaphoreHandle I2C_Available;
 xSemaphoreHandle NewMeasurementAvaiable;
-
+Sensor_Calibration_Type *sensor_calibration;
 
 /* Conversion union for sensor data */
-MPU6050_Data_Union MPU6050_Data;
-HMC5883L_Data_Union HMC5883L_Data;
+static MPU6050_Data_Union MPU6050_Data;
+static HMC5883L_Data_Union HMC5883L_Data;
 
 void SensorsInterruptReadInit(void)
 {
@@ -51,7 +51,9 @@ void SensorsInterruptReadInit(void)
 	xSemaphoreGive(I2C_Available);
 
 	EXTI_SensorInit();
-	vInitSensorCalibration((Sensor_Calibration_Type *)&sensor_calibration);
+
+	sensor_calibration = ptrGetSensorCalibrationPointer();
+	vInitSensorCalibration(sensor_calibration);
 
 	/* Zero Sensor_Data */
 	Sensor_Data.acc_x = 0.0f;
@@ -80,6 +82,11 @@ void SensorsInterruptReadInit(void)
 			0,
 			configMAX_PRIORITIES - 1, // Highest priority available
 			&HMC5883LHandle);
+}
+
+Sensor_Data_Type *ptrGetSensorDataPointer(void)
+{
+	return &Sensor_Data;
 }
 
 /* *
@@ -123,13 +130,13 @@ static void MPU6050ParseData(void)
 	RevMPU6050Data(MPU6050_Data.data);
 
 	/* Move the data to the public data holder and compensate for gains and biases from calibration */
-	Sensor_Data.acc_x = (((float)MPU6050_Data.value.acc_x) - sensor_calibration.accelerometer_bias.x) * sensor_calibration.accelerometer_gain.x;
-	Sensor_Data.acc_y = (((float)MPU6050_Data.value.acc_y) - sensor_calibration.accelerometer_bias.y) * sensor_calibration.accelerometer_gain.y;
-	Sensor_Data.acc_z = (((float)MPU6050_Data.value.acc_z) - sensor_calibration.accelerometer_bias.z) * sensor_calibration.accelerometer_gain.z;
+	Sensor_Data.acc_x = (((float)MPU6050_Data.value.acc_x) - sensor_calibration->accelerometer_bias.x) * sensor_calibration->accelerometer_gain.x;
+	Sensor_Data.acc_y = (((float)MPU6050_Data.value.acc_y) - sensor_calibration->accelerometer_bias.y) * sensor_calibration->accelerometer_gain.y;
+	Sensor_Data.acc_z = (((float)MPU6050_Data.value.acc_z) - sensor_calibration->accelerometer_bias.z) * sensor_calibration->accelerometer_gain.z;
 
-	Sensor_Data.gyro_x = ((float)MPU6050_Data.value.gyro_x) * sensor_calibration.gyroscope_gain;
-	Sensor_Data.gyro_y = ((float)MPU6050_Data.value.gyro_y) * sensor_calibration.gyroscope_gain;
-	Sensor_Data.gyro_z = ((float)MPU6050_Data.value.gyro_z) * sensor_calibration.gyroscope_gain;
+	Sensor_Data.gyro_x = ((float)MPU6050_Data.value.gyro_x) * sensor_calibration->gyroscope_gain;
+	Sensor_Data.gyro_y = ((float)MPU6050_Data.value.gyro_y) * sensor_calibration->gyroscope_gain;
+	Sensor_Data.gyro_z = ((float)MPU6050_Data.value.gyro_z) * sensor_calibration->gyroscope_gain;
 
 	xSemaphoreGiveFromISR(NewMeasurementAvaiable, &xHigherPriorityTaskWoken);
 	if (xHigherPriorityTaskWoken != pdFALSE)
@@ -184,9 +191,9 @@ static void HMC5883LParseData(void)
 	LEDToggle(LED_RED);
 
 	/* Move the data to the public data holder and convert signs */
-	Sensor_Data.mag_x = (((float)HMC5883L_Data.value.mag_x)  - sensor_calibration.magnetometer_bias.x) * sensor_calibration.magnetometer_gain.x;
-	Sensor_Data.mag_y = (((float)HMC5883L_Data.value.mag_y)  - sensor_calibration.magnetometer_bias.y) * sensor_calibration.magnetometer_gain.y;
-	Sensor_Data.mag_z = (((float)HMC5883L_Data.value.mag_z)  - sensor_calibration.magnetometer_bias.z) * sensor_calibration.magnetometer_gain.z;
+	Sensor_Data.mag_x = (((float)HMC5883L_Data.value.mag_x)  - sensor_calibration->magnetometer_bias.x) * sensor_calibration->magnetometer_gain.x;
+	Sensor_Data.mag_y = (((float)HMC5883L_Data.value.mag_y)  - sensor_calibration->magnetometer_bias.y) * sensor_calibration->magnetometer_gain.y;
+	Sensor_Data.mag_z = (((float)HMC5883L_Data.value.mag_z)  - sensor_calibration->magnetometer_bias.z) * sensor_calibration->magnetometer_gain.z;
 
 	xSemaphoreGiveFromISR(I2C_Available, &xHigherPriorityTaskWoken);
 

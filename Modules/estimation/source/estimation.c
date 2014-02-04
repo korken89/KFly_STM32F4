@@ -57,20 +57,22 @@ static void sendSensordata(void)
 	f2bArray s_q[4];
 	sint2bArray s_m[9];
 
+	Sensor_Data_Type *Sensor_Data = ptrGetSensorDataPointer();
+
 	s_q[0].value = q0;
 	s_q[1].value = q1;
 	s_q[2].value = q2;
 	s_q[3].value = q3;
 
-	s_m[0].value = Sensor_Data.acc_x;
-	s_m[1].value = Sensor_Data.acc_y;
-	s_m[2].value = Sensor_Data.acc_z;
-	s_m[3].value = Sensor_Data.gyro_x;
-	s_m[4].value = Sensor_Data.gyro_y;
-	s_m[5].value = Sensor_Data.gyro_z;
-	s_m[6].value = Sensor_Data.mag_x;
-	s_m[7].value = Sensor_Data.mag_y;
-	s_m[8].value = Sensor_Data.mag_z;
+	s_m[0].value = Sensor_Data->acc_x;
+	s_m[1].value = Sensor_Data->acc_y;
+	s_m[2].value = Sensor_Data->acc_z;
+	s_m[3].value = Sensor_Data->gyro_x;
+	s_m[4].value = Sensor_Data->gyro_y;
+	s_m[5].value = Sensor_Data->gyro_z;
+	s_m[6].value = Sensor_Data->mag_x;
+	s_m[7].value = Sensor_Data->mag_y;
+	s_m[8].value = Sensor_Data->mag_z;
 
 	uint8_t msg[34];
 	int i;
