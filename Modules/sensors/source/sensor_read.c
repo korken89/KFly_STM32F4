@@ -52,7 +52,7 @@ void SensorsInterruptReadInit(void)
 
 	EXTI_SensorInit();
 
-	sensor_calibration = ptrGetSensorCalibrationPointer();
+	sensor_calibration = ptrGetSensorCalibration();
 	vInitSensorCalibration(sensor_calibration);
 
 	/* Zero Sensor_Data */
@@ -191,9 +191,9 @@ static void HMC5883LParseData(void)
 	LEDToggle(LED_RED);
 
 	/* Move the data to the public data holder and convert signs */
-	Sensor_Data.mag_x = (((float)HMC5883L_Data.value.mag_x)  - sensor_calibration->magnetometer_bias.x) * sensor_calibration->magnetometer_gain.x;
-	Sensor_Data.mag_y = (((float)HMC5883L_Data.value.mag_y)  - sensor_calibration->magnetometer_bias.y) * sensor_calibration->magnetometer_gain.y;
-	Sensor_Data.mag_z = (((float)HMC5883L_Data.value.mag_z)  - sensor_calibration->magnetometer_bias.z) * sensor_calibration->magnetometer_gain.z;
+	Sensor_Data.mag_x = (((float)HMC5883L_Data.value.mag_x) - sensor_calibration->magnetometer_bias.x) * sensor_calibration->magnetometer_gain.x;
+	Sensor_Data.mag_y = (((float)HMC5883L_Data.value.mag_y) - sensor_calibration->magnetometer_bias.y) * sensor_calibration->magnetometer_gain.y;
+	Sensor_Data.mag_z = (((float)HMC5883L_Data.value.mag_z) - sensor_calibration->magnetometer_bias.z) * sensor_calibration->magnetometer_gain.z;
 
 	xSemaphoreGiveFromISR(I2C_Available, &xHigherPriorityTaskWoken);
 

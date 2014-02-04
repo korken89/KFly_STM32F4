@@ -16,9 +16,9 @@
 
 void vInitPIController(PI_Data_Type *pi, float P_gain, float I_gain, float I_limit)
 {
-	pi->P_gain = P_gain;
-	pi->I_gain = I_gain;
-	pi->I_limit = I_limit;
+	pi->P_gain = fabsf(P_gain); /* Absolute value just in case */
+	pi->I_gain = fabsf(I_gain);
+	pi->I_limit = fabsf(I_limit);
 	pi->I_state = 0.0f;
 	pi->Control_signal = 0.0f;
 }

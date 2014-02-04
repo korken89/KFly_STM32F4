@@ -30,6 +30,6 @@ typedef struct
 /* Global function defines */
 void vInitSensorCalibration(Sensor_Calibration_Type *);
 void vLoadSensorCalibration(Sensor_Calibration_Type *);
-Sensor_Calibration_Type *ptrGetSensorCalibrationPointer(void);
+Sensor_Calibration_Type *ptrGetSensorCalibration(void);
 
 #endif
