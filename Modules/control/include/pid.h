@@ -6,35 +6,31 @@
 #include "stm32f4xx.h"
 
 /* System includes */
-#include "quaternion.h"
 
 /* Scheduler includes */
 
 /* KFly includes */
 
 /* Includes */
+#include "trig.h"
 
 /* Defines */
 
 /* Typedefs */
-typedef enum
-{
-	CONTROL_P = 0,
-	CONTROL_PD,
-	CONTROL_PI,
-	CONTROL_PID
-} Controller_Type;
-
 typedef struct
 {
-	Controller_Type type;
-	float Integral;
-
-} PID_Data_Type;
+	float P_gain;
+	float I_gain;
+	float I_state;
+	float I_limit;
+	float Control_signal;
+} PI_Data_Type;
 
 
 /* Global variable defines */
 
 /* Global function defines */
+void vInitPIController(PI_Data_Type *, float, float, float);
+void pi_update(PI_Data_Type *, float, float, const float);
 
 #endif
