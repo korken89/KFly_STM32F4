@@ -98,3 +98,8 @@ ErrorStatus GetMPU6050Rates(uint8_t *data)
 
 	return I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_POLLING);
 }
+
+float GetMPU6050GyroGain(void)
+{
+	return DPS2000_TO_RADPS;
+}

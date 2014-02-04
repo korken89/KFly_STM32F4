@@ -42,7 +42,7 @@ typedef struct
 
 typedef struct
 {
-	float mix[8][4];
+	float mix_weights[8][4];
 } Output_Mixer_Type;
 
 /* Global variable defines */

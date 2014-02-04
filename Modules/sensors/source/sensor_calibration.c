@@ -11,9 +11,34 @@
 /* Private Typedefs */
 
 /* Global variable defines */
-
-/* I2C Interrupt handlers */
+volatile Sensor_Calibration_Type sensor_calibration;
 
 /* Private function defines */
 
-/* Conversion union for sensor data */
+
+void vInitSensorCalibration(Sensor_Calibration_Type *cal)
+{
+	/* Set gains and biases */
+	cal->accelerometer_bias.x = 0.0f;
+	cal->accelerometer_bias.y = 0.0f;
+	cal->accelerometer_bias.z = 0.0f;
+
+	cal->accelerometer_gain.x = 1.0f;
+	cal->accelerometer_gain.y = 1.0f;
+	cal->accelerometer_gain.z = 1.0f;
+
+	cal->magnetometer_bias.x = 0.0f;
+	cal->magnetometer_bias.y = 0.0f;
+	cal->magnetometer_bias.z = 0.0f;
+
+	cal->magnetometer_gain.x = 1.0f;
+	cal->magnetometer_gain.y = 1.0f;
+	cal->magnetometer_gain.z = 1.0f;
+
+	cal->gyroscope_gain = GetMPU6050GyroGain();
+}
+
+void vLoadSensorCalibration(Sensor_Calibration_Type *cal)
+{
+
+}

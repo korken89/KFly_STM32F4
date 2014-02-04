@@ -23,7 +23,7 @@ void vInitPIController(PI_Data_Type *pi, float P_gain, float I_gain, float I_lim
 	pi->Control_signal = 0.0f;
 }
 
-void pi_update(PI_Data_Type *pi, float reference, float input, const float dt)
+void vPI_Update(PI_Data_Type *pi, float reference, float input, float dt)
 {
 	float p_term, i_term, error;
 
@@ -33,7 +33,7 @@ void pi_update(PI_Data_Type *pi, float reference, float input, const float dt)
     /* Integration with anti-windup */
     pi->I_state = bound(pi->I_limit, -pi->I_limit, pi->I_state + (error * dt));
 
-    /* Add gains */
+    /* Include gains */
     p_term = pi->P_gain * error;
     i_term = pi->I_gain * pi->I_state;
 

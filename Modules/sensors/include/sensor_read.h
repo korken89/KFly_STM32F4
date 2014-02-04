@@ -18,6 +18,7 @@
 /* KFly includes */
 
 /* Includes */
+#include "sensor_calibration.h"
 
 /* Defines */
 
@@ -50,15 +51,15 @@ typedef union
 
 typedef struct
 {
-	int16_t acc_x;
-	int16_t acc_y;
-	int16_t acc_z;
-	int16_t gyro_x;
-	int16_t gyro_y;
-	int16_t gyro_z;
-	int16_t mag_x;
-	int16_t mag_y;
-	int16_t mag_z;
+	float acc_x;
+	float acc_y;
+	float acc_z;
+	float gyro_x;
+	float gyro_y;
+	float gyro_z;
+	float mag_x;
+	float mag_y;
+	float mag_z;
 	int32_t pressure;
 } Raw_Sensor_Data_Struct;
 

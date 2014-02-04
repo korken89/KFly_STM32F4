@@ -31,6 +31,6 @@ typedef struct
 
 /* Global function defines */
 void vInitPIController(PI_Data_Type *, float, float, float);
-void pi_update(PI_Data_Type *, float, float, const float);
+void vPI_Update(PI_Data_Type *, float, float, float);
 
 #endif
