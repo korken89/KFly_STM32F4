@@ -36,6 +36,7 @@ Sensor_Calibration_Type *sensor_calibration;
 /* Conversion union for sensor data */
 static MPU6050_Data_Union MPU6050_Data;
 static HMC5883L_Data_Union HMC5883L_Data;
+static float MPU6050_Gyro_Gain;
 
 void SensorsInterruptReadInit(void)
 {
@@ -53,6 +54,7 @@ void SensorsInterruptReadInit(void)
 	EXTI_SensorInit();
 
 	sensor_calibration = ptrGetSensorCalibration();
+	MPU6050_Gyro_Gain = GetMPU6050GyroGain();
 	vInitSensorCalibration(sensor_calibration);
 
 	/* Zero Sensor_Data */
@@ -134,9 +136,9 @@ static void MPU6050ParseData(void)
 	Sensor_Data.acc_y = (((float)MPU6050_Data.value.acc_y) - sensor_calibration->accelerometer_bias.y) * sensor_calibration->accelerometer_gain.y;
 	Sensor_Data.acc_z = (((float)MPU6050_Data.value.acc_z) - sensor_calibration->accelerometer_bias.z) * sensor_calibration->accelerometer_gain.z;
 
-	Sensor_Data.gyro_x = ((float)MPU6050_Data.value.gyro_x) * sensor_calibration->gyroscope_gain;
-	Sensor_Data.gyro_y = ((float)MPU6050_Data.value.gyro_y) * sensor_calibration->gyroscope_gain;
-	Sensor_Data.gyro_z = ((float)MPU6050_Data.value.gyro_z) * sensor_calibration->gyroscope_gain;
+	Sensor_Data.gyro_x = ((float)MPU6050_Data.value.gyro_x) * MPU6050_Gyro_Gain;
+	Sensor_Data.gyro_y = ((float)MPU6050_Data.value.gyro_y) * MPU6050_Gyro_Gain;
+	Sensor_Data.gyro_z = ((float)MPU6050_Data.value.gyro_z) * MPU6050_Gyro_Gain;
 
 	xSemaphoreGiveFromISR(NewMeasurementAvaiable, &xHigherPriorityTaskWoken);
 	if (xHigherPriorityTaskWoken != pdFALSE)

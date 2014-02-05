@@ -22,7 +22,6 @@ typedef struct
 	vector_t accelerometer_gain;
 	vector_t magnetometer_bias;
 	vector_t magnetometer_gain;
-	float gyroscope_gain;
 } Sensor_Calibration_Type;
 
 /* Global variable defines */

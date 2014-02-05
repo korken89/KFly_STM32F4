@@ -36,8 +36,6 @@ void vInitSensorCalibration(Sensor_Calibration_Type *cal)
 	cal->magnetometer_gain.x = 1.0f;
 	cal->magnetometer_gain.y = 1.0f;
 	cal->magnetometer_gain.z = 1.0f;
-
-	cal->gyroscope_gain = GetMPU6050GyroGain();
 }
 
 void vLoadSensorCalibration(Sensor_Calibration_Type *cal)
