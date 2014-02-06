@@ -3,11 +3,11 @@
  * General control structure from position to motors:
  *                 __________        __________        ___________        __________        __________        __________
  *                |          |      |          |      |           |      |          |      |          |      |          |
- *            +-> | Position | ---> | Velocity | ---> | Targeting | ---> | Attitude | ---> |   Rate   | ---> |  Motors  |
+ *            +-> | Position | -+-> | Velocity | ---> | Targeting | -+-> | Attitude | -+-> |   Rate   | -+-> |  Motors  |
  *            |   |__________|  |   |__________|      |___________|  |   |__________|  |   |__________|  |   |__________|
  *            |                 |                                    |                 |                 |
  *             /                 /                                    /                 /                 / <-- Switch
- * Reference -+-----------------+-----------------+------------------+-----------------+-----------------+
+ * Reference -+-----------------+------------------------------------+-----------------+-----------------+
  *
  * Aim:
  * To be able to connect a reference anywhere in the
@@ -32,6 +32,7 @@
 /* Private Typedefs */
 
 /* Private variable defines */
+static Control_Reference_Type Control_Reference;
 static Control_Data_Type Control_Data;
 static Output_Mixer_Type Output_Mixer;
 
@@ -43,6 +44,34 @@ static Output_Mixer_Type Output_Mixer;
 void vInitControl(void)
 {
 	/* Initialize the controllers here */
+}
+
+void vUpdateControlAction(void)
+{
+	switch (Control_Reference.mode)
+	{
+		case FLIGHTMODE_POSITION_HOLD:
+			break;
+
+		case FLIGHTMODE_POSITION:
+			break;
+
+		case FLIGHTMODE_VELOCITY:
+			break;
+
+		case FLIGHTMODE_ATTITUDE:
+			break;
+
+		case FLIGHTMODE_RATE:
+			break;
+
+		case FLIGHTMODE_DISARMED:
+			break;
+
+		default:
+			break;
+	}
+
 }
 
 void vUpdateOutputs(float u_throttle, float u_pitch, float u_roll, float u_yaw)

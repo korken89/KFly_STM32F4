@@ -21,7 +21,8 @@
 typedef enum
 {
 	/* The different flight modes available */
-	FLIGHTMODE_RATE = 0,
+	FLIGHTMODE_DISARMED = 0,
+	FLIGHTMODE_RATE,
 	FLIGHTMODE_ATTITUDE,
 	FLIGHTMODE_VELOCITY,
 	FLIGHTMODE_POSITION,
