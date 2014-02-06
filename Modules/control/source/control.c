@@ -1,5 +1,26 @@
 /* *
  *
+ * General control structure from position to motors:
+ *             __________        __________        ___________        __________        __________        __________
+ *            |          |      |          |      |           |      |          |      |          |      |          |
+ *            | Position | ---> | Velocity | ---> | Targeting | ---> | Attitude | ---> |   Rate   | ---> |  Motors  |
+ *            |__________|  |   |__________|  |   |___________|  |   |__________|  |   |__________|  |   |__________|
+ *                          |                 |                  |                 |                 |
+ *                           /                 /                  /                 /                 / <-- Switch
+ * Reference ---------------+-----------------+------------------+-----------------+-----------------+
+ *
+ * Aim:
+ * To be able to connect a reference anywhere in the
+ * chain in order to choose what type of control to use.
+ * This is done by the generic control structure with a
+ * setting of the current control mode.
+ *
+ * The "Targeting" module does conversion from velocity
+ * commands to attitude depending on where the system
+ * shall be pointing.
+ *
+ * Every block is an vector PI controller (except Targeting
+ * and Motors) with 3 inputs, 3 outputs and 3 references.
  *
  * */
 
