@@ -30,8 +30,8 @@
 typedef struct
 {
 	quaternion_t q;
-	vector_t w;
-	vector_t wb;
+	vector3f_t w;
+	vector3f_t wb;
 } Estimation_State_Struct;
 
 /* Global variable defines */

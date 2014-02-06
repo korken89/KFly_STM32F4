@@ -1,5 +1,5 @@
-#ifndef __TRIG_H
-#define __TRIG_H
+#ifndef __TRIGONOMETRY_H
+#define __TRIGONOMETRY_H
 
 /* Standard includes */
 #include <math.h>
@@ -29,12 +29,22 @@
 
 /* Global variable defines */
 
+/* Inline functions */
+static inline float bound(float max, float min, float x)
+{
+	if (x > max)
+		return max;
+	else if (x < min)
+		return min;
+	else
+		return x;
+}
+
 /* Private function defines */
 
 /* Global function defines */
 float fast_sin(float);
 float fast_cos(float);
-float bound(float, float, float);
 float invSqrt(float);
 float fmodf(float, float);
 float myfloor(float);

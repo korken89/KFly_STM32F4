@@ -43,6 +43,5 @@
 
 
 void main(void);
-void vTaskPrintTimer(void *);
 
 #endif

@@ -18,10 +18,10 @@
 /* Typedefs */
 typedef struct
 {
-	vector_t accelerometer_bias;
-	vector_t accelerometer_gain;
-	vector_t magnetometer_bias;
-	vector_t magnetometer_gain;
+	vector3f_t accelerometer_bias;
+	vector3f_t accelerometer_gain;
+	vector3f_t magnetometer_bias;
+	vector3f_t magnetometer_gain;
 } Sensor_Calibration_Type;
 
 /* Global variable defines */

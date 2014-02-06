@@ -14,29 +14,26 @@
 
 /* Private function defines */
 
-void vInitPIController(PI_Data_Type *pi, float P_gain, float I_gain, float I_limit)
+void vInitPIController(PI_Data_Type *pi_settings, float P_gain, float I_gain, float I_limit)
 {
-	pi->P_gain = fabsf(P_gain); /* Absolute value just in case */
-	pi->I_gain = fabsf(I_gain);
-	pi->I_limit = fabsf(I_limit);
-	pi->I_state = 0.0f;
-	pi->Control_signal = 0.0f;
+	pi_settings->P_gain = P_gain;
+	pi_settings->I_gain = I_gain;
+	pi_settings->I_limit = I_limit;
+	pi_settings->I_state = 0.0f;
 }
 
-void vPI_Update(PI_Data_Type *pi, float reference, float input, float dt)
+void vUpdatePISettings(PI_Data_Type *pi_settings, float P_gain, float I_gain, float I_limit)
 {
-	float p_term, i_term, error;
+	pi_settings->P_gain = P_gain;
+	pi_settings->I_gain = I_gain;
+	pi_settings->I_limit = I_limit;
+}
 
-	/* Create PI error */
-	error = reference - input;
-
+float vPIUpdate(PI_Data_Type *pi, float error, float dt)
+{
     /* Integration with anti-windup */
-    pi->I_state = bound(pi->I_limit, -pi->I_limit, pi->I_state + (error * dt));
-
-    /* Include gains */
-    p_term = pi->P_gain * error;
-    i_term = pi->I_gain * pi->I_state;
+    pi->I_state = bound(pi->I_limit, - pi->I_limit, pi->I_state + error * dt);
 
     /* Create control signal */
-    pi->Control_signal = p_term + i_term;
+    return pi->P_gain * error + pi->I_gain * pi->I_state;
 }

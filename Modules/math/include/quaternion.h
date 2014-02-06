@@ -29,7 +29,7 @@ typedef struct
 	float x;
 	float y;
 	float z;
-} vector_t;
+} vector3f_t;
 
 /* Global variable defines */
 
@@ -51,7 +51,7 @@ void qmult(quaternion_t *, quaternion_t *, quaternion_t *);
 void qconj(quaternion_t *);
 float qnorm(quaternion_t *);
 void qnormalize(quaternion_t *);
-void qvqc(quaternion_t *, vector_t *, vector_t *);
+void qvqc(quaternion_t *, vector3f_t *, vector3f_t *);
 void euler2quat(float, float, float, quaternion_t *);
 
 #endif

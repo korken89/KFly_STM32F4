@@ -21,16 +21,15 @@ typedef struct
 {
 	float P_gain;
 	float I_gain;
-	float I_state;
 	float I_limit;
-	float Control_signal;
+	float I_state;
 } PI_Data_Type;
-
 
 /* Global variable defines */
 
 /* Global function defines */
 void vInitPIController(PI_Data_Type *, float, float, float);
-void vPI_Update(PI_Data_Type *, float, float, float);
+void vUpdatePISettings(PI_Data_Type *, float, float, float);
+float fPIUpdate(PI_Data_Type *, float, float);
 
 #endif

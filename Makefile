@@ -104,7 +104,7 @@ include make/defs.mk
 
 all: build
 
-build: elf bin hex lss sym size
+build: elf bin hex lss sym dump size
 
 # Link: Create elf output file from object files.
 $(eval $(call LINK_TEMPLATE, $(ELFDIR)/$(TARGET).elf, $(ALLOBJECTS)))

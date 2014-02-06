@@ -4,8 +4,6 @@
 __attribute__((section(".sw_version"))) __I char build_version[] = KFLY_VERSION;
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 
-volatile Bool test = TRUE;
-
 void main(void)
 {
 	/* Give the debugger time to halt the processor ~1s delay */
@@ -78,7 +76,6 @@ void main(void)
 	 *
 	 * */
 	EstimationInit();
-	ControlInit();
 
 	/* *
 	 *
@@ -106,29 +103,11 @@ void main(void)
 	 * Start the scheduler.
 	 *
 	 * */
-	xTaskCreate(vTaskPrintTimer,
-			"RTS",
-			256,
-			0,
-			tskIDLE_PRIORITY + 1,
-			0);
-
 	vTaskStartScheduler();
 
 	/* We only get here if there was insufficient memory to start the Scheduler */
 
 	while(1);
-}
-
-volatile char RTStats[1024];
-
-void vTaskPrintTimer(void *pvParameters)
-{
-	//uint8_t msg[] = {0xa6, 0x01, 0x00, CRC8(msg, 3), 0xaa, 0xbb, (uint8_t)(CRC16(msg,6)>>8), (uint8_t)(CRC16(msg,6))};
-
-	while(1)
-	{
-	}
 }
 
 uint32_t itoa(int num, char *buf)

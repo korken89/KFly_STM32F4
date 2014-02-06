@@ -50,7 +50,7 @@ void qnormalize(quaternion_t *q)
 	q->q3 *= invNorm;
 }
 
-void qvqc(quaternion_t *q, vector_t *v, vector_t *vr)
+void qvqc(quaternion_t *q, vector3f_t *v, vector3f_t *vr)
 {
 	/* *
 	 *

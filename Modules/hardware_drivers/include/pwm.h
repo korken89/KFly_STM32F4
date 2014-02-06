@@ -5,6 +5,7 @@
 #include "stm32f4xx.h"
 
 /* System includes */
+#include "quaternion.h"
 
 /* Scheduler includes. */
 
@@ -48,7 +49,7 @@ typedef enum
 } Output_Channel_Type;
 
 void PWMInit(void);
-void vSetRCOutput(Output_Channel_Type, uint32_t);
+void vSetRCOutput(Output_Channel_Type, float);
 void vSetOutputRate(Output_Group_Type, PWM_Rate_Type);
 
 #endif

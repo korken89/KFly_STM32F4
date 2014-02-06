@@ -4,7 +4,7 @@
  * */
 
 /* Includes */
-#include "trig.h"
+#include "trigonometry.h"
 
 /* Private Defines */
 
@@ -54,16 +54,6 @@ float fast_cos(float x)
 	y = P * (y * fabsf(y) - y) + y;
 
 	return y;
-}
-
-float bound(float max, float min, float x)
-{
-	if (x > max)
-		return max;
-	else if (x < min)
-		return min;
-	else
-		return x;
 }
 
 float invSqrt(float x)
