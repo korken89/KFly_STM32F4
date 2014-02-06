@@ -6,19 +6,10 @@
 #include "stm32f4xx.h"
 
 /* System includes */
-#include "filters.h"
-#include "comlink.h"
-#include "crc.h"
-#include "estimation.h"
 #include "pwm.h"
-#include "quaternion.h"
 #include "pid.h"
 
 /* Scheduler includes */
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "semphr.h"
 
 /* KFly includes */
 
