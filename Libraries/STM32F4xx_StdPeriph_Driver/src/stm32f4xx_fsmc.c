@@ -2,19 +2,19 @@
   ******************************************************************************
   * @file    stm32f4xx_fsmc.c
   * @author  MCD Application Team
-  * @version V1.3.0
-  * @date    08-November-2013
+  * @version V1.0.2
+  * @date    05-March-2012
  * @brief    This file provides firmware functions to manage the following 
   *          functionalities of the FSMC peripheral:           
-  *           + Interface with SRAM, PSRAM, NOR and OneNAND memories
-  *           + Interface with NAND memories
-  *           + Interface with 16-bit PC Card compatible memories  
-  *           + Interrupts and flags management   
+  *           - Interface with SRAM, PSRAM, NOR and OneNAND memories
+  *           - Interface with NAND memories
+  *           - Interface with 16-bit PC Card compatible memories  
+  *           - Interrupts and flags management   
   *           
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
   * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
   * You may not use this file except in compliance with the License.
@@ -74,41 +74,41 @@
  *
 @verbatim   
  ===============================================================================
-                    ##### NOR and SRAM Controller functions #####
+                    NOR/SRAM Controller functions
  ===============================================================================  
 
- [..] The following sequence should be followed to configure the FSMC to interface
-      with SRAM, PSRAM, NOR or OneNAND memory connected to the NOR/SRAM Bank:
+ The following sequence should be followed to configure the FSMC to interface with
+ SRAM, PSRAM, NOR or OneNAND memory connected to the NOR/SRAM Bank:
  
-   (#) Enable the clock for the FSMC and associated GPIOs using the following functions:
+   1. Enable the clock for the FSMC and associated GPIOs using the following functions:
           RCC_AHB3PeriphClockCmd(RCC_AHB3Periph_FSMC, ENABLE);
           RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOx, ENABLE);
 
-   (#) FSMC pins configuration 
-       (++) Connect the involved FSMC pins to AF12 using the following function 
-            GPIO_PinAFConfig(GPIOx, GPIO_PinSourcex, GPIO_AF_FSMC); 
-       (++) Configure these FSMC pins in alternate function mode by calling the function
-            GPIO_Init();    
+   2. FSMC pins configuration 
+       - Connect the involved FSMC pins to AF12 using the following function 
+          GPIO_PinAFConfig(GPIOx, GPIO_PinSourcex, GPIO_AF_FSMC); 
+       - Configure these FSMC pins in alternate function mode by calling the function
+          GPIO_Init();    
        
-   (#) Declare a FSMC_NORSRAMInitTypeDef structure, for example:
+   3. Declare a FSMC_NORSRAMInitTypeDef structure, for example:
           FSMC_NORSRAMInitTypeDef  FSMC_NORSRAMInitStructure;
       and fill the FSMC_NORSRAMInitStructure variable with the allowed values of
       the structure member.
       
-   (#) Initialize the NOR/SRAM Controller by calling the function
+   4. Initialize the NOR/SRAM Controller by calling the function
           FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure); 
 
-   (#) Then enable the NOR/SRAM Bank, for example:
+   5. Then enable the NOR/SRAM Bank, for example:
           FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM2, ENABLE);  
 
-   (#) At this stage you can read/write from/to the memory connected to the NOR/SRAM Bank. 
+   6. At this stage you can read/write from/to the memory connected to the NOR/SRAM Bank. 
    
 @endverbatim
   * @{
   */
 
 /**
-  * @brief  De-initializes the FSMC NOR/SRAM Banks registers to their default 
+  * @brief  Deinitializes the FSMC NOR/SRAM Banks registers to their default 
   *   reset values.
   * @param  FSMC_Bank: specifies the FSMC Bank to be used
   *          This parameter can be one of the following values:
@@ -295,48 +295,46 @@ void FSMC_NORSRAMCmd(uint32_t FSMC_Bank, FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-                    ##### NAND Controller functions #####
+                    NAND Controller functions
  ===============================================================================  
 
- [..]  The following sequence should be followed to configure the FSMC to interface 
-       with 8-bit or 16-bit NAND memory connected to the NAND Bank:
+ The following sequence should be followed to configure the FSMC to interface with
+ 8-bit or 16-bit NAND memory connected to the NAND Bank:
  
-  (#) Enable the clock for the FSMC and associated GPIOs using the following functions:
-      (++)  RCC_AHB3PeriphClockCmd(RCC_AHB3Periph_FSMC, ENABLE);
-      (++)  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOx, ENABLE);
+   1. Enable the clock for the FSMC and associated GPIOs using the following functions:
+          RCC_AHB3PeriphClockCmd(RCC_AHB3Periph_FSMC, ENABLE);
+          RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOx, ENABLE);
 
-  (#) FSMC pins configuration 
-      (++) Connect the involved FSMC pins to AF12 using the following function 
-           GPIO_PinAFConfig(GPIOx, GPIO_PinSourcex, GPIO_AF_FSMC); 
-      (++) Configure these FSMC pins in alternate function mode by calling the function
-           GPIO_Init();    
+   2. FSMC pins configuration 
+       - Connect the involved FSMC pins to AF12 using the following function 
+          GPIO_PinAFConfig(GPIOx, GPIO_PinSourcex, GPIO_AF_FSMC); 
+       - Configure these FSMC pins in alternate function mode by calling the function
+          GPIO_Init();    
        
-  (#) Declare a FSMC_NANDInitTypeDef structure, for example:
-      FSMC_NANDInitTypeDef  FSMC_NANDInitStructure;
+   3. Declare a FSMC_NANDInitTypeDef structure, for example:
+          FSMC_NANDInitTypeDef  FSMC_NANDInitStructure;
       and fill the FSMC_NANDInitStructure variable with the allowed values of
       the structure member.
       
-  (#) Initialize the NAND Controller by calling the function
-      FSMC_NANDInit(&FSMC_NANDInitStructure); 
+   4. Initialize the NAND Controller by calling the function
+          FSMC_NANDInit(&FSMC_NANDInitStructure); 
 
-  (#) Then enable the NAND Bank, for example:
-      FSMC_NANDCmd(FSMC_Bank3_NAND, ENABLE);  
+   5. Then enable the NAND Bank, for example:
+          FSMC_NANDCmd(FSMC_Bank3_NAND, ENABLE);  
 
-  (#) At this stage you can read/write from/to the memory connected to the NAND Bank. 
+   6. At this stage you can read/write from/to the memory connected to the NAND Bank. 
    
- [..]
-  (@) To enable the Error Correction Code (ECC), you have to use the function
-      FSMC_NANDECCCmd(FSMC_Bank3_NAND, ENABLE);  
- [..]
-  (@) and to get the current ECC value you have to use the function
-      ECCval = FSMC_GetECC(FSMC_Bank3_NAND); 
+@note To enable the Error Correction Code (ECC), you have to use the function
+          FSMC_NANDECCCmd(FSMC_Bank3_NAND, ENABLE);  
+      and to get the current ECC value you have to use the function
+          ECCval = FSMC_GetECC(FSMC_Bank3_NAND); 
 
 @endverbatim
   * @{
   */
   
 /**
-  * @brief  De-initializes the FSMC NAND Banks registers to their default reset values.
+  * @brief  Deinitializes the FSMC NAND Banks registers to their default reset values.
   * @param  FSMC_Bank: specifies the FSMC Bank to be used
   *          This parameter can be one of the following values:
   *            @arg FSMC_Bank2_NAND: FSMC Bank2 NAND 
@@ -573,41 +571,41 @@ uint32_t FSMC_GetECC(uint32_t FSMC_Bank)
  *
 @verbatim   
  ===============================================================================
-                    ##### PCCARD Controller functions #####
+                    PCCARD Controller functions
  ===============================================================================  
 
- [..]  he following sequence should be followed to configure the FSMC to interface 
-       with 16-bit PC Card compatible memory connected to the PCCARD Bank:
+ The following sequence should be followed to configure the FSMC to interface with
+ 16-bit PC Card compatible memory connected to the PCCARD Bank:
  
-  (#)  Enable the clock for the FSMC and associated GPIOs using the following functions:
-       (++)  RCC_AHB3PeriphClockCmd(RCC_AHB3Periph_FSMC, ENABLE);
-       (++)  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOx, ENABLE);
+   1. Enable the clock for the FSMC and associated GPIOs using the following functions:
+          RCC_AHB3PeriphClockCmd(RCC_AHB3Periph_FSMC, ENABLE);
+          RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOx, ENABLE);
 
-  (#) FSMC pins configuration 
-       (++) Connect the involved FSMC pins to AF12 using the following function 
-            GPIO_PinAFConfig(GPIOx, GPIO_PinSourcex, GPIO_AF_FSMC); 
-       (++) Configure these FSMC pins in alternate function mode by calling the function
-            GPIO_Init();    
+   2. FSMC pins configuration 
+       - Connect the involved FSMC pins to AF12 using the following function 
+          GPIO_PinAFConfig(GPIOx, GPIO_PinSourcex, GPIO_AF_FSMC); 
+       - Configure these FSMC pins in alternate function mode by calling the function
+          GPIO_Init();    
        
-  (#) Declare a FSMC_PCCARDInitTypeDef structure, for example:
-      FSMC_PCCARDInitTypeDef  FSMC_PCCARDInitStructure;
+   3. Declare a FSMC_PCCARDInitTypeDef structure, for example:
+          FSMC_PCCARDInitTypeDef  FSMC_PCCARDInitStructure;
       and fill the FSMC_PCCARDInitStructure variable with the allowed values of
       the structure member.
       
-  (#) Initialize the PCCARD Controller by calling the function
-      FSMC_PCCARDInit(&FSMC_PCCARDInitStructure); 
+   4. Initialize the PCCARD Controller by calling the function
+          FSMC_PCCARDInit(&FSMC_PCCARDInitStructure); 
 
-  (#) Then enable the PCCARD Bank:
-      FSMC_PCCARDCmd(ENABLE);  
+   5. Then enable the PCCARD Bank:
+          FSMC_PCCARDCmd(ENABLE);  
 
-  (#) At this stage you can read/write from/to the memory connected to the PCCARD Bank. 
+   6. At this stage you can read/write from/to the memory connected to the PCCARD Bank. 
  
 @endverbatim
   * @{
   */
 
 /**
-  * @brief  De-initializes the FSMC PCCARD Bank registers to their default reset values.
+  * @brief  Deinitializes the FSMC PCCARD Bank registers to their default reset values.
   * @param  None                       
   * @retval None
   */
@@ -730,8 +728,8 @@ void FSMC_PCCARDCmd(FunctionalState NewState)
  *
 @verbatim   
  ===============================================================================
-             ##### Interrupts and flags management functions #####
- ===============================================================================   
+                     Interrupts and flags management functions
+ ===============================================================================  
 
 @endverbatim
   * @{
