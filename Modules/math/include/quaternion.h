@@ -36,7 +36,7 @@ typedef struct
 /* Global function defines */
 
 /* Includes */
-#include "trig.h"
+#include "trigonometry.h"
 
 /* Private Defines */
 

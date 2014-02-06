@@ -12,7 +12,7 @@
 /* KFly includes */
 
 /* Includes */
-#include "trig.h"
+#include "trigonometry.h"
 
 /* Defines */
 
