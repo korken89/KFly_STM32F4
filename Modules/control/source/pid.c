@@ -29,7 +29,7 @@ void vUpdatePISettings(PI_Data_Type *pi_settings, float P_gain, float I_gain, fl
 	pi_settings->I_limit = I_limit;
 }
 
-float vPIUpdate(PI_Data_Type *pi, float error, float dt)
+float fPIUpdate(PI_Data_Type *pi, float error, float dt)
 {
     /* Integration with anti-windup */
     pi->I_state = bound(pi->I_limit, - pi->I_limit, pi->I_state + error * dt);

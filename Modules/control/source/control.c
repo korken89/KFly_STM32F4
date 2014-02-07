@@ -39,42 +39,165 @@ static Output_Mixer_Type Output_Mixer;
 /* Global variable defines */
 
 /* Private function defines */
-
+static void vPositionControl(vector3f_t);
+static void vVelocityControl(vector3f_t);
+static void vAttitudeControl(vector3f_t);
+static void vRateControl(vector3f_t);
+static void vUpdateOutputs(float, float, float, float);
 
 void vInitControl(void)
 {
 	/* Initialize the controllers here */
 }
 
-void vUpdateControlAction(void)
+void vUpdateControlAction(Control_Reference_Type *reference)
 {
-	switch (Control_Reference.mode)
+	switch (reference->mode)
 	{
 		case FLIGHTMODE_POSITION_HOLD:
+
 			break;
 
 		case FLIGHTMODE_POSITION:
+			vPositionControl(reference->reference);
 			break;
 
 		case FLIGHTMODE_VELOCITY:
+			vVelocityControl(reference->reference);
 			break;
 
 		case FLIGHTMODE_ATTITUDE:
+			vAttitudeControl(reference->reference);
 			break;
 
 		case FLIGHTMODE_RATE:
+			vRateControl(reference->reference);
 			break;
 
 		case FLIGHTMODE_DISARMED:
-			break;
-
 		default:
+			vUpdateOutputs(0.0f, 0.0f, 0.0f, 0.0f);
 			break;
 	}
 
 }
 
-void vUpdateOutputs(float u_throttle, float u_pitch, float u_roll, float u_yaw)
+Control_Data_Type *ptrGetControlData(void)
+{
+	return &Control_Data;
+}
+
+Output_Mixer_Type *ptrGetOutputMixer(void)
+{
+	return &Output_Mixer;
+}
+
+
+/* *
+ *
+ * Private functions
+ *
+ * */
+
+static void vPositionControl(vector3f_t reference)
+{
+	float error_x, error_y, error_z;
+	vector3f_t u;
+
+	error_x = reference.x - 0.0f; /* Add where the position can be read */
+	error_y = reference.y - 0.0f; /* Add where the position can be read */
+	error_z = reference.z - 0.0f; /* Add where the position can be read */
+
+	u.x = fPIUpdate(&Control_Data.position_controller[0], error_x, 0.005f); /* Add where dt is found */
+	u.y = fPIUpdate(&Control_Data.position_controller[1], error_y, 0.005f); /* Add where dt is found */
+	u.z = fPIUpdate(&Control_Data.position_controller[2], error_z, 0.005f); /* Add where dt is found */
+
+	/* Send control signal to the next step in the cascade */
+	vVelocityControl(u);
+
+}
+
+static void vVelocityControl(vector3f_t reference)
+{
+	float error_x, error_y, error_z;
+	vector3f_t u;
+
+
+	/* *
+	 *
+	 * TODO: Add the saturation of velocities.
+	 *
+	 * */
+
+	error_x = reference.x - 0.0f; /* Add where the velocity can be read */
+	error_y = reference.y - 0.0f; /* Add where the velocity can be read */
+	error_z = reference.z - 0.0f; /* Add where the velocity can be read */
+
+	u.x = fPIUpdate(&Control_Data.velocity_controller[0], error_x, 0.005f); /* Add where dt is found */
+	u.y = fPIUpdate(&Control_Data.velocity_controller[1], error_y, 0.005f); /* Add where dt is found */
+	u.z = fPIUpdate(&Control_Data.velocity_controller[2], error_z, 0.005f); /* Add where dt is found */
+
+	/* *
+	 *
+	 * TODO: Add the conversion block for targeting.
+	 *
+	 * */
+
+	/* Send control signal to the next step in the cascade */
+	vAttitudeControl(u);
+}
+
+static void vAttitudeControl(vector3f_t reference)
+{
+	float error_x, error_y, error_z;
+	vector3f_t u;
+
+
+	/* *
+	 *
+	 * TODO: Add the saturation of angles.
+	 *
+	 * */
+
+	/* *
+	 *
+	 * TODO: Calculate quaternion error.
+	 *
+	 * */
+
+	u.x = fPIUpdate(&Control_Data.attitude_controller[0], error_x, 0.005f); /* Add where dt is found */
+	u.y = fPIUpdate(&Control_Data.attitude_controller[1], error_y, 0.005f); /* Add where dt is found */
+	u.z = fPIUpdate(&Control_Data.attitude_controller[2], error_z, 0.005f); /* Add where dt is found */
+
+	/* Send control signal to the next step in the cascade */
+	vRateControl(u);
+}
+
+static void vRateControl(vector3f_t reference)
+{
+	float error_x, error_y, error_z;
+	vector3f_t u;
+
+
+	/* *
+	 *
+	 * TODO: Add the saturation of rotational rates.
+	 *
+	 * */
+
+	error_x = reference.x - 0.0f; /* Add where the rotational rate can be read */
+	error_y = reference.y - 0.0f; /* Add where the rotational rate can be read */
+	error_z = reference.z - 0.0f; /* Add where the rotational rate can be read */
+
+	u.x = fPIUpdate(&Control_Data.rate_controller[0], error_x, 0.005f); /* Add where dt is found */
+	u.y = fPIUpdate(&Control_Data.rate_controller[1], error_y, 0.005f); /* Add where dt is found */
+	u.z = fPIUpdate(&Control_Data.rate_controller[2], error_z, 0.005f); /* Add where dt is found */
+
+	/* TODO: Send control signal to the engines */
+	vUpdateOutputs(Control_Reference.throttle, u.x, u.y, u.z);
+}
+
+static void vUpdateOutputs(float u_throttle, float u_pitch, float u_roll, float u_yaw)
 {
 	float sum;
 
@@ -87,14 +210,4 @@ void vUpdateOutputs(float u_throttle, float u_pitch, float u_roll, float u_yaw)
 
 		vSetRCOutput(i, sum);
 	}
-}
-
-Control_Data_Type *ptrGetControlData(void)
-{
-	return &Control_Data;
-}
-
-Output_Mixer_Type *ptrGetOutputMixer(void)
-{
-	return &Output_Mixer;
 }
