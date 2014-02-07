@@ -58,7 +58,6 @@ typedef struct
 	PI_Data_Type rate_controller[3];
 } Control_Data_Type;
 
-
 typedef struct
 {
 	float weights[8][4];
