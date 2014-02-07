@@ -39,9 +39,9 @@ static Output_Mixer_Type Output_Mixer;
 /* Global variable defines */
 
 /* Private function defines */
-static void vPositionControl(vector3f_t);
-static void vVelocityControl(vector3f_t);
-static void vAttitudeControl(vector3f_t);
+static vector3f_t vPositionControl(vector3f_t);
+static vector3f_t vVelocityControl(vector3f_t);
+static vector3f_t vAttitudeControl(vector3f_t);
 static void vRateControl(vector3f_t);
 static void vUpdateOutputs(float, float, float, float);
 
@@ -52,6 +52,8 @@ void vInitControl(void)
 
 void vUpdateControlAction(Control_Reference_Type *reference)
 {
+	vector3f_t u;
+
 	switch (reference->mode)
 	{
 		case FLIGHTMODE_POSITION_HOLD:
@@ -59,15 +61,21 @@ void vUpdateControlAction(Control_Reference_Type *reference)
 			break;
 
 		case FLIGHTMODE_POSITION:
-			vPositionControl(reference->reference);
+			u = vPositionControl(reference->reference);
+			u = vVelocityControl(u);
+			u = vAttitudeControl(u);
+			vRateControl(u);
 			break;
 
 		case FLIGHTMODE_VELOCITY:
-			vVelocityControl(reference->reference);
+			u = vVelocityControl(reference->reference);
+			u = vAttitudeControl(u);
+			vRateControl(u);
 			break;
 
 		case FLIGHTMODE_ATTITUDE:
-			vAttitudeControl(reference->reference);
+			u = vAttitudeControl(reference->reference);
+			vRateControl(u);
 			break;
 
 		case FLIGHTMODE_RATE:
@@ -99,7 +107,7 @@ Output_Mixer_Type *ptrGetOutputMixer(void)
  *
  * */
 
-static void vPositionControl(vector3f_t reference)
+static vector3f_t vPositionControl(vector3f_t reference)
 {
 	float error_x, error_y, error_z;
 	vector3f_t u;
@@ -113,11 +121,11 @@ static void vPositionControl(vector3f_t reference)
 	u.z = fPIUpdate(&Control_Data.position_controller[2], error_z, 0.005f); /* Add where dt is found */
 
 	/* Send control signal to the next step in the cascade */
-	vVelocityControl(u);
+	return u;
 
 }
 
-static void vVelocityControl(vector3f_t reference)
+static vector3f_t vVelocityControl(vector3f_t reference)
 {
 	float error_x, error_y, error_z;
 	vector3f_t u;
@@ -144,10 +152,10 @@ static void vVelocityControl(vector3f_t reference)
 	 * */
 
 	/* Send control signal to the next step in the cascade */
-	vAttitudeControl(u);
+	return u;
 }
 
-static void vAttitudeControl(vector3f_t reference)
+static vector3f_t vAttitudeControl(vector3f_t reference)
 {
 	float error_x, error_y, error_z;
 	vector3f_t u;
@@ -170,7 +178,7 @@ static void vAttitudeControl(vector3f_t reference)
 	u.z = fPIUpdate(&Control_Data.attitude_controller[2], error_z, 0.005f); /* Add where dt is found */
 
 	/* Send control signal to the next step in the cascade */
-	vRateControl(u);
+	return u;
 }
 
 static void vRateControl(vector3f_t reference)

@@ -32,7 +32,7 @@ F_HSE = 12000000
 USE_STD_LIBS = 1
 
 # Optimization
-OPTIMIZATION = 2
+OPTIMIZATION = 1
 
 # Make date
 DATE = 20$(shell date +'%y%m%d-%H%M')

@@ -40,13 +40,73 @@ static inline float bound(float max, float min, float x)
 		return x;
 }
 
+/*
+ * fast_sin - Sine approximation
+ * @param[in] x	    Angle [rad]
+ * @param[out] y    Sine
+ */
+static inline float fast_sin(float x)
+{
+	if (x < -PI)
+	    x += 2.0f * PI;
+	else if (x > PI)
+	    x -= 2.0f * PI;
+
+	const float B = 4.0f/PI;
+	const float C = -4.0f/(PI*PI);
+	const float P = 0.225f;
+
+	float y = B * x + C * x * fabsf(x);
+	y = P * (y * fabsf(y) - y) + y;
+
+	return y;
+}
+
+static inline float fast_cos(float x)
+{
+	x += PI*0.5f;
+
+	if (x < -PI)
+	    x += 2.0f * PI;
+	else if (x > PI)
+	    x -= 2.0f * PI;
+
+	const float B = 4.0f/PI;
+	const float C = -4.0f/(PI*PI);
+	const float P = 0.225f;
+
+	float y = B * x + C * x * fabsf(x);
+	y = P * (y * fabsf(y) - y) + y;
+
+	return y;
+}
+
+static inline float invSqrt(float x)
+{
+	float halfx = 0.5f * x;
+	float y = x;
+	long i = *(long*)&y;
+	i = 0x5f3759df - (i>>1);
+	y = *(float*)&i;
+	y = y * (1.5f - (halfx * y * y));
+	return y;
+}
+
+static inline float myfloor(float x)
+{
+	if (x > 0.0f)
+		return (int)x;
+	else
+		return (int)(x - 0.9999999999999999f);
+}
+
+static inline float myfmodf(float x, float m)
+{
+	return x - myfloor(x / m) * m;
+}
+
 /* Private function defines */
 
 /* Global function defines */
-float fast_sin(float);
-float fast_cos(float);
-float invSqrt(float);
-float fmodf(float, float);
-float myfloor(float);
 
 #endif
