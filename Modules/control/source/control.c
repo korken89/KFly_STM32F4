@@ -34,6 +34,7 @@
 /* Private variable defines */
 static Control_Reference_Type Control_Reference;
 static Control_Data_Type Control_Data;
+static Control_Limits_Type Control_Limits;
 static Output_Mixer_Type Output_Mixer;
 
 /* Global variable defines */
@@ -93,6 +94,11 @@ void vUpdateControlAction(Control_Reference_Type *reference)
 Control_Data_Type *ptrGetControlData(void)
 {
 	return &Control_Data;
+}
+
+Control_Limits_Type *ptrGetControlLimits(void)
+{
+	return &Control_Limits;
 }
 
 Output_Mixer_Type *ptrGetOutputMixer(void)

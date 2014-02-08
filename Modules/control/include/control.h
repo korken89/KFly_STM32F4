@@ -50,13 +50,43 @@ typedef struct
 
 typedef struct
 {
-	/* The controller gains, limits and states of
-	 * each controller in the cascade scheme */
+	/* The controller gains, integral limits and states
+	 * of each controller in the cascade scheme */
 	PI_Data_Type position_controller[3];
 	PI_Data_Type velocity_controller[3];
 	PI_Data_Type attitude_controller[3];
 	PI_Data_Type rate_controller[3];
 } Control_Data_Type;
+
+typedef struct
+{
+	/* The controller limits for rate, angles and velocity */
+	struct
+	{	/* Rate control limits */
+		float roll;
+		float pitch;
+		float yaw;
+	} max_rate;
+
+	struct
+	{	/* Rate control limits whilst in attitude mode */
+		float roll;
+		float pitch;
+		float yaw;
+	} max_rate_attitude;
+
+	struct
+	{	/* Attitude control limits */
+		float roll;
+		float pitch;
+	} max_angle;
+
+	struct
+	{	/* Velocity control limits */
+		float horizontal;
+		float vertical;
+	} max_velocity;
+} Control_Limits_Type;
 
 typedef struct
 {
