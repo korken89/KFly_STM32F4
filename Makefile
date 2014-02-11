@@ -96,11 +96,8 @@ ALLSRCBASE = $(notdir $(basename $(ALLSRC)))
 ALLOBJECTS = $(addprefix $(OBJDIR)/, $(addsuffix .o, $(ALLSRCBASE)))
 
 
-
-
 # Include defenitions
 include make/defs.mk
-
 
 
 all: build
