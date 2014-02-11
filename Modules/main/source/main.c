@@ -33,6 +33,20 @@ void main(void)
 	 * */
 	PWMInit();
 
+
+
+	init_usart(115200);
+
+	while(1)
+	{
+		while (USART_GetFlagStatus(USART3, USART_FLAG_RXNE) == RESET);
+
+		uint8_t x = USART_ReceiveData(USART3);
+
+		USART_SendData(USART3, x);
+		LEDToggle(LED_GREEN);
+		LEDToggle(LED_RED);
+	}
 	/* *
 	 *
 	 * USB receive queue init

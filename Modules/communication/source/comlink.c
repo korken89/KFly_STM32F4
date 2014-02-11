@@ -3,7 +3,7 @@
  * Hardware Abstraction Layer for all communications
  *
  * TODO:
- * Add support for Serial Communication AUX1, AUX2, AUX3 and CAN1
+ * Add support for Serial Communication AUX1, AUX2, AUX3 and AUX4
  *
  * */
 

@@ -82,7 +82,7 @@ void vSerialManagerInit(void)
  * */
 void vTaskUSBSerialManager(void *pvParameters)
 {
-	char in_data;
+	uint8_t in_data;
 	Parser_Holder_Type data_holder;
 	static uint8_t buffer[SERIAL_BUFFER_SIZE]; /* Buffer for serial USB commands */
 

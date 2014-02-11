@@ -22,6 +22,7 @@
 #include "serialmanager.h"
 #include "timer.h"
 #include "i2c.h"
+#include "uart.h"
 #include "mpu6050.h"
 #include "hmc5883l.h"
 #include "crc.h"

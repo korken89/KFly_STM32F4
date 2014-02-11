@@ -26,8 +26,8 @@
 /* Typedefs */
 typedef struct
 {
-	volatile xQueueHandle xUSBQueueHandle;
-	volatile Bool bUSBAvalible;
+	xQueueHandle xUSBQueueHandle;
+	Bool bUSBAvalible;
 } USB_QUEUE_Type;
 
 /* Global variable defines */
