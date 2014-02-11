@@ -97,7 +97,7 @@ typedef struct
 
 /* Global function defines */
 void vInitControl(void);
-void vUpdateControlAction(Control_Reference_Type *);
+void vUpdateControlAction(Control_Reference_Type *, Control_Limits_Type *);
 Control_Data_Type *ptrGetControlData(void);
 Output_Mixer_Type *ptrGetOutputMixer(void);
 

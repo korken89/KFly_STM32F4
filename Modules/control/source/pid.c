@@ -35,5 +35,5 @@ float fPIUpdate(PI_Data_Type *pi, float error, float dt)
     pi->I_state = bound(pi->I_limit, - pi->I_limit, pi->I_state + error * dt);
 
     /* Create control signal */
-    return pi->P_gain * error + pi->I_gain * pi->I_state;
+    return ((pi->P_gain * error) + (pi->I_gain * pi->I_state));
 }

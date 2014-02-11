@@ -40,10 +40,10 @@ static Output_Mixer_Type Output_Mixer;
 /* Global variable defines */
 
 /* Private function defines */
-static vector3f_t vPositionControl(vector3f_t);
-static vector3f_t vVelocityControl(vector3f_t);
-static vector3f_t vAttitudeControl(vector3f_t);
-static void vRateControl(vector3f_t);
+static vector3f_t vPositionControl(vector3f_t, Control_Limits_Type *);
+static vector3f_t vVelocityControl(vector3f_t, Control_Limits_Type *);
+static vector3f_t vAttitudeControl(vector3f_t, Control_Limits_Type *);
+static void vRateControl(vector3f_t, Control_Limits_Type *);
 static void vUpdateOutputs(float, float, float, float);
 
 void vInitControl(void)
@@ -51,7 +51,7 @@ void vInitControl(void)
 	/* Initialize the controllers here */
 }
 
-void vUpdateControlAction(Control_Reference_Type *reference)
+void vUpdateControlAction(Control_Reference_Type *reference, Control_Limits_Type *limits)
 {
 	vector3f_t u;
 
@@ -62,25 +62,25 @@ void vUpdateControlAction(Control_Reference_Type *reference)
 			break;
 
 		case FLIGHTMODE_POSITION:
-			u = vPositionControl(reference->reference);
-			u = vVelocityControl(u);
-			u = vAttitudeControl(u);
-			vRateControl(u);
+			u = vPositionControl(reference->reference, limits);
+			u = vVelocityControl(u, limits);
+			u = vAttitudeControl(u, limits);
+			vRateControl(u, limits);
 			break;
 
 		case FLIGHTMODE_VELOCITY:
-			u = vVelocityControl(reference->reference);
-			u = vAttitudeControl(u);
-			vRateControl(u);
+			u = vVelocityControl(reference->reference, limits);
+			u = vAttitudeControl(u, limits);
+			vRateControl(u, limits);
 			break;
 
 		case FLIGHTMODE_ATTITUDE:
-			u = vAttitudeControl(reference->reference);
-			vRateControl(u);
+			u = vAttitudeControl(reference->reference, limits);
+			vRateControl(u, limits);
 			break;
 
 		case FLIGHTMODE_RATE:
-			vRateControl(reference->reference);
+			vRateControl(reference->reference, limits);
 			break;
 
 		case FLIGHTMODE_DISARMED:
@@ -113,7 +113,7 @@ Output_Mixer_Type *ptrGetOutputMixer(void)
  *
  * */
 
-static vector3f_t vPositionControl(vector3f_t reference)
+static vector3f_t vPositionControl(vector3f_t reference, Control_Limits_Type *limits)
 {
 	float error_x, error_y, error_z;
 	vector3f_t u;
@@ -131,7 +131,7 @@ static vector3f_t vPositionControl(vector3f_t reference)
 
 }
 
-static vector3f_t vVelocityControl(vector3f_t reference)
+static vector3f_t vVelocityControl(vector3f_t reference, Control_Limits_Type *limits)
 {
 	float error_x, error_y, error_z;
 	vector3f_t u;
@@ -161,7 +161,7 @@ static vector3f_t vVelocityControl(vector3f_t reference)
 	return u;
 }
 
-static vector3f_t vAttitudeControl(vector3f_t reference)
+static vector3f_t vAttitudeControl(vector3f_t reference, Control_Limits_Type *limits)
 {
 	float error_x, error_y, error_z;
 	vector3f_t u;
@@ -187,7 +187,7 @@ static vector3f_t vAttitudeControl(vector3f_t reference)
 	return u;
 }
 
-static void vRateControl(vector3f_t reference)
+static void vRateControl(vector3f_t reference, Control_Limits_Type *limits)
 {
 	float error_x, error_y, error_z;
 	vector3f_t u;
