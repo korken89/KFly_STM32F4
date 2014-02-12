@@ -3,6 +3,8 @@
 
 __attribute__((section(".sw_version"))) __I char build_version[] = KFLY_VERSION;
 USB_OTG_CORE_HANDLE USB_OTG_dev;
+static uint8_t DMA_buffer[32];
+static uint8_t DMA_buffer2[32];
 
 void main(void)
 {
@@ -35,17 +37,21 @@ void main(void)
 
 
 
-	init_usart(115200);
+	AUX1Init(115200);
+	DMA_Configuration(DMA_buffer, DMA_buffer2, 32);
+
+	while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET); // Wait for Empty
+	USART_SendData(USART3, '*');
 
 	while(1)
 	{
-		while (USART_GetFlagStatus(USART3, USART_FLAG_RXNE) == RESET);
+		/*while (USART_GetFlagStatus(USART3, USART_FLAG_RXNE) == RESET);
 
 		uint8_t x = USART_ReceiveData(USART3);
 
 		USART_SendData(USART3, x);
 		LEDToggle(LED_GREEN);
-		LEDToggle(LED_RED);
+		LEDToggle(LED_RED);*/
 	}
 	/* *
 	 *
