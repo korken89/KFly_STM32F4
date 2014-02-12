@@ -93,7 +93,7 @@ void DMA_Configuration(uint8_t *buffer, uint8_t *buffer2, uint16_t size)
 
 
   /* Configure Double Buffer */
-  DMA_DoubleBufferModeConfig(DMA1_Stream1, (uint32_t)buffer2, (uint32_t)buffer);
+  DMA_DoubleBufferModeConfig(DMA1_Stream1, (uint32_t)buffer2, DMA_Memory_1);
 
   /* Enable the USART RX DMA request */
   USART_DMACmd(USART3, USART_DMAReq_Rx, ENABLE);
@@ -138,13 +138,13 @@ void DMA1_Stream1_IRQHandler(void)
     {
     	USART_SendData(USART3, 'H');
     	while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET);
-    	USART_SendData(USART3, '0');
+    	USART_SendData(USART3, '1');
     }
     else
     {
     	USART_SendData(USART3, 'H');
     	while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET);
-    	USART_SendData(USART3, '1');
+    	USART_SendData(USART3, '0');
     }
   }
 }
