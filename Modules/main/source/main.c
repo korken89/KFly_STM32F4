@@ -66,7 +66,7 @@ void main(void)
 	 * Initializes and sets up a timer as a 1MHz counter for timing.
 	 *
 	 * */
-	FastCounterInit();
+	//FastCounterInit();
 
 	/* *
 	 *

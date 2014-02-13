@@ -74,27 +74,6 @@ void AUX1Init(uint32_t baudrate)
 	USART_Cmd(USART3, ENABLE);
 }
 
-void USART3_IRQHandler(void)
-{
-	/* *
-	 * To catch the RXNE interrupt and handle DMA timeout, special care have to be taken.
-	 * The DMA clears the interrupt bit when reading and hence it is impossible so read
-	 * the RXNE bit to see if it has happened. The interrupt must be configured so only
-	 * RXNE generates an interrupt
-	 * */
-
-	/* Disable the RXNE interrupt */
-	USART_ITConfig(USART3, USART_IT_RXNE, DISABLE);
-
-	/* Start the DMA timeout timer */
-
-
-
-
-	while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET);
-	USART_SendData(USART3, 'S');
-}
-
 void DMA_Configuration(uint8_t *buffer, uint8_t *buffer2, uint16_t size)
 {
   DMA_InitTypeDef  DMA_InitStructure;
@@ -128,11 +107,80 @@ void DMA_Configuration(uint8_t *buffer, uint8_t *buffer2, uint16_t size)
   USART_DMACmd(USART3, USART_DMAReq_Rx, ENABLE);
 
   /* Enable DMA Stream Transfer Complete interrupt */
-  DMA_ITConfig(DMA1_Stream1, DMA_IT_TC, ENABLE);
+  DMA_ITConfig(DMA1_Stream1, DMA_IT_TC | DMA_IT_HT, ENABLE);
 
   /* Enable the DMA RX Stream */
   DMA_DoubleBufferModeCmd(DMA1_Stream1, ENABLE);
+
+  /* Start the DMA Timeout */
+  DMATimeoutInit();
+
   DMA_Cmd(DMA1_Stream1, ENABLE);
+}
+
+void DMATimeoutInit(void)
+{
+	const uint16_t TIMER_RATE = 10000;
+	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+	TIM_OCInitTypeDef TIM_OCInitStructure;
+	NVIC_InitTypeDef NVIC_InitStructure;
+
+	uint16_t PrescalerValue = ((SystemCoreClock /2) / TIMER_RATE) - 1;
+
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+
+    /* Time base configuration */
+    TIM_TimeBaseStructure.TIM_Period = 0xFFFF;
+    TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
+    TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+
+    TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
+
+    /* Output compare configuration */
+    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Timing;
+    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+    TIM_OCInitStructure.TIM_Pulse = 30000;
+    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+
+    TIM_OC1Init(TIM2, &TIM_OCInitStructure);
+
+    /* Enable interrupts */
+    NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+
+    TIM_OC1PreloadConfig(TIM2, TIM_OCPreload_Disable);
+    TIM_ITConfig(TIM2, TIM_IT_CC1, DISABLE);
+
+    TIM_Cmd(TIM2, ENABLE);
+}
+
+void USART3_IRQHandler(void)
+{
+	/* *
+	 * To catch the RXNE interrupt and handle DMA timeout, special care have to be taken.
+	 * The DMA clears the interrupt bit when reading and hence it is impossible so read
+	 * the RXNE bit to see if it has happened. The interrupt must be configured so only
+	 * RXNE generates an interrupt
+	 * */
+
+	/* Calculate the new Compare value */
+	uint16_t NewCompare = (uint16_t)TIM_GetCounter(TIM2);
+	NewCompare += 30000;
+
+	/* Disable the RXNE interrupt */
+	USART_ITConfig(USART3, USART_IT_RXNE, DISABLE);
+
+	/* Start the DMA timeout timer */
+	TIM_SetCompare1(TIM2, NewCompare);
+	TIM_ClearITPendingBit(TIM2, TIM_IT_CC1); /* For some reason the pending bit must be cleared */
+	TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);
+
+	while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET);
+	USART_SendData(USART3, 'S');
 }
 
 void DMA1_Stream1_IRQHandler(void)
@@ -186,4 +234,16 @@ void DMA1_Stream1_IRQHandler(void)
     	USART_SendData(USART3, '0');
     }
   }
+}
+
+void TIM2_IRQHandler(void)
+{
+	if (TIM_GetITStatus(TIM2, TIM_IT_CC1))
+	{
+		TIM_ClearITPendingBit(TIM2, TIM_IT_CC1);
+		TIM_ITConfig(TIM2, TIM_IT_CC1, DISABLE);
+
+		while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET);
+		USART_SendData(USART3, 'T');
+	}
 }

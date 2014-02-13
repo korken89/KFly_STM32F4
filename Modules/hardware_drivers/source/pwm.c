@@ -138,24 +138,19 @@ void PWMInit(void)
 
 /* *
  *
- * vSetRCOutput(channel, period [in us]):
+ * vSetRCOutput(channel, period [in %]):
  * Sets a new PWM match value.
  *
  * */
 void vSetRCOutput(Output_Channel_Type ch, float u)
 {
-	uint32_t period = (uint32_t)(1000.0f * bound(1.0f, 0.0f, u));
-
-	/* Constant array as lookup table for the PWM channel's CCR register */
+	/* Constant array as lookup table for the PWM channel's CCR registers */
 	static const uint32_t PWM_CH[8] = { (uint32_t)&TIM4->CCR4, (uint32_t)&TIM4->CCR3,
 										(uint32_t)&TIM4->CCR2, (uint32_t)&TIM4->CCR1,
 										(uint32_t)&TIM8->CCR4, (uint32_t)&TIM8->CCR3,
 										(uint32_t)&TIM3->CCR2, (uint32_t)&TIM3->CCR1};
 
-	if (period > RC_MAX) /* If above 2ms, set it to 2ms */
-		period = RC_MAX;
-	else if (period < RC_MIN) /* If below 1ms, set it to 1ms */
-		period = RC_MIN;
+	uint32_t period = (uint32_t)(1000.0f * bound(1.0f, 0.0f, u));
 
 	*((uint32_t *)PWM_CH[ch]) = period + 1000; /* Instead of big switch/if statement */
 }
