@@ -14,7 +14,7 @@
 
 /* Private function defines */
 
-void AUX1Init(uint32_t baudrate)
+void USART3Init(uint32_t baudrate)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	USART_InitTypeDef USART_InitStructure;
@@ -164,7 +164,7 @@ void USART3_IRQHandler(void)
 	 * To catch the RXNE interrupt and handle DMA timeout, special care have to be taken.
 	 * The DMA clears the interrupt bit when reading and hence it is impossible so read
 	 * the RXNE bit to see if it has happened. The interrupt must be configured so only
-	 * RXNE generates an interrupt
+	 * RXNE generates an interrupt.
 	 * */
 
 	/* Calculate the new Compare value */
@@ -238,6 +238,8 @@ void DMA1_Stream1_IRQHandler(void)
 
 void TIM2_IRQHandler(void)
 {
+	/* Check if the Compare interrupt has happened,
+	 * this means a DMA timeout has ocured. */
 	if (TIM_GetITStatus(TIM2, TIM_IT_CC1))
 	{
 		TIM_ClearITPendingBit(TIM2, TIM_IT_CC1);

@@ -8,6 +8,8 @@
 #include "serialmanager_types.h"
 #include "comlink.h"
 #include "crc.h"
+#include "pid.h"
+#include "control.h"
 
 /* Scheduler includes. */
 #include "FreeRTOS.h"
@@ -28,7 +30,10 @@
 /* Global variable defines */
 
 /* Global function defines */
+void vPing(Parser_Holder_Type *);
+void vGetRunningMode(Parser_Holder_Type *);
 void vGetBootloaderVersion(Parser_Holder_Type *);
 void vGetFirmwareVersion(Parser_Holder_Type *);
+void vGetControllerData(Parser_Holder_Type *);
 
 #endif

@@ -10,6 +10,44 @@
 #include "serialmanager_parsers.h"
 
 /* *
+ * Sends a ping.
+ * */
+void vPing(Parser_Holder_Type *pHolder)
+{
+	uint8_t str[4];
+
+	str[0] = SYNC_BYTE;
+	str[1] = Cmd_Ping;
+	str[2] = 0;
+	str[3] = CRC8(str, 3);
+
+	if (pHolder->Port == PORT_USB)
+		xUSBSendData(str, 4);
+}
+
+/* *
+ * Get the current running mode. P for program, B for bootloader.
+ * */
+void vGetRunningMode(Parser_Holder_Type *pHolder)
+{
+	uint8_t str[7];
+	uint16_t crc16;
+
+	str[0] = SYNC_BYTE;
+	str[1] = Cmd_GetRunningMode;
+	str[2] = 0;
+	str[3] = CRC8(str, 3);
+	str[4] = 'P'; /* P for program mode */
+	crc16 = CRC16(str, 5);
+
+	str[5] = (uint8_t)(crc16 >> 8);
+	str[6] = (uint8_t)(crc16);
+
+	if (pHolder->Port == PORT_USB)
+		xUSBSendData(str, 7);
+}
+
+/* *
  * Gets the bootloader version and sends it.
  * */
 void vGetBootloaderVersion(Parser_Holder_Type *pHolder)
@@ -23,21 +61,21 @@ void vGetBootloaderVersion(Parser_Holder_Type *pHolder)
 	str[0] = SYNC_BYTE;
 	str[1] = Cmd_GetBootloaderVersion;
 
-	while (txt && (i < 40)) /* In case there is something wrong with the string  */
+	while (txt && (i < 60)) /* In case there is something wrong with the string  */
 	{
 		txt = *(msg + i);
 		str[i++] = txt;
 	}
 
-	str[2] = (uint8_t)i - 5;
+	str[2] = (uint8_t)i - 4;
 	str[3] = CRC8(str, 3);
-	uint16_t crc16 = CRC16(str, i - 1);
+	uint16_t crc16 = CRC16(str, i);
 
 	str[i++] = (uint8_t)(crc16 >> 8);
 	str[i++] = (uint8_t)(crc16);
 
 	if (pHolder->Port == PORT_USB)
-		xUSBSendData(str, i - 1);
+		xUSBSendData(str, i);
 }
 
 /* *
@@ -54,19 +92,52 @@ void vGetFirmwareVersion(Parser_Holder_Type *pHolder)
 	str[0] = SYNC_BYTE;
 	str[1] = Cmd_GetFirmwareVersion;
 
-	while (txt && (i < 40)) /* In case there is something wrong with the string  */
+	while (txt && (i < 60)) /* In case there is something wrong with the string  */
 	{
 		txt = *(msg + i);
 		str[i++] = txt;
 	}
 
-	str[2] = (uint8_t)i - 5;
+	str[2] = (uint8_t)i - 4;
 	str[3] = CRC8(str, 3);
-	uint16_t crc16 = CRC16(str, i - 1);
+	uint16_t crc16 = CRC16(str, i);
 
 	str[i++] = (uint8_t)(crc16 >> 8);
 	str[i++] = (uint8_t)(crc16);
 
 	if (pHolder->Port == PORT_USB)
-		xUSBSendData(str, i - 1);
+		xUSBSendData(str, i);
+}
+
+void vGetControllerData(Parser_Holder_Type *pHolder)
+{
+	uint8_t str[200];
+	PI_Data_Type *PI_settings;
+	uint8_t *data;
+	uint32_t size = 4;
+	uint16_t crc16;
+
+	/* Case the control data to an array of PI_Data_Type */
+	PI_settings = (PI_Data_Type *)ptrGetControlData();
+
+	str[0] = SYNC_BYTE;
+	str[1] = Cmd_GetControllerData;
+	str[2] = 144;
+	str[3] = CRC8(str, 3);
+
+	for (int i = 0; i < 12; i++)
+	{
+		data = (uint8_t *)&PI_settings[i];
+
+		for (int j = 0; j < 12; j++)
+			str[size++] = data[j];
+	}
+
+	crc16 = CRC16(str, size - 1);
+
+	str[size++] = (uint8_t)(crc16 >> 8);
+	str[size++] = (uint8_t)(crc16);
+
+	if (pHolder->Port == PORT_USB)
+		xUSBSendData(str, size);
 }

@@ -20,10 +20,13 @@ ELFDIR = ./build
 ifdef ComSpec
 $(shell md $(subst /,\\,$(OBJDIR)) 2>NUL)
 REMOVE = del
+DATE = no timestamp
 else
 $(shell mkdir -p $(OBJDIR) 2>/dev/null)
 REMOVE = rm -f
+DATE = 20$(shell date +'%y%m%d-%H%M')
 endif
+
 
 # External high speed crystal frequency
 F_HSE = 12000000
@@ -33,9 +36,6 @@ USE_STD_LIBS = 1
 
 # Optimization
 OPTIMIZATION = 1
-
-# Make date
-DATE = 20$(shell date +'%y%m%d-%H%M')
 
 # StdLibs to use if wanted
 STDLIBDIR = ./Libraries/STM32F4xx_StdPeriph_Driver/src/
@@ -103,7 +103,7 @@ include make/defs.mk
 
 all: build
 
-build: elf bin hex lss sym dump size
+build: elf bin hex lss sym size
 
 # Link: Create elf output file from object files.
 $(eval $(call LINK_TEMPLATE, $(ELFDIR)/$(TARGET).elf, $(ALLOBJECTS)))

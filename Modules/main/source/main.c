@@ -37,14 +37,14 @@ void main(void)
 
 
 
-	AUX1Init(115200);
-	DMA_Configuration(DMA_buffer, DMA_buffer2, 32);
+	//USART3Init(115200);
+	//DMA_Configuration(DMA_buffer, DMA_buffer2, 32);
 
-	while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET); // Wait for Empty
-	USART_SendData(USART3, '*');
+	//while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET); // Wait for Empty
+	//USART_SendData(USART3, '*');
 
-	while(1)
-	{
+	//while(1)
+	//{
 		/*while (USART_GetFlagStatus(USART3, USART_FLAG_RXNE) == RESET);
 
 		uint8_t x = USART_ReceiveData(USART3);
@@ -52,7 +52,7 @@ void main(void)
 		USART_SendData(USART3, x);
 		LEDToggle(LED_GREEN);
 		LEDToggle(LED_RED);*/
-	}
+	//}
 	/* *
 	 *
 	 * USB receive queue init
@@ -73,29 +73,29 @@ void main(void)
 	 * Initializes the I2C-bus.
 	 *
 	 * */
-	SensorBusInit();
+	//SensorBusInit();
 
 	/* *
 	 *
 	 * Initialize all sensors
 	 *
 	 * */
-	MPU6050Init();
-	HMC5883LInit();
+	//MPU6050Init();
+	//HMC5883LInit();
 
 	/* *
 	 *
 	 * Initializes the sensor interrupts.
 	 *
 	 * */
-	SensorsInterruptReadInit();
+	//SensorsInterruptReadInit();
 
 	/* *
 	 *
 	 * Estimation init.
 	 *
 	 * */
-	EstimationInit();
+	//EstimationInit();
 
 	/* *
 	 *

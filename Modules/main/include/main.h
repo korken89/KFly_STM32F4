@@ -39,7 +39,7 @@
 #endif
 
 #define MAINVERSION	 	"0"
-#define SUBVERSION 		".01 alpha"
+#define SUBVERSION 		"01 alpha"
 #define KFLY_VERSION	"KFly v" MAINVERSION "." SUBVERSION " (" DATE ")\0"
 
 

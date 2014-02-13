@@ -19,31 +19,29 @@ typedef enum
 {
 	Cmd_None = 0,
 	Cmd_ACK = 1,
-	Cmd_Ping,
-	Cmd_DebugMessage,
-	Cmd_GetRunningMode,
-	Cmd_PrepareWriteFirmware,		/* Bootloader specific, shall always require ACK */
-	Cmd_WriteFirmwarePackage,		/* Bootloader specific, shall always require ACK */
-	Cmd_WriteLastFirmwarePackage,	/* Bootloader specific, shall always require ACK */
-	Cmd_ReadFirmwarePackage,		/* Bootloader specific, shall always require ACK */
-	Cmd_ReadLastFirmwarePackage,	/* Bootloader specific, shall always require ACK */
-	Cmd_NextPackage,				/* Bootloader specific, shall always require ACK */
-	Cmd_ExitBootloader,				/* Bootloader specific, shall always require ACK */
-	Cmd_GetBootloaderVersion,
-	Cmd_GetFirmwareVersion,
-	Cmd_SaveToFlash,
-	Cmd_GetControllerData,
-	Cmd_SetControllerData,
-	Cmd_GetChannelMix,
-	Cmd_SetChannelMix,
-	Cmd_StartRCCalibration,
-	Cmd_StopRCCalibration,
-	Cmd_CalibrateRCCenters,
-	Cmd_GetRCCalibration,
-	Cmd_SetRCCalibration,
-	Cmd_GetRCValues,
-	Cmd_GetSensorData,
-	EndOfCommands
+	Cmd_Ping = 2,
+	Cmd_DebugMessage = 3,
+	Cmd_GetRunningMode = 4,
+
+	Cmd_PrepareWriteFirmware = 10,   	/* Bootloader specific, shall always require ACK */
+	Cmd_WriteFirmwarePackage = 11,		/* Bootloader specific, shall always require ACK */
+	Cmd_WriteLastFirmwarePackage = 12,	/* Bootloader specific, shall always require ACK */
+	Cmd_ReadFirmwarePackage = 13,		/* Bootloader specific, shall always require ACK */
+	Cmd_ReadLastFirmwarePackage = 14,   /* Bootloader specific, shall always require ACK */
+	Cmd_NextPackage = 15,   			/* Bootloader specific, shall always require ACK */
+	Cmd_ExitBootloader = 16,   			/* Bootloader specific, shall always require ACK */
+	Cmd_GetBootloaderVersion = 17,
+	Cmd_GetFirmwareVersion = 18,
+	Cmd_SaveToFlash = 19,
+
+	Cmd_GetControllerData = 30,
+	Cmd_SetControllerData = 31,
+	Cmd_GetChannelMix = 32,
+	Cmd_SetChannelMix = 33,
+	Cmd_GetRCCalibration = 34,
+	Cmd_SetRCCalibration = 35,
+	Cmd_GetRCValues = 36,
+	Cmd_GetSensorData = 37
 } KFly_Command_Type;
 
 /* Length of data packets */
@@ -66,9 +64,6 @@ typedef enum {
 	Length_SetControllerData,
 	Length_GetChannelMix = 0,
 	Length_SetChannelMix,
-	Length_StartRCCalibration = 0,
-	Length_StopRCCalibration = 0,
-	Length_CalibrateRCCenters = 0,
 	Length_GetRCCalibration = 0,
 	Length_SetRCCalibration,
 	Length_GetRCValues,

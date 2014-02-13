@@ -180,7 +180,7 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			break;
 
 		case Cmd_Ping:
-			pHolder->parser = NULL;
+			pHolder->parser = vPing;
 			pHolder->data_length = Length_Ping;
 			break;
 
@@ -190,7 +190,7 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			break;
 
 		case Cmd_GetRunningMode:
-			pHolder->parser = NULL;
+			pHolder->parser = vGetRunningMode;
 			pHolder->data_length = Length_GetRunningMode;
 			break;
 
@@ -254,7 +254,7 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			break;
 
 		case Cmd_GetControllerData:
-			pHolder->parser = NULL;
+			pHolder->parser = vGetControllerData;
 			pHolder->data_length = Length_GetControllerData;
 			break;
 
@@ -271,21 +271,6 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 		case Cmd_SetChannelMix:
 			pHolder->parser = NULL;
 			pHolder->data_length = Length_SetChannelMix;
-			break;
-
-		case Cmd_StartRCCalibration:
-			pHolder->parser = NULL;
-			pHolder->data_length = Length_StartRCCalibration;
-			break;
-
-		case Cmd_StopRCCalibration:
-			pHolder->parser = NULL;
-			pHolder->data_length = Length_StopRCCalibration;
-			break;
-
-		case Cmd_CalibrateRCCenters:
-			pHolder->parser = NULL;
-			pHolder->data_length = Length_CalibrateRCCenters;
 			break;
 
 		case Cmd_GetRCCalibration:
