@@ -253,12 +253,42 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 			pHolder->data_length = Length_SaveToFlash;
 			break;
 
-		case Cmd_GetControllerData:
-			pHolder->parser = vGetControllerData;
+		case Cmd_GetRateControllerData:
+			pHolder->parser = vGetRateControllerData;
 			pHolder->data_length = Length_GetControllerData;
 			break;
 
-		case Cmd_SetControllerData:
+		case Cmd_SetRateControllerData:
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_SetControllerData;
+			break;
+
+		case Cmd_GetAttitudeControllerData:
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_GetControllerData;
+			break;
+
+		case Cmd_SetAttitudeControllerData:
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_SetControllerData;
+			break;
+
+		case Cmd_GetVelocityControllerData:
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_GetControllerData;
+			break;
+
+		case Cmd_SetVelocityControllerData:
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_SetControllerData;
+			break;
+
+		case Cmd_GetPositionControllerData:
+			pHolder->parser = NULL;
+			pHolder->data_length = Length_GetControllerData;
+			break;
+
+		case Cmd_SetPositionControllerData:
 			pHolder->parser = NULL;
 			pHolder->data_length = Length_SetControllerData;
 			break;

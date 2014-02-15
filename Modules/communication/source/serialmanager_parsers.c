@@ -109,28 +109,38 @@ void vGetFirmwareVersion(Parser_Holder_Type *pHolder)
 		xUSBSendData(str, i);
 }
 
-void vGetControllerData(Parser_Holder_Type *pHolder)
+void vGetRateControllerData(Parser_Holder_Type *pHolder)
 {
 	uint8_t str[200];
 	PI_Data_Type *PI_settings;
+	uint8_t *CL_settings;
 	uint8_t *data;
 	uint32_t size = 4;
+	int i, j;
 	uint16_t crc16;
 
-	/* Case the control data to an array of PI_Data_Type */
+	/* CasT the control data to an array of PI_Data_Type */
 	PI_settings = (PI_Data_Type *)ptrGetControlData();
 
+	/* Cast the settings into bytes for read out */
+	CL_settings = (uint8_t *)ptrGetControlLimits();
+
 	str[0] = SYNC_BYTE;
-	str[1] = Cmd_GetControllerData;
-	str[2] = 144;
+	str[1] = Cmd_GetRateControllerData;
+	str[2] = 48;
 	str[3] = CRC8(str, 3);
 
-	for (int i = 0; i < 12; i++)
+	for (i = 0; i < 3; i++) /* Get only the rate coefficients */
 	{
 		data = (uint8_t *)&PI_settings[i];
 
-		for (int j = 0; j < 12; j++)
+		for (j = 0; j < 12; j++)
 			str[size++] = data[j];
+	}
+
+	for (i = 0; i < 12; i++) /* Get only the rate constraints */
+	{
+		str[size++] = CL_settings[i];
 	}
 
 	crc16 = CRC16(str, size - 1);

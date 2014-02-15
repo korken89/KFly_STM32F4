@@ -61,27 +61,27 @@ typedef struct
 typedef struct
 {
 	/* The controller limits for rate, angles and velocity */
-	struct
+	struct /* Belongs to the rate controller */
 	{	/* Rate control limits */
 		float roll;
 		float pitch;
 		float yaw;
 	} max_rate;
 
-	struct
+	struct /* Belongs to the attitude controller */
 	{	/* Rate control limits whilst in attitude mode */
 		float roll;
 		float pitch;
 		float yaw;
 	} max_rate_attitude;
 
-	struct
+	struct /* Belongs to the attitude controller */
 	{	/* Attitude control limits */
 		float roll;
 		float pitch;
 	} max_angle;
 
-	struct
+	struct /* Belongs to the velocity controller */
 	{	/* Velocity control limits */
 		float horizontal;
 		float vertical;
@@ -99,6 +99,7 @@ typedef struct
 void vInitControl(void);
 void vUpdateControlAction(Control_Reference_Type *, Control_Limits_Type *, float);
 Control_Data_Type *ptrGetControlData(void);
+Control_Limits_Type *ptrGetControlLimits(void);
 Output_Mixer_Type *ptrGetOutputMixer(void);
 
 #endif

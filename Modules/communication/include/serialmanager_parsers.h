@@ -34,6 +34,6 @@ void vPing(Parser_Holder_Type *);
 void vGetRunningMode(Parser_Holder_Type *);
 void vGetBootloaderVersion(Parser_Holder_Type *);
 void vGetFirmwareVersion(Parser_Holder_Type *);
-void vGetControllerData(Parser_Holder_Type *);
+void vGetRateControllerData(Parser_Holder_Type *);
 
 #endif
