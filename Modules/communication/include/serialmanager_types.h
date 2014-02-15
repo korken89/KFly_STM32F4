@@ -34,14 +34,20 @@ typedef enum
 	Cmd_GetFirmwareVersion = 18,
 	Cmd_SaveToFlash = 19,
 
-	Cmd_GetControllerData = 30,
-	Cmd_SetControllerData = 31,
-	Cmd_GetChannelMix = 32,
-	Cmd_SetChannelMix = 33,
-	Cmd_GetRCCalibration = 34,
-	Cmd_SetRCCalibration = 35,
-	Cmd_GetRCValues = 36,
-	Cmd_GetSensorData = 37
+	Cmd_GetRateControllerData = 30,
+	Cmd_SetRateControllerData = 31,
+	Cmd_GetAttitudeControllerData = 32,
+	Cmd_SetAttitudeControllerData = 33,
+	Cmd_GetVelocityControllerData = 34,
+	Cmd_SetVelocityControllerData = 35,
+	Cmd_GetPositionControllerData = 36,
+	Cmd_SetPositionControllerData = 37,
+	Cmd_GetChannelMix = 38,
+	Cmd_SetChannelMix = 39,
+	Cmd_GetRCCalibration = 40,
+	Cmd_SetRCCalibration = 41,
+	Cmd_GetRCValues = 42,
+	Cmd_GetSensorData = 43
 } KFly_Command_Type;
 
 /* Length of data packets */
