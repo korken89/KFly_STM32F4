@@ -34,6 +34,13 @@ void USART3Init(uint32_t baudrate)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
+	/* Enable the USART3 TX DMA Interrupt */
+	NVIC_InitStructure.NVIC_IRQChannel = DMA1_Stream3_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 6;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
 	/* TX/RX */
 	GPIO_InitStructure.GPIO_Pin = (GPIO_Pin_10 | GPIO_Pin_11);
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
@@ -75,6 +82,20 @@ void USART3Init(uint32_t baudrate)
 	USART_Cmd(USART3, ENABLE);
 }
 
+void USART_putc(USART_TypeDef *USARTx, uint8_t ch)
+{
+	while(USART_GetFlagStatus(USARTx, USART_FLAG_TXE) == RESET);
+	USART_SendData(USARTx, ch);
+}
+
+void USART_puts(USART_TypeDef *USARTx, uint8_t *msg)
+{
+	while (*msg)
+	{
+		USART_putc(USARTx, *(msg++));
+	}
+}
+
 void DMA_Receive_Configuration(uint8_t *buffer, uint8_t *buffer2, uint16_t size)
 {
   DMA_InitTypeDef  DMA_InitStructure;
@@ -108,7 +129,7 @@ void DMA_Receive_Configuration(uint8_t *buffer, uint8_t *buffer2, uint16_t size)
   USART_DMACmd(USART3, USART_DMAReq_Rx, ENABLE);
 
   /* Enable DMA Stream Transfer Complete interrupt */
-  DMA_ITConfig(DMA1_Stream1, DMA_IT_TC | DMA_IT_HT, ENABLE);
+  DMA_ITConfig(DMA1_Stream1, DMA_IT_TC, ENABLE);
 
   /* Enable the DMA RX Stream */
   DMA_DoubleBufferModeCmd(DMA1_Stream1, ENABLE);
@@ -117,6 +138,50 @@ void DMA_Receive_Configuration(uint8_t *buffer, uint8_t *buffer2, uint16_t size)
   DMATimeoutInit();
 
   DMA_Cmd(DMA1_Stream1, ENABLE);
+}
+
+void DMA_Transmit_Configuration(void)
+{
+  DMA_InitTypeDef  DMA_InitStructure;
+
+  DMA_DeInit(DMA1_Stream3);
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
+
+  DMA_InitStructure.DMA_Channel = DMA_Channel_4;
+  DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToPeripheral; // Transmit
+  DMA_InitStructure.DMA_Memory0BaseAddr = 0x00000000;
+  DMA_InitStructure.DMA_BufferSize = 0;
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&USART3->DR;
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;
+  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_1QuarterFull;
+  DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
+  DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
+
+  DMA_Init(DMA1_Stream3, &DMA_InitStructure);
+
+  /* Enable the USART TX DMA request */
+  USART_DMACmd(USART3, USART_DMAReq_Tx, ENABLE);
+
+  /* Enable DMA Stream Transfer Complete interrupt */
+  DMA_ITConfig(DMA1_Stream3, DMA_IT_TC, ENABLE);
+
+  DMA_Cmd(DMA1_Stream3, ENABLE);
+}
+
+void DMA_Transmit_Buffer(DMA_Stream_TypeDef *DMAx_Streamy, uint8_t *buffer, uint16_t size)
+{
+	/* Load the buffer and the buffer size */
+	DMAx_Streamy->NDTR = size;
+	DMAx_Streamy->M0AR = (uint32_t)buffer;
+
+	/* Initialize DMA transfer */
+	DMA_Cmd(DMAx_Streamy, ENABLE);
 }
 
 void DMATimeoutInit(void)
@@ -154,7 +219,7 @@ void DMATimeoutInit(void)
     NVIC_Init(&NVIC_InitStructure);
 
     TIM_OC1PreloadConfig(TIM2, TIM_OCPreload_Disable);
-    TIM_ITConfig(TIM2, TIM_IT_CC1, DISABLE);
+    TIM_ITConfig(TIM2, (TIM_IT_CC1 | TIM_IT_CC2 | TIM_IT_CC3 | TIM_IT_CC4), DISABLE);
 
     TIM_Cmd(TIM2, ENABLE);
 }
@@ -214,19 +279,16 @@ void DMA1_Stream1_IRQHandler(void)
     	 * */
     }
   }
+}
 
-  /* Test on DMA Stream Half Transfer interrupt */
-  if (DMA_GetITStatus(DMA1_Stream1, DMA_IT_HTIF1))
+void DMA1_Stream3_IRQHandler(void)
+{
+  /* Test on DMA Stream Transfer Complete interrupt */
+  if (DMA_GetITStatus(DMA1_Stream3, DMA_IT_TCIF3))
   {
-    /* Clear DMA Stream Half Transfer interrupt pending bit */
-    DMA_ClearITPendingBit(DMA1_Stream1, DMA_IT_HTIF1);
+    /* Clear DMA Stream Transfer Complete interrupt pending bit */
+    DMA_ClearITPendingBit(DMA1_Stream3, DMA_IT_TCIF3);
 
-    if (DMA_GetCurrentMemoryTarget(DMA1_Stream1) == 0)
-    {
-    }
-    else
-    {
-    }
   }
 }
 

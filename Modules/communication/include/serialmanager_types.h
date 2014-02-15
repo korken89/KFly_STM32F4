@@ -2,7 +2,7 @@
 #define __SERIALMANAGER_TYPES_H
 
 #define SYNC_BYTE				(0xa6)
-#define ACK_BIT					(0x40)
+#define ACK_BIT					(0x80)
 #define SERIAL_BUFFER_SIZE		(256)
 
 typedef enum
@@ -87,6 +87,7 @@ typedef struct _parser_holder
 	void (*current_state)(uint8_t, struct _parser_holder *);	/* Current state in the state machine */
 	void (*next_state)(uint8_t, struct _parser_holder *);		/* Next state in the state machine */
 	void (*parser)(struct _parser_holder *);					/* Parser to parse the data after a successful transfer */
+	Bool AckRequested;											/* If an ACK was requested */
 } Parser_Holder_Type;
 
 typedef union

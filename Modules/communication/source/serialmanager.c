@@ -45,9 +45,9 @@
  *
  *
  * -------------------- OBSERVE! --------------------
- * A command is build up by 8 bits (1 byte) and the 7-th bit is the ACK Request bit.
+ * A command is build up by 8 bits (1 byte) and the 8-th bit is the ACK Request bit.
  * So all command must not use the ACK bit unless they need an ACK.
- * Command 0bxAxx xxxx <- A is ACK-bit.
+ * Command 0bAxxx xxxx <- A is ACK-bit.
  * Also the value 0xa6/166d/0b10100110 is reserved as the SYNC-byte.
  *
  * This gives 126 commands for the user.
@@ -401,7 +401,7 @@ void vRxData(uint8_t data, Parser_Holder_Type *pHolder)
 		pHolder->next_state = vRxCRC16;
 }
 /* *
- * Checks the whole message for errors and calles the parser if the
+ * Checks the whole message for errors and calls the parser if the
  * message was without errors.
  * */
 void vRxCRC16(uint8_t data, Parser_Holder_Type *pHolder)
@@ -421,7 +421,9 @@ void vRxCRC16(uint8_t data, Parser_Holder_Type *pHolder)
 		{
 			/* If ACK is requested, send it */
 			if (pHolder->buffer[1] & ACK_BIT)
-				vReturnACK(pHolder);
+				pHolder->AckRequested = TRUE;
+			else
+				pHolder->AckRequested = FALSE;
 
 			/* If there is a parser for the message, execute it */
 			if (pHolder->parser != NULL)

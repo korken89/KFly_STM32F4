@@ -111,7 +111,7 @@ void vGetFirmwareVersion(Parser_Holder_Type *pHolder)
 
 void vGetRateControllerData(Parser_Holder_Type *pHolder)
 {
-	uint8_t str[200];
+	uint8_t str[100];
 	PI_Data_Type *PI_settings;
 	uint8_t *CL_settings;
 	uint8_t *data;
