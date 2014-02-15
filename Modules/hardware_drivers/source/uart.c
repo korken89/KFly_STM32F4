@@ -161,10 +161,10 @@ void DMATimeoutInit(void)
 void USART3_IRQHandler(void)
 {
 	/* *
-	 * To catch the RXNE interrupt and handle DMA timeout, special care have to be taken.
-	 * The DMA clears the interrupt bit when reading and hence it is impossible so read
-	 * the RXNE bit to see if it has happened. The interrupt must be configured so only
-	 * RXNE generates an interrupt.
+	 * To catch the RXNE (receive not empty) interrupt and handle DMA timeout, special
+	 * care have to be taken. The DMA clears the interrupt bit when reading and hence it
+	 * is impossible so read the RXNE bit to see if it has happened. The interrupt must
+	 * be configured so only RXNE generates an interrupt.
 	 * */
 
 	/* Calculate the new Compare value */
@@ -178,9 +178,6 @@ void USART3_IRQHandler(void)
 	TIM_SetCompare1(TIM2, NewCompare);
 	TIM_ClearITPendingBit(TIM2, TIM_IT_CC1); /* For some reason the pending bit must be cleared */
 	TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);
-
-	while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET);
-	USART_SendData(USART3, 'S');
 }
 
 void DMA1_Stream1_IRQHandler(void)
@@ -196,22 +193,18 @@ void DMA1_Stream1_IRQHandler(void)
     	/* Buffer full, enable RXNE interrupt of the USART to detect DMA timeout */
     	USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
 
-
-
-    	USART_SendData(USART3, 'C');
-    	while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET);
-    	USART_SendData(USART3, '0');
+    	/* TODO:
+    	 * Add buffer0 read out.
+    	 * */
     }
     else
     {
     	/* Buffer full, enable RXNE interrupt of the USART to detect DMA timeout */
     	USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
 
-
-
-    	USART_SendData(USART3, 'C');
-    	while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET);
-    	USART_SendData(USART3, '1');
+    	/* TODO:
+    	 * Add buffer1 read out.
+    	 * */
     }
   }
 
@@ -223,15 +216,9 @@ void DMA1_Stream1_IRQHandler(void)
 
     if (DMA_GetCurrentMemoryTarget(DMA1_Stream1) == 0)
     {
-    	USART_SendData(USART3, 'H');
-    	while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET);
-    	USART_SendData(USART3, '1');
     }
     else
     {
-    	USART_SendData(USART3, 'H');
-    	while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET);
-    	USART_SendData(USART3, '0');
     }
   }
 }
@@ -239,13 +226,14 @@ void DMA1_Stream1_IRQHandler(void)
 void TIM2_IRQHandler(void)
 {
 	/* Check if the Compare interrupt has happened,
-	 * this means a DMA timeout has ocured. */
+	 * this means a DMA timeout has occurred. */
 	if (TIM_GetITStatus(TIM2, TIM_IT_CC1))
 	{
 		TIM_ClearITPendingBit(TIM2, TIM_IT_CC1);
 		TIM_ITConfig(TIM2, TIM_IT_CC1, DISABLE);
 
-		while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET);
-		USART_SendData(USART3, 'T');
+		/* TODO:
+    	 * Add DMA timeout code.
+    	 * */
 	}
 }
