@@ -25,7 +25,7 @@
 
 /* Global function defines */
 void USART3Init(uint32_t);
-void DMA_Configuration(uint8_t *, uint8_t *, uint16_t);
+void DMA_Receive_Configuration(uint8_t *, uint8_t *, uint16_t);
 void DMATimeoutInit(void);
 void USART3_IRQHandler(void);
 void DMA1_Stream2_IRQHandler(void);

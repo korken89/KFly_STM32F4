@@ -13,6 +13,7 @@
 /* Global variable defines */
 
 /* Private function defines */
+void vStartDMATimeout(TIM_TypeDef *, uint16_t, uint16_t);
 
 void USART3Init(uint32_t baudrate)
 {
@@ -74,7 +75,7 @@ void USART3Init(uint32_t baudrate)
 	USART_Cmd(USART3, ENABLE);
 }
 
-void DMA_Configuration(uint8_t *buffer, uint8_t *buffer2, uint16_t size)
+void DMA_Receive_Configuration(uint8_t *buffer, uint8_t *buffer2, uint16_t size)
 {
   DMA_InitTypeDef  DMA_InitStructure;
 
@@ -140,7 +141,7 @@ void DMATimeoutInit(void)
     /* Output compare configuration */
     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Timing;
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-    TIM_OCInitStructure.TIM_Pulse = 30000;
+    TIM_OCInitStructure.TIM_Pulse = 0;
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 
     TIM_OC1Init(TIM2, &TIM_OCInitStructure);
@@ -158,6 +159,18 @@ void DMATimeoutInit(void)
     TIM_Cmd(TIM2, ENABLE);
 }
 
+void vStartDMATimeout(TIM_TypeDef *TIMx, uint16_t TIM_IT, uint16_t wait_ticks)
+{
+	/* Calculate the new Compare value */
+	uint16_t NewCompare = (uint16_t)TIMx->CNT;
+	NewCompare += wait_ticks;
+
+	/* Start the DMA timeout timer */
+	TIM_SetCompare1(TIMx, NewCompare);
+	TIM_ClearITPendingBit(TIMx, TIM_IT); /* For some reason the pending bit must be cleared */
+	TIM_ITConfig(TIMx, TIM_IT, ENABLE);
+}
+
 void USART3_IRQHandler(void)
 {
 	/* *
@@ -167,17 +180,11 @@ void USART3_IRQHandler(void)
 	 * be configured so only RXNE generates an interrupt.
 	 * */
 
-	/* Calculate the new Compare value */
-	uint16_t NewCompare = (uint16_t)TIM_GetCounter(TIM2);
-	NewCompare += 30000;
-
 	/* Disable the RXNE interrupt */
 	USART_ITConfig(USART3, USART_IT_RXNE, DISABLE);
 
-	/* Start the DMA timeout timer */
-	TIM_SetCompare1(TIM2, NewCompare);
-	TIM_ClearITPendingBit(TIM2, TIM_IT_CC1); /* For some reason the pending bit must be cleared */
-	TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);
+	/* Start the DMA timeout interrupt */
+	vStartDMATimeout(TIM2, TIM_IT_CC1, 30000);
 }
 
 void DMA1_Stream1_IRQHandler(void)

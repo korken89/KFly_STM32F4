@@ -38,7 +38,7 @@ void main(void)
 
 
 	//USART3Init(115200);
-	//DMA_Configuration(DMA_buffer, DMA_buffer2, 32);
+	//DMA_Receive_Configuration(DMA_buffer, DMA_buffer2, 32);
 
 	//while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET); // Wait for Empty
 	//USART_SendData(USART3, '*');
