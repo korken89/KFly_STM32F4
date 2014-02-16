@@ -56,10 +56,10 @@ static inline void CircularBuffer_WriteChunk(Circular_Buffer_Type *Cbuff, uint8_
 {
 	uint32_t i, from_bot, to_top;
 	uint32_t head = Cbuff->head;
+	to_top = buffer_size - Cbuff->head;
 
 	if (to_top < count)
 	{	/* If we need to wrap around during the write */
-		to_top = buffer_size - Cbuff->head;
 		from_bot = count - to_top;
 
 		/* First we fill to the top */

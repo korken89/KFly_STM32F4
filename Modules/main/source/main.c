@@ -5,7 +5,7 @@ __attribute__((section(".sw_version"))) __I char build_version[] = KFLY_VERSION;
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 static uint8_t DMA_buffer[32];
 static uint8_t DMA_buffer2[32];
-static uint8_t DMA_transmit[256];
+static uint8_t DMA_transmit[100];
 
 static inline void CircularBuffer_DMATransmit(DMA_Stream_TypeDef *DMAx_Streamy, Circular_Buffer_Type *Cbuff, const uint32_t buffer_size)
 {
@@ -63,15 +63,23 @@ void main(void)
 	Circular_Buffer_Type CBuff;
 	CircularBuffer_Init(&CBuff, DMA_transmit);
 
-	CircularBuffer_WriteChunk(&CBuff, buf1, 61, 256);
-
-
 	USART3Init(115200);
 	DMA_Receive_Configuration(DMA_buffer, DMA_buffer2, 32);
 	DMA_Transmit_Configuration();
 
+	USART_putc(USART3, CBuff.head - CBuff.tail);
 
-	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff, 256);
+	CircularBuffer_WriteChunk(&CBuff, buf1, 61, 100);
+	USART_putc(USART3, CBuff.head - CBuff.tail);
+
+	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff, 100);
+
+	for (volatile uint32_t i = 0; i < 0xFFFFF; i++);
+	CircularBuffer_WriteChunk(&CBuff, buf1, 61, 100);
+	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff, 100);
+
+	for (volatile uint32_t i = 0; i < 0xFFFFF; i++);
+	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff, 100);
 	//DMA_Transmit_Buffer(DMA1_Stream3, buf1, 61);
 
 

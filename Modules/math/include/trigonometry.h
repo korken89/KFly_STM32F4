@@ -3,6 +3,7 @@
 
 /* Standard includes */
 #include <math.h>
+#include <stdint.h>
 
 /* System includes */
 
