@@ -156,10 +156,10 @@ void DMA_Transmit_Configuration(void)
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
   DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
   DMA_InitStructure.DMA_Priority = DMA_Priority_High;
-  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;
-  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_1QuarterFull;
+  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Enable;
+  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
   DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
   DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
 
@@ -170,12 +170,13 @@ void DMA_Transmit_Configuration(void)
 
   /* Enable DMA Stream Transfer Complete interrupt */
   DMA_ITConfig(DMA1_Stream3, DMA_IT_TC, ENABLE);
-
-  DMA_Cmd(DMA1_Stream3, ENABLE);
 }
 
 void DMA_Transmit_Buffer(DMA_Stream_TypeDef *DMAx_Streamy, uint8_t *buffer, uint16_t size)
 {
+	/* Disable DMA stream to access registers */
+	DMA_Cmd(DMAx_Streamy, DISABLE);
+
 	/* Load the buffer and the buffer size */
 	DMAx_Streamy->NDTR = size;
 	DMAx_Streamy->M0AR = (uint32_t)buffer;
@@ -252,6 +253,11 @@ void USART3_IRQHandler(void)
 	vStartDMATimeout(TIM2, TIM_IT_CC1, 30000);
 }
 
+/* *
+ *
+ * DMA IRQ Handler for USART3 receive.
+ *
+ * */
 void DMA1_Stream1_IRQHandler(void)
 {
   /* Test on DMA Stream Transfer Complete interrupt */
@@ -281,6 +287,11 @@ void DMA1_Stream1_IRQHandler(void)
   }
 }
 
+/* *
+ *
+ * DMA IRQ Handler for USART3 transmit.
+ *
+ * */
 void DMA1_Stream3_IRQHandler(void)
 {
   /* Test on DMA Stream Transfer Complete interrupt */
@@ -289,6 +300,9 @@ void DMA1_Stream3_IRQHandler(void)
     /* Clear DMA Stream Transfer Complete interrupt pending bit */
     DMA_ClearITPendingBit(DMA1_Stream3, DMA_IT_TCIF3);
 
+    /* TODO:
+     * Add DMA TX transfer complete code
+     * */
   }
 }
 

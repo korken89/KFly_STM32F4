@@ -23,6 +23,22 @@ void vPing(Parser_Holder_Type *pHolder)
 
 	if (pHolder->Port == PORT_USB)
 		xUSBSendData(str, 4);
+	else if (pHolder->Port == PORT_AUX1)
+	{
+
+	}
+	else if (pHolder->Port == PORT_AUX2)
+	{
+
+	}
+	else if (pHolder->Port == PORT_AUX3)
+	{
+
+	}
+	else if (pHolder->Port == PORT_AUX4)
+	{
+
+	}
 }
 
 /* *

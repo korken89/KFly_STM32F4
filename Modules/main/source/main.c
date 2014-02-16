@@ -35,24 +35,17 @@ void main(void)
 	 * */
 	PWMInit();
 
+	static uint8_t buf1[] = "This is a short text to test the DMA transfers via USART...\r\n";
+
+	USART3Init(115200);
+	DMA_Receive_Configuration(DMA_buffer, DMA_buffer2, 32);
+	DMA_Transmit_Configuration();
+
+	DMA_Transmit_Buffer(DMA1_Stream3, buf1, 61);
 
 
-	//USART3Init(115200);
-	//DMA_Receive_Configuration(DMA_buffer, DMA_buffer2, 32);
+	while(1);
 
-	//while(USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET); // Wait for Empty
-	//USART_SendData(USART3, '*');
-
-	//while(1)
-	//{
-		/*while (USART_GetFlagStatus(USART3, USART_FLAG_RXNE) == RESET);
-
-		uint8_t x = USART_ReceiveData(USART3);
-
-		USART_SendData(USART3, x);
-		LEDToggle(LED_GREEN);
-		LEDToggle(LED_RED);*/
-	//}
 	/* *
 	 *
 	 * USB receive queue init
