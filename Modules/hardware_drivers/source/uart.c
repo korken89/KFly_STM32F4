@@ -175,14 +175,14 @@ void DMA_Transmit_Configuration(void)
 void DMA_Transmit_Buffer(DMA_Stream_TypeDef *DMAx_Streamy, uint8_t *buffer, uint16_t size)
 {
 	/* Disable DMA stream to access registers */
-	DMA_Cmd(DMAx_Streamy, DISABLE);
+	DMAx_Streamy->CR &= ~(uint32_t)DMA_SxCR_EN;
 
 	/* Load the buffer and the buffer size */
 	DMAx_Streamy->NDTR = size;
 	DMAx_Streamy->M0AR = (uint32_t)buffer;
 
 	/* Initialize DMA transfer */
-	DMA_Cmd(DMAx_Streamy, ENABLE);
+	DMAx_Streamy->CR |= (uint32_t)DMA_SxCR_EN;
 }
 
 void DMATimeoutInit(void)
