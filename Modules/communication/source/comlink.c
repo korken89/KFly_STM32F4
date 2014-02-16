@@ -57,27 +57,3 @@ ErrorStatus xUSBSendData(uint8_t *data, uint32_t size)
 		return SUCCESS;
 	}
 }
-
-void SendMessage(KFly_Command_Type cmd, Reveiver_Source_Type port)
-{
-	if (port == PORT_USB)
-	{
-
-	}
-	else if (port == PORT_AUX1)
-	{
-
-	}
-	else if (port == PORT_AUX2)
-	{
-
-	}
-	else if (port == PORT_AUX3)
-	{
-
-	}
-	else if (port == PORT_AUX4)
-	{
-
-	}
-}

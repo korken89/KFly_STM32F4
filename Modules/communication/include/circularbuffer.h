@@ -6,6 +6,7 @@
 #include "stm32f4xx.h"
 
 /* System includes */
+#include "stm32f4xx_dma.h"
 
 /* Scheduler includes */
 
@@ -27,9 +28,10 @@ typedef struct
 
 /* Global function defines */
 
+/* Inline functions */
 static inline void CircularBuffer_Init(Circular_Buffer_Type *Cbuff, uint8_t *buffer)
 {
-	Cbuff->head = 1;
+	Cbuff->head = 0;
 	Cbuff->tail = 0;
 	Cbuff->buffer = buffer;
 }

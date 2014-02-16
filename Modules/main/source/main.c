@@ -5,6 +5,30 @@ __attribute__((section(".sw_version"))) __I char build_version[] = KFLY_VERSION;
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 static uint8_t DMA_buffer[32];
 static uint8_t DMA_buffer2[32];
+static uint8_t DMA_transmit[256];
+
+static inline void CircularBuffer_DMATransmit(DMA_Stream_TypeDef *DMAx_Streamy, Circular_Buffer_Type *Cbuff, const uint32_t buffer_size)
+{
+	uint32_t count;
+
+	if (Cbuff->head > Cbuff->tail)
+	{	/* Head is larger than tail, no wrap around */
+		count = Cbuff->head - Cbuff->tail;
+		DMA_Transmit_Buffer(DMAx_Streamy, &(Cbuff->buffer[Cbuff->tail]), count);
+
+		/* Set tail to equal head since we are now at the same position */
+		Cbuff->tail = Cbuff->head;
+	}
+	else
+	{	/* Head is smaller than tail, wrap around will occur.
+		 * Transmit the data to the end of the buffer.
+		 * */
+		DMA_Transmit_Buffer(DMAx_Streamy, &(Cbuff->buffer[Cbuff->tail]), buffer_size - Cbuff->tail);
+
+		/* Set tail to zero since we are now at the start of the buffer */
+		Cbuff->tail = 0;
+	}
+}
 
 void main(void)
 {
@@ -36,12 +60,19 @@ void main(void)
 	PWMInit();
 
 	static uint8_t buf1[] = "This is a short text to test the DMA transfers via USART...\r\n";
+	Circular_Buffer_Type CBuff;
+	CircularBuffer_Init(&CBuff, DMA_transmit);
+
+	CircularBuffer_WriteChunk(&CBuff, buf1, 61, 256);
+
 
 	USART3Init(115200);
 	DMA_Receive_Configuration(DMA_buffer, DMA_buffer2, 32);
 	DMA_Transmit_Configuration();
 
-	DMA_Transmit_Buffer(DMA1_Stream3, buf1, 61);
+
+	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff, 256);
+	//DMA_Transmit_Buffer(DMA1_Stream3, buf1, 61);
 
 
 	while(1);

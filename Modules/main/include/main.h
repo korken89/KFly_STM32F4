@@ -29,6 +29,7 @@
 #include "pwm.h"
 #include "sensor_read.h"
 #include "estimation.h"
+#include "circularbuffer.h"
 
 /* Includes */
 #include "led.h"
