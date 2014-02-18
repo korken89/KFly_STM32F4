@@ -16,18 +16,15 @@ static inline void CircularBuffer_DMATransmit(DMA_Stream_TypeDef *DMAx_Streamy, 
 	to_top = buffer_size - head;
 
 	if (count <= to_top)
-	{	/* Head is larger than tail, no wrap around */
+	{	/* No wrap around */
 
 		DMA_Transmit_Buffer(DMAx_Streamy, &(Cbuff->buffer[Cbuff->start]), count);
 
-		/* Set tail to equal head since we are now at the same position */
 		Cbuff->start += count;
 		Cbuff->count -= count;
 	}
 	else
-	{	/* Head is smaller than tail, wrap around will occur.
-		 * Transmit the data to the end of the buffer.
-		 * */
+	{	/* Wrap around will occur. Transmit the data to the end of the buffer. */
 		DMA_Transmit_Buffer(DMAx_Streamy, &(Cbuff->buffer[Cbuff->start]), to_top);
 
 		/* Set tail to zero since we are now at the start of the buffer */

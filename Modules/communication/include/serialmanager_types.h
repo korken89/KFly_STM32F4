@@ -50,37 +50,11 @@ typedef enum
 	Cmd_GetSensorData = 43
 } KFly_Command_Type;
 
-/* Length of data packets */
-typedef enum {
-	Length_ACK = 0,
-	Length_Ping = 0,
-	Length_DebugMessage = 0xFF,
-	Length_GetRunningMode = 0,
-	Length_PrepareWriteFirmware,			/* Bootloader specific, tells bootloader to erase and prepare the flash for write */
-	Length_WriteFirmwarePackage = 66,		/* Bootloader specific, package of 2 bytes Package no, 64 bytes data */
-	Length_WriteLastFirmwarePackage = 0xFF,	/* Bootloader specific, package of 2 bytes Package no, unknown number of bytes */
-	Length_ReadFirmwarePackage = 66,		/* Bootloader specific, package of 2 bytes Package no, 64 bytes data */
-	Length_ReadLastFirmwarePackage = 0xFF,	/* Bootloader specific, package of 2 bytes Package no, unknown number of bytes */
-	Length_NextPackage = 0,					/* Bootloader specific, tells the sender that Flash write is complete and is ready for next package */
-	Length_ExitBootloader = 0,				/* Bootloader specific, exits bootloader */
-	Length_GetBootloaderVersion = 0,
-	Length_GetFirmwareVersion = 0,
-	Length_SaveToFlash = 0,
-	Length_GetControllerData = 0,
-	Length_SetControllerData,
-	Length_GetChannelMix = 0,
-	Length_SetChannelMix,
-	Length_GetRCCalibration = 0,
-	Length_SetRCCalibration,
-	Length_GetRCValues,
-	Length_GetSensorData
-} KFly_Data_Length_Type;
-
 /* The structure to keep track of transfers through the state machine */
 typedef struct _parser_holder
 {
 	Reveiver_Source_Type Port; 									/* Which port the data came from */
-	KFly_Data_Length_Type data_length;							/* The length of the data */
+	uint8_t data_length;										/* The length of the data */
 	uint8_t *buffer;											/* Pointer to the buffer storing the data */
 	uint16_t buffer_count;										/* The current location in the buffer */
 	uint32_t rx_error;											/* The number of receive errors */
@@ -89,6 +63,8 @@ typedef struct _parser_holder
 	void (*parser)(struct _parser_holder *);					/* Parser to parse the data after a successful transfer */
 	Bool AckRequested;											/* If an ACK was requested */
 } Parser_Holder_Type;
+
+typedef void (*Parser_Type)(struct _parser_holder *);
 
 typedef union
 {

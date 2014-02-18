@@ -56,6 +56,134 @@
 
 #include "statemachine.h"
 
+const static Parser_Type parsers[127] = {
+	NULL,		/* 0: 	Cmd_None 						*/
+	NULL,		/* 1: 	Cmd_ACK 						*/
+	NULL,		/* 2: 	Cmd_Ping 						*/
+	NULL,		/* 3:	Cmd_DebugMessage				*/
+	NULL,		/* 4:	Cmd_GetRunningMode 				*/
+	NULL,		/* 5 */
+	NULL,		/* 6 */
+	NULL,		/* 7 */
+	NULL,		/* 8 */
+	NULL,		/* 9 */
+	NULL,		/* 10:	Cmd_PrepareWriteFirmware 		*/
+	NULL,		/* 11: 	Cmd_WriteFirmwarePackage 		*/
+	NULL,		/* 12:	Cmd_WriteLastFirmwarePackage	*/
+	NULL,		/* 13:	Cmd_ReadFirmwarePackage			*/
+	NULL,		/* 14:	Cmd_ReadLastFirmwarePackage		*/
+	NULL,		/* 15:	Cmd_NextPackage					*/
+	NULL,		/* 16:	Cmd_ExitBootloader				*/
+	NULL,		/* 17:	Cmd_GetBootloaderVersion		*/
+	NULL,		/* 18:	Cmd_GetFirmwareVersion			*/
+	NULL,		/* 19:	Cmd_SaveToFlash					*/
+	NULL,		/* 20 */
+	NULL,		/* 21 */
+	NULL,		/* 22 */
+	NULL,		/* 23 */
+	NULL,		/* 24 */
+	NULL,		/* 25 */
+	NULL,		/* 26 */
+	NULL,		/* 27 */
+	NULL,		/* 28 */
+	NULL,		/* 29 */
+	NULL,		/* 30:	Cmd_GetRateControllerData		*/
+	NULL,		/* 31:	Cmd_SetRateControllerData		*/
+	NULL,		/* 32:	Cmd_GetAttitudeControllerData	*/
+	NULL,		/* 33:	Cmd_SetAttitudeControllerData	*/
+	NULL,		/* 34:	Cmd_GetVelocityControllerData	*/
+	NULL,		/* 36:	Cmd_SetVelocityControllerData	*/
+	NULL,		/* 37:	Cmd_GetPositionControllerData	*/
+	NULL,		/* 38:	Cmd_SetPositionControllerData	*/
+	NULL,		/* 39:	Cmd_GetChannelMix				*/
+	NULL,		/* 40:	Cmd_SetChannelMix				*/
+	NULL,		/* 41:	Cmd_GetRCCalibration			*/
+	NULL,		/* 42:	Cmd_SetRCCalibration			*/
+	NULL,		/* 43:	Cmd_GetRCValues					*/
+	NULL,		/* 44:	Cmd_GetSensorData				*/
+	NULL,		/* 45 */
+	NULL,		/* 46 */
+	NULL,		/* 47 */
+	NULL,		/* 48 */
+	NULL,		/* 49 */
+	NULL,		/* 50 */
+	NULL,		/* 51 */
+	NULL,		/* 52 */
+	NULL,		/* 53 */
+	NULL,		/* 54 */
+	NULL,		/* 55 */
+	NULL,		/* 56 */
+	NULL,		/* 57 */
+	NULL,		/* 58 */
+	NULL,		/* 59 */
+	NULL,		/* 60 */
+	NULL,		/* 61 */
+	NULL,		/* 62 */
+	NULL,		/* 63 */
+	NULL,		/* 64 */
+	NULL,		/* 65 */
+	NULL,		/* 66 */
+	NULL,		/* 67 */
+	NULL,		/* 68 */
+	NULL,		/* 69 */
+	NULL,		/* 70 */
+	NULL,		/* 71 */
+	NULL,		/* 72 */
+	NULL,		/* 73 */
+	NULL,		/* 74 */
+	NULL,		/* 75 */
+	NULL,		/* 76 */
+	NULL,		/* 77 */
+	NULL,		/* 78 */
+	NULL,		/* 79 */
+	NULL,		/* 80 */
+	NULL,		/* 81 */
+	NULL,		/* 82 */
+	NULL,		/* 83 */
+	NULL,		/* 84 */
+	NULL,		/* 85 */
+	NULL,		/* 86 */
+	NULL,		/* 87 */
+	NULL,		/* 88 */
+	NULL,		/* 89 */
+	NULL,		/* 90 */
+	NULL,		/* 91 */
+	NULL,		/* 92 */
+	NULL,		/* 93 */
+	NULL,		/* 94 */
+	NULL,		/* 95 */
+	NULL,		/* 96 */
+	NULL,		/* 97 */
+	NULL,		/* 98 */
+	NULL,		/* 99 */
+	NULL,		/* 100 */
+	NULL,		/* 101 */
+	NULL,		/* 102 */
+	NULL,		/* 103 */
+	NULL,		/* 104 */
+	NULL,		/* 105 */
+	NULL,		/* 106 */
+	NULL,		/* 107 */
+	NULL,		/* 108 */
+	NULL,		/* 109 */
+	NULL,		/* 110 */
+	NULL,		/* 111 */
+	NULL,		/* 112 */
+	NULL,		/* 113 */
+	NULL,		/* 114 */
+	NULL,		/* 115 */
+	NULL,		/* 116 */
+	NULL,		/* 117 */
+	NULL,		/* 118 */
+	NULL,		/* 119 */
+	NULL,		/* 120 */
+	NULL,		/* 121 */
+	NULL,		/* 122 */
+	NULL,		/* 123 */
+	NULL,		/* 124 */
+	NULL,		/* 125 */
+	NULL		/* 126 */
+};
 
 /* *
  *
@@ -136,17 +264,14 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 
 		case Cmd_Ping:
 			pHolder->parser = vPing;
-			pHolder->data_length = Length_Ping;
 			break;
 
 		case Cmd_DebugMessage:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_DebugMessage;
 			break;
 
 		case Cmd_GetRunningMode:
 			pHolder->parser = vGetRunningMode;
-			pHolder->data_length = Length_GetRunningMode;
 			break;
 
 
@@ -154,37 +279,30 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 
 		case Cmd_PrepareWriteFirmware:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_PrepareWriteFirmware;
 			break;
 
 		case Cmd_WriteFirmwarePackage:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_WriteFirmwarePackage;
 			break;
 
 		case Cmd_WriteLastFirmwarePackage:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_WriteLastFirmwarePackage;
 			break;
 
 		case Cmd_ReadFirmwarePackage:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_ReadFirmwarePackage;
 			break;
 
 		case Cmd_ReadLastFirmwarePackage:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_ReadLastFirmwarePackage;
 			break;
 
 		case Cmd_NextPackage:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_NextPackage;
 			break;
 
 		case Cmd_ExitBootloader:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_ExitBootloader;
 			break;
 
 		/* ----- End Bootloader specific commands ----- */
@@ -192,12 +310,10 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 
 		case Cmd_GetBootloaderVersion:
 			pHolder->parser = vGetBootloaderVersion;
-			pHolder->data_length = Length_GetBootloaderVersion;
 			break;
 
 		case Cmd_GetFirmwareVersion:
 			pHolder->parser = vGetFirmwareVersion;
-			pHolder->data_length = Length_GetFirmwareVersion;
 			break;
 
 
@@ -205,77 +321,62 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 
 		case Cmd_SaveToFlash:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_SaveToFlash;
 			break;
 
 		case Cmd_GetRateControllerData:
 			pHolder->parser = vGetRateControllerData;
-			pHolder->data_length = Length_GetControllerData;
 			break;
 
 		case Cmd_SetRateControllerData:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_SetControllerData;
 			break;
 
 		case Cmd_GetAttitudeControllerData:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_GetControllerData;
 			break;
 
 		case Cmd_SetAttitudeControllerData:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_SetControllerData;
 			break;
 
 		case Cmd_GetVelocityControllerData:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_GetControllerData;
 			break;
 
 		case Cmd_SetVelocityControllerData:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_SetControllerData;
 			break;
 
 		case Cmd_GetPositionControllerData:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_GetControllerData;
 			break;
 
 		case Cmd_SetPositionControllerData:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_SetControllerData;
 			break;
 
 		case Cmd_GetChannelMix:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_GetChannelMix;
 			break;
 
 		case Cmd_SetChannelMix:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_SetChannelMix;
 			break;
 
 		case Cmd_GetRCCalibration:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_GetRCCalibration;
 			break;
 
 		case Cmd_SetRCCalibration:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_SetRCCalibration;
 			break;
 
 		case Cmd_GetRCValues:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_GetRCValues;
 			break;
 
 		case Cmd_GetSensorData:
 			pHolder->parser = NULL;
-			pHolder->data_length = Length_GetSensorData;
 			break;
 
 		/* ----- End Firmware specific commands ----- */
@@ -292,23 +393,13 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 }
 
 /* *
- * Checks the length of a message. If it equals the correct length
- * or if the message has unspecified length (0xFF) it will wait for
- * Header CRC8.
+ * Checks the length of a message.
  * */
 void vRxSize(uint8_t data, Parser_Holder_Type *pHolder)
 {
-	if ((pHolder->data_length == data) || (pHolder->data_length == 0xFF))
-	{	/* If correct length or unspecified length, go to CRC8 */
-		pHolder->next_state = vRxCRC8;
-		pHolder->buffer[pHolder->buffer_count++] = data;
-		pHolder->data_length = data; /* Set the length of the message to that of the header. */
-	}
-	else /* Data length error! */
-	{
-		pHolder->next_state = vWaitingForSYNC;
-		pHolder->rx_error++;
-	}
+	pHolder->next_state = vRxCRC8;
+	pHolder->buffer[pHolder->buffer_count++] = data;
+	pHolder->data_length = data; /* Set the length of the message to that of the header. */
 }
 
 /* *

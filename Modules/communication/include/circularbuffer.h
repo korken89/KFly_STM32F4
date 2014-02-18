@@ -99,16 +99,14 @@ static inline void CircularBuffer_WriteChunk(Circular_Buffer_Type *Cbuff, uint8_
 		/* The we fill the rest */
 		for (i = 0; i < from_bot; i++)
 			Cbuff->buffer[i] = data[to_top + i];
-
-		Cbuff->count += data_size;
 	}
 	else
 	{	/* No wrap around needed, chunk will fit in the space left to the top */
 		for (i = 0; i < data_size; i++)
 			Cbuff->buffer[head + i] = data[i];
-
-		Cbuff->count += data_size;
 	}
+
+	Cbuff->count += data_size;
 }
 
 static inline void CircularBuffer_ReadSingle(Circular_Buffer_Type *Cbuff, uint8_t *data, const uint32_t buffer_size)
