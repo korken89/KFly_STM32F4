@@ -9,24 +9,30 @@ static uint8_t DMA_transmit[100];
 
 static inline void CircularBuffer_DMATransmit(DMA_Stream_TypeDef *DMAx_Streamy, Circular_Buffer_Type *Cbuff, const uint32_t buffer_size)
 {
-	uint32_t count;
+	uint32_t count, head, to_top;
 
-	if (Cbuff->head > Cbuff->tail)
+	count = CircularBuffer_SpaceLeft(Cbuff, buffer_size);
+	head = (Cbuff->start + Cbuff->count) % buffer_size;
+	to_top = buffer_size - head;
+
+	if (count <= to_top)
 	{	/* Head is larger than tail, no wrap around */
-		count = Cbuff->head - Cbuff->tail;
-		DMA_Transmit_Buffer(DMAx_Streamy, &(Cbuff->buffer[Cbuff->tail]), count);
+
+		DMA_Transmit_Buffer(DMAx_Streamy, &(Cbuff->buffer[Cbuff->start]), count);
 
 		/* Set tail to equal head since we are now at the same position */
-		Cbuff->tail = Cbuff->head;
+		Cbuff->start += count;
+		Cbuff->count -= count;
 	}
 	else
 	{	/* Head is smaller than tail, wrap around will occur.
 		 * Transmit the data to the end of the buffer.
 		 * */
-		DMA_Transmit_Buffer(DMAx_Streamy, &(Cbuff->buffer[Cbuff->tail]), buffer_size - Cbuff->tail);
+		DMA_Transmit_Buffer(DMAx_Streamy, &(Cbuff->buffer[Cbuff->start]), to_top);
 
 		/* Set tail to zero since we are now at the start of the buffer */
-		Cbuff->tail = 0;
+		Cbuff->start = 0;
+		Cbuff->count -= to_top;
 	}
 }
 
