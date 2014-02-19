@@ -23,8 +23,8 @@
 typedef struct
 {
 	xSemaphoreHandle write_lock;	/* Write lock mutex */
-	uint32_t count;					/* Number of elements in buffer */
-	uint32_t start;					/* Oldest element */
+	uint32_t head;					/* Newest element */
+	uint32_t tail;					/* Oldest element */
 	uint8_t *buffer;				/* Pointer to memory area */
 } Circular_Buffer_Type;
 
@@ -35,8 +35,8 @@ typedef struct
 /* Inline functions */
 static inline void CircularBuffer_Init(Circular_Buffer_Type *Cbuff, uint8_t *buffer)
 {
-	Cbuff->count = 0;
-	Cbuff->start = 0;
+	Cbuff->head = 0;
+	Cbuff->tail = 0;
 	Cbuff->buffer = buffer;
 }
 
@@ -67,13 +67,13 @@ static inline void CircularBuffer_ReleaseFromISR(Circular_Buffer_Type *Cbuff)
 
 static inline uint32_t CircularBuffer_SpaceLeft(Circular_Buffer_Type *Cbuff, const uint32_t buffer_size)
 {
-	return  (buffer_size - Cbuff->count);
+	return  ((Cbuff->head - Cbuff->tail + buffer_size) % buffer_size);
 }
 
 static inline void CircularBuffer_WriteSingle(Circular_Buffer_Type *Cbuff, uint8_t data, const uint32_t buffer_size)
 {
-	Cbuff->buffer[Cbuff->start + Cbuff->count] = data;
-	Cbuff->count = (Cbuff->count + 1) % buffer_size;
+	Cbuff->buffer[Cbuff->head] = data;
+	Cbuff->head = (Cbuff->head + 1) % buffer_size;
 }
 
 /* *
@@ -81,16 +81,17 @@ static inline void CircularBuffer_WriteSingle(Circular_Buffer_Type *Cbuff, uint8
  * This algorithm assumes you have checked that the data will fit inside the buffer.
  *
  * */
-static inline void CircularBuffer_WriteChunk(Circular_Buffer_Type *Cbuff, uint8_t *data, const uint32_t data_size, const uint32_t buffer_size)
+static inline void CircularBuffer_WriteChunk(Circular_Buffer_Type *Cbuff, uint8_t *data, const uint32_t count, const uint32_t buffer_size)
 {
 	uint32_t i, head, from_bot, to_top;
 
-	head = (Cbuff->start + Cbuff->count) % buffer_size;
-	to_top = buffer_size - head;
+	head = Cbuff->head;
+	to_top = buffer_size - Cbuff->head;
 
-	if (to_top < data_size)
+
+	if (to_top < count)
 	{	/* If we need to wrap around during the write */
-		from_bot = data_size - to_top;
+		from_bot = count - to_top;
 
 		/* First we fill to the top */
 		for (i = 0; i < to_top; i++)
@@ -99,21 +100,22 @@ static inline void CircularBuffer_WriteChunk(Circular_Buffer_Type *Cbuff, uint8_
 		/* The we fill the rest */
 		for (i = 0; i < from_bot; i++)
 			Cbuff->buffer[i] = data[to_top + i];
+
+		Cbuff->head = from_bot; /* The end value of head was pre-calculated */
 	}
 	else
 	{	/* No wrap around needed, chunk will fit in the space left to the top */
-		for (i = 0; i < data_size; i++)
+		for (i = 0; i < count; i++)
 			Cbuff->buffer[head + i] = data[i];
-	}
 
-	Cbuff->count += data_size;
+		Cbuff->head = (Cbuff->head + count); /* There will be no wrap around */
+	}
 }
 
 static inline void CircularBuffer_ReadSingle(Circular_Buffer_Type *Cbuff, uint8_t *data, const uint32_t buffer_size)
 {
-	*data = Cbuff->buffer[Cbuff->start];
-	Cbuff->start = (Cbuff->start + 1) % buffer_size;
-	Cbuff->count -= 1;
+	*data = Cbuff->buffer[Cbuff->tail];
+	Cbuff->tail = (Cbuff->tail + 1) % buffer_size;
 }
 
 static inline void CircularBuffer_ReadChunk(Circular_Buffer_Type *Cbuff, uint8_t *data, uint32_t count, const uint32_t buffer_size)

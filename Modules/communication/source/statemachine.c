@@ -56,7 +56,7 @@
 
 #include "statemachine.h"
 
-const static Parser_Type parsers[127] = {
+const static Parser_Type parser_lookup[128] = {
 	NULL,						/* 0: 	Cmd_None 						*/
 	NULL,						/* 1: 	Cmd_ACK 						*/
 	vPing,						/* 2: 	Cmd_Ping 						*/
@@ -182,7 +182,8 @@ const static Parser_Type parsers[127] = {
 	NULL,						/* 123 */
 	NULL,						/* 124 */
 	NULL,						/* 125 */
-	NULL						/* 126 */
+	NULL,						/* 126 */
+	NULL						/* 127 */
 };
 
 /* *
@@ -254,142 +255,8 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 	pHolder->next_state = vRxSize;
 	pHolder->buffer[pHolder->buffer_count++] = data;
 
-	switch (data & ~ACK_BIT)
-	{
-		case SYNC_BYTE: /* SYNC is not allowed as command! */
-			pHolder->next_state = vRxCmd; /* If sync comes, continue running vRxCmd */
-			pHolder->rx_error++;
-			pHolder->buffer_count--; /* So buffer_count doesn't get the wrong value on error */
-			break;
-
-		case Cmd_Ping:
-			pHolder->parser = vPing;
-			break;
-
-		case Cmd_DebugMessage:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_GetRunningMode:
-			pHolder->parser = vGetRunningMode;
-			break;
-
-
-		/* ----- Start Bootloader specific commands ----- */
-
-		case Cmd_PrepareWriteFirmware:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_WriteFirmwarePackage:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_WriteLastFirmwarePackage:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_ReadFirmwarePackage:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_ReadLastFirmwarePackage:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_NextPackage:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_ExitBootloader:
-			pHolder->parser = NULL;
-			break;
-
-		/* ----- End Bootloader specific commands ----- */
-
-
-		case Cmd_GetBootloaderVersion:
-			pHolder->parser = vGetBootloaderVersion;
-			break;
-
-		case Cmd_GetFirmwareVersion:
-			pHolder->parser = vGetFirmwareVersion;
-			break;
-
-
-		/* ----- Start Firmware specific commands ----- */
-
-		case Cmd_SaveToFlash:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_GetRateControllerData:
-			pHolder->parser = vGetRateControllerData;
-			break;
-
-		case Cmd_SetRateControllerData:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_GetAttitudeControllerData:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_SetAttitudeControllerData:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_GetVelocityControllerData:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_SetVelocityControllerData:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_GetPositionControllerData:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_SetPositionControllerData:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_GetChannelMix:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_SetChannelMix:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_GetRCCalibration:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_SetRCCalibration:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_GetRCValues:
-			pHolder->parser = NULL;
-			break;
-
-		case Cmd_GetSensorData:
-			pHolder->parser = NULL;
-			break;
-
-		/* ----- End Firmware specific commands ----- */
-
-		/* *
-		 * Add new commands here!
-		 * */
-
-		default:
-			pHolder->next_state = vWaitingForSYNC;
-			pHolder->rx_error++;
-			break;
-	}
+	/* Get the correct parser from the parser lookup table */
+	pHolder->parser = parser_lookup[(data & ~ACK_BIT)];
 }
 
 /* *
