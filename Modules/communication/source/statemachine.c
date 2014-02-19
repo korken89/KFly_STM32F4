@@ -252,11 +252,20 @@ void vWaitingForSYNCorCMD(uint8_t data, Parser_Holder_Type *pHolder)
  * */
 void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 {
-	pHolder->next_state = vRxSize;
-	pHolder->buffer[pHolder->buffer_count++] = data;
+	/* 0 is not an allowed command (Cmd_None) */
+	if ((data & ~ACK_BIT) > Cmd_None)
+	{
+		pHolder->next_state = vRxSize;
+		pHolder->buffer[pHolder->buffer_count++] = data;
 
-	/* Get the correct parser from the parser lookup table */
-	pHolder->parser = parser_lookup[(data & ~ACK_BIT)];
+		/* Get the correct parser from the parser lookup table */
+		pHolder->parser = parser_lookup[(data & ~ACK_BIT)];
+	}
+	else
+	{
+		pHolder->next_state = vWaitingForSYNC;
+		pHolder->rx_error++;
+	}
 }
 
 /* *
