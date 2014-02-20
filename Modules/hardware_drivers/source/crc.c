@@ -78,6 +78,16 @@ uint8_t CRC8(uint8_t *data, uint32_t data_len)
     return crc;
 }
 
+uint8_t CRC8_step(uint8_t data, uint8_t crc)
+{
+	uint32_t tbl_idx;
+
+    tbl_idx = (crc ^ data) & 0xff;
+    crc = crc8_table[tbl_idx] ^ (crc << 8);
+
+    return crc;
+}
+
 uint16_t CRC16(uint8_t *data, uint32_t data_len) /* CRC-CCITT */
 {
 	uint32_t tbl_idx;
@@ -90,6 +100,16 @@ uint16_t CRC16(uint8_t *data, uint32_t data_len) /* CRC-CCITT */
 
         data++;
     }
+
+    return crc;
+}
+
+uint16_t CRC16_step(uint8_t data, uint16_t crc) /* CRC-CCITT */
+{
+	uint32_t tbl_idx;
+
+    tbl_idx = ((crc >> 8) ^ data) & 0xff;
+    crc = crc16_table[tbl_idx] ^ (crc << 8);
 
     return crc;
 }

@@ -97,7 +97,7 @@ static inline void CircularBuffer_WriteChunk(Circular_Buffer_Type *Cbuff, uint8_
 		for (i = 0; i < to_top; i++)
 			Cbuff->buffer[head + i] = data[i];
 
-		/* The we fill the rest */
+		/* Then we fill the rest */
 		for (i = 0; i < from_bot; i++)
 			Cbuff->buffer[i] = data[to_top + i];
 
