@@ -8,6 +8,7 @@
 /* System includes */
 #include "stm32f4xx_dma.h"
 #include "statemachine_types.h"
+##include "uart.h"
 
 /* Scheduler includes */
 #include "FreeRTOS.h"
@@ -171,6 +172,27 @@ static inline void CircularBuffer_ReadSingle(Circular_Buffer_Type *Cbuff, uint8_
 static inline void CircularBuffer_ReadChunk(Circular_Buffer_Type *Cbuff, uint8_t *data, uint32_t count)
 {
 
+}
+
+static inline void CircularBuffer_DMATransmit(DMA_Stream_TypeDef *DMAx_Streamy, Circular_Buffer_Type *Cbuff)
+{
+	uint32_t count;
+
+	if (Cbuff->head > Cbuff->tail)
+	{	/* No wrap around */
+		count = Cbuff->head - Cbuff->tail;
+		DMA_Transmit_Buffer(DMAx_Streamy, &(Cbuff->buffer[Cbuff->tail]), count);
+
+		/* Set tail to equal head since we are now at the same position */
+		Cbuff->tail = ((Cbuff->tail + count) % Cbuff->size);
+	}
+	else
+	{	/* Wrap around will occur. Transmit the data to the end of the buffer. */
+		DMA_Transmit_Buffer(DMAx_Streamy, &(Cbuff->buffer[Cbuff->tail]), Cbuff->size - Cbuff->tail);
+
+		/* Set tail to zero since we are now at the start of the buffer */
+		Cbuff->tail = 0;
+	}
 }
 
 static inline ErrorStatus CircularBuffer_Increment(uint32_t count, Circular_Buffer_Type *Cbuff)

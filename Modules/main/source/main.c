@@ -1,32 +1,12 @@
 #include "main.h"
 #include <stdlib.h>
+#include "circularbuffer.h"
 
 __attribute__((section(".sw_version"))) __I char build_version[] = KFLY_VERSION;
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 static uint8_t DMA_buffer[32];
 static uint8_t DMA_buffer2[32];
 static uint8_t DMA_transmit[100];
-
-static inline void CircularBuffer_DMATransmit(DMA_Stream_TypeDef *DMAx_Streamy, Circular_Buffer_Type *Cbuff)
-{
-	uint32_t count;
-
-	if (Cbuff->head > Cbuff->tail)
-	{	/* No wrap around */
-		count = Cbuff->head - Cbuff->tail;
-		DMA_Transmit_Buffer(DMAx_Streamy, &(Cbuff->buffer[Cbuff->tail]), count);
-
-		/* Set tail to equal head since we are now at the same position */
-		Cbuff->tail = ((Cbuff->tail + count) % Cbuff->size);
-	}
-	else
-	{	/* Wrap around will occur. Transmit the data to the end of the buffer. */
-		DMA_Transmit_Buffer(DMAx_Streamy, &(Cbuff->buffer[Cbuff->tail]), Cbuff->size - Cbuff->tail);
-
-		/* Set tail to zero since we are now at the start of the buffer */
-		Cbuff->tail = 0;
-	}
-}
 
 void main(void)
 {
