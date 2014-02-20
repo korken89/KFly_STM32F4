@@ -166,11 +166,6 @@ ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff)
 
 		CircularBuffer_Claim(Cbuff, portMAX_DELAY);
 		{
-			/* How to detect error?!?!
-			 *
-			 * If count = -1, then we have buffer overflow and no data will have been saved.
-			 *
-			 */
 			CircularBuffer_WriteNoIncrement(SYNC_BYTE,	Cbuff, &count, &crc8, NULL);
 			CircularBuffer_WriteNoIncrement(Cmd_Ping,	Cbuff, &count, &crc8, NULL);
 			CircularBuffer_WriteNoIncrement(0, 			Cbuff, &count, &crc8, NULL);

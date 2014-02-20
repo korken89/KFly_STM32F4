@@ -156,7 +156,14 @@ static inline void CircularBuffer_ReadChunk(Circular_Buffer_Type *Cbuff, uint8_t
 
 static inline ErrorStatus CircularBuffer_Increment(uint32_t count, Circular_Buffer_Type *Cbuff)
 {
+	if (count == -1) /* Error! */
+		return ERROR;
 
+	else
+	{
+		Cbuff->head = (Cbuff->head + count) % Cbuff->size;
+		return SUCCESS;
+	}
 }
 
 #endif
