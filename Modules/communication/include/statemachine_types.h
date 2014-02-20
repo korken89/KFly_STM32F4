@@ -44,7 +44,7 @@ typedef enum
 /* The structure to keep track of transfers through the state machine */
 typedef struct _parser_holder
 {
-	Reveiver_Source_Type Port; 									/* Which port the data came from */
+	Receiver_Source_Type Port; 									/* Which port the data came from */
 	uint8_t data_length;										/* The length of the data */
 	uint8_t *buffer;											/* Pointer to the buffer storing the data */
 	uint16_t buffer_count;										/* The current location in the buffer */

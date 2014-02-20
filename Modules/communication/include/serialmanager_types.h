@@ -8,7 +8,7 @@ typedef enum
 	PORT_AUX2,
 	PORT_AUX3,
 	PORT_AUX4		/* CAN port */
-} Reveiver_Source_Type;
+} Receiver_Source_Type;
 
 typedef union
 {
