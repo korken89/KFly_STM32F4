@@ -8,7 +8,7 @@
 /* System includes */
 #include "stm32f4xx_dma.h"
 #include "statemachine_types.h"
-##include "uart.h"
+#include "uart.h"
 
 /* Scheduler includes */
 #include "FreeRTOS.h"

@@ -165,12 +165,12 @@ ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff)
 
 		CircularBuffer_Claim(Cbuff, portMAX_DELAY);
 		{
-			CircularBuffer_WriteSYNCNoIncrement(		Cbuff, &count, &crc8, NULL);
-			CircularBuffer_WriteNoIncrement(Cmd_Ping,	Cbuff, &count, &crc8, NULL);
-			CircularBuffer_WriteNoIncrement(0, 			Cbuff, &count, &crc8, NULL);
+			CircularBuffer_WriteSYNCNoIncrement(		Cbuff, &count, &crc8, NULL); /* Write the stating SYNC (without doubling it) */
+			CircularBuffer_WriteNoIncrement(Cmd_Ping,	Cbuff, &count, &crc8, NULL); /* Add all data to the message */
+			CircularBuffer_WriteNoIncrement(0, 			Cbuff, &count, &crc8, NULL); 
 			CircularBuffer_WriteNoIncrement(crc8, 		Cbuff, &count, NULL,  NULL);
 
-			status = CircularBuffer_Increment(count, Cbuff);
+			status = CircularBuffer_Increment(count, Cbuff);	/* Check if the message fit inside the buffer, if not return ERROR */
 		}
 		CircularBuffer_Release(Cbuff);
 
