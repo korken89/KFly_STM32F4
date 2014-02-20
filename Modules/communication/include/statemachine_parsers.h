@@ -1,11 +1,12 @@
-#ifndef __SERIALMANAGER_PARSERS_H
-#define __SERIALMANAGER_PARSERS_H
+#ifndef __STATEMACHINE_PARSERS_H
+#define __STATEMACHINE_PARSERS_H
 
 /* Standard includes */
 #include "stm32f4xx.h"
 
 /* Driver includes */
 #include "serialmanager_types.h"
+#include "statemachine_types.h"
 #include "comlink.h"
 #include "crc.h"
 #include "pid.h"

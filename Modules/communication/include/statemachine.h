@@ -7,7 +7,8 @@
 /* Driver includes */
 #include "comlink.h"
 #include "crc.h"
-#include "serialmanager_parsers.h"
+#include "statemachine_parsers.h"
+#include "statemachine_types.h"
 #include "serialmanager_types.h"
 
 /* Scheduler includes. */

@@ -8,8 +8,7 @@
 #include "statemachine.h"
 #include "comlink.h"
 #include "crc.h"
-#include "serialmanager_parsers.h"
-#include "serialmanager_types.h"
+#include "circularbuffer.h"
 
 /* Scheduler includes. */
 #include "FreeRTOS.h"

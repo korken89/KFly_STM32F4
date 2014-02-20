@@ -53,7 +53,9 @@ void vTaskUSBSerialManager(void *pvParameters)
 	}
 }
 
-uint32_t GeneratePackage(KFly_Command_Type cmd, uint8_t *buffer)
+ErrorStatus GeneratePackage(KFly_Command_Type cmd, Circular_Buffer_Type *buffer)
 {
+	ErrorStatus status = SUCCESS;
 
+	return status;
 }
