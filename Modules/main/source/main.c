@@ -7,7 +7,7 @@ static uint8_t DMA_buffer[32];
 static uint8_t DMA_buffer2[32];
 static uint8_t DMA_transmit[100];
 
-static inline void CircularBuffer_DMATransmit(DMA_Stream_TypeDef *DMAx_Streamy, Circular_Buffer_Type *Cbuff, const uint32_t buffer_size)
+static inline void CircularBuffer_DMATransmit(DMA_Stream_TypeDef *DMAx_Streamy, Circular_Buffer_Type *Cbuff)
 {
 	uint32_t count;
 
@@ -17,11 +17,11 @@ static inline void CircularBuffer_DMATransmit(DMA_Stream_TypeDef *DMAx_Streamy, 
 		DMA_Transmit_Buffer(DMAx_Streamy, &(Cbuff->buffer[Cbuff->tail]), count);
 
 		/* Set tail to equal head since we are now at the same position */
-		Cbuff->tail = ((Cbuff->tail + count) % buffer_size);
+		Cbuff->tail = ((Cbuff->tail + count) % Cbuff->size);
 	}
 	else
 	{	/* Wrap around will occur. Transmit the data to the end of the buffer. */
-		DMA_Transmit_Buffer(DMAx_Streamy, &(Cbuff->buffer[Cbuff->tail]), buffer_size - Cbuff->tail);
+		DMA_Transmit_Buffer(DMAx_Streamy, &(Cbuff->buffer[Cbuff->tail]), Cbuff->size - Cbuff->tail);
 
 		/* Set tail to zero since we are now at the start of the buffer */
 		Cbuff->tail = 0;
@@ -59,21 +59,21 @@ void main(void)
 
 	static uint8_t buf1[] = "This is a short text to test the DMA transfers via USART...\r\n";
 	Circular_Buffer_Type CBuff;
-	CircularBuffer_Init(&CBuff, DMA_transmit);
+	CircularBuffer_Init(&CBuff, DMA_transmit, 100);
 
 	USART3Init(115200);
 	DMA_Receive_Configuration(DMA_buffer, DMA_buffer2, 32);
 	DMA_Transmit_Configuration();
 
-	CircularBuffer_WriteChunk(&CBuff, buf1, 61, 100);
-	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff, 100);
+	CircularBuffer_WriteChunk(&CBuff, buf1, 61);
+	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);
 
 	for (volatile uint32_t i = 0; i < 0xFFFFFF; i++);
-	CircularBuffer_WriteChunk(&CBuff, buf1, 61, 100);
-	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff, 100);
+	CircularBuffer_WriteChunk(&CBuff, buf1, 61);
+	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);
 
 	for (volatile uint32_t i = 0; i < 0xFFFFFF; i++);
-	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff, 100);
+	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);
 	//DMA_Transmit_Buffer(DMA1_Stream3, buf1, 61);
 
 

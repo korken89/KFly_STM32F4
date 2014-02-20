@@ -1,6 +1,8 @@
 #ifndef __STATEMACHINE_TYPES_H
 #define __STATEMACHINE_TYPES_H
 
+#include "serialmanager_types.h"
+
 #define SYNC_BYTE				(0xa6)
 #define ACK_BIT					(0x80)
 #define SERIAL_BUFFER_SIZE		(256)

@@ -161,12 +161,11 @@ ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff)
 	{
 		/* Dump data into the buffer! */
 		int count = 0;
-		uint8_t crc8 = 0x00;
-		uint16_t crc16 = 0x0000;
+		uint8_t crc8;
 
 		CircularBuffer_Claim(Cbuff, portMAX_DELAY);
 		{
-			CircularBuffer_WriteNoIncrement(SYNC_BYTE,	Cbuff, &count, &crc8, NULL);
+			CircularBuffer_WriteSYNCNoIncrement(		Cbuff, &count, &crc8, NULL);
 			CircularBuffer_WriteNoIncrement(Cmd_Ping,	Cbuff, &count, &crc8, NULL);
 			CircularBuffer_WriteNoIncrement(0, 			Cbuff, &count, &crc8, NULL);
 			CircularBuffer_WriteNoIncrement(crc8, 		Cbuff, &count, NULL,  NULL);

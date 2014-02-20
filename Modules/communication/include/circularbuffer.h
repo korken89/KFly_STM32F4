@@ -7,6 +7,7 @@
 
 /* System includes */
 #include "stm32f4xx_dma.h"
+#include "statemachine_types.h"
 
 /* Scheduler includes */
 #include "FreeRTOS.h"
@@ -112,6 +113,24 @@ static inline void CircularBuffer_WriteChunk(Circular_Buffer_Type *Cbuff, uint8_
 
 		Cbuff->head = (Cbuff->head + count); /* There will be no wrap around */
 	}
+}
+
+static inline void CircularBuffer_WriteSYNCNoIncrement(Circular_Buffer_Type *Cbuff, int *count, uint8_t *crc8, uint16_t *crc16)
+{
+	/* Check if we have 1 byte free for SYNC */
+	if (CircularBuffer_SpaceLeft(Cbuff) >= 1)
+	{
+		Cbuff->buffer[(Cbuff->head + *count) % Cbuff->size] = SYNC_BYTE;
+		*count += 1;
+
+		/* When writing the SYNC CRC8 must be calculated */
+		*crc8 = CRC8_step(SYNC_BYTE, 0x00);
+
+		if (crc16 != NULL)
+			*crc16 = CRC16_step(SYNC_BYTE, 0xffff);	
+	}
+	else
+		*count = -1;
 }
 
 static inline void CircularBuffer_WriteNoIncrement(uint8_t data, Circular_Buffer_Type *Cbuff, int *count, uint8_t *crc8, uint16_t *crc16)
