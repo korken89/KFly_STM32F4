@@ -18,11 +18,11 @@ OBJDIR = ./build/obj
 ELFDIR = ./build
 
 ifdef ComSpec
-$(shell md $(subst /,\\,$(OBJDIR)) 2>NUL)
+$(shell mkdir -p $(OBJDIR) 2>/dev/null)
 REMOVE = del
 DATE = no timestamp
 else
-$(shell mkdir -p $(OBJDIR) 2>/dev/null)
+$(shell md $(subst /,\\,$(OBJDIR)) 2>NUL)
 REMOVE = rm -f
 DATE = 20$(shell date +'%y%m%d-%H%M')
 endif

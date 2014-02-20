@@ -25,6 +25,7 @@ typedef struct
 	xSemaphoreHandle write_lock;	/* Write lock mutex */
 	uint32_t head;					/* Newest element */
 	uint32_t tail;					/* Oldest element */
+	uint32_t size;					/* Size of buffer */
 	uint8_t *buffer;				/* Pointer to memory area */
 } Circular_Buffer_Type;
 
@@ -33,10 +34,11 @@ typedef struct
 /* Global function defines */
 
 /* Inline functions */
-static inline void CircularBuffer_Init(Circular_Buffer_Type *Cbuff, uint8_t *buffer)
+static inline void CircularBuffer_Init(Circular_Buffer_Type *Cbuff, uint8_t *buffer, uint32_t buffer_size)
 {
 	Cbuff->head = 0;
 	Cbuff->tail = 0;
+	Cbuff->size = buffer_size;
 	Cbuff->buffer = buffer;
 }
 
@@ -65,15 +67,15 @@ static inline void CircularBuffer_ReleaseFromISR(Circular_Buffer_Type *Cbuff)
 }
 
 
-static inline uint32_t CircularBuffer_SpaceLeft(Circular_Buffer_Type *Cbuff, const uint32_t buffer_size)
+static inline uint32_t CircularBuffer_SpaceLeft(Circular_Buffer_Type *Cbuff)
 {
-	return  ((Cbuff->head - Cbuff->tail + buffer_size) % buffer_size);
+	return  ((Cbuff->head - Cbuff->tail + Cbuff->size) % Cbuff->size);
 }
 
-static inline void CircularBuffer_WriteSingle(Circular_Buffer_Type *Cbuff, uint8_t data, const uint32_t buffer_size)
+static inline void CircularBuffer_WriteSingle(Circular_Buffer_Type *Cbuff, uint8_t data)
 {
 	Cbuff->buffer[Cbuff->head] = data;
-	Cbuff->head = (Cbuff->head + 1) % buffer_size;
+	Cbuff->head = (Cbuff->head + 1) % Cbuff->size;
 }
 
 /* *
@@ -81,12 +83,12 @@ static inline void CircularBuffer_WriteSingle(Circular_Buffer_Type *Cbuff, uint8
  * This algorithm assumes you have checked that the data will fit inside the buffer.
  *
  * */
-static inline void CircularBuffer_WriteChunk(Circular_Buffer_Type *Cbuff, uint8_t *data, const uint32_t count, const uint32_t buffer_size)
+static inline void CircularBuffer_WriteChunk(Circular_Buffer_Type *Cbuff, uint8_t *data, const uint32_t count)
 {
 	uint32_t i, head, from_bot, to_top;
 
 	head = Cbuff->head;
-	to_top = buffer_size - Cbuff->head;
+	to_top = Cbuff->size - Cbuff->head;
 
 
 	if (to_top < count)
@@ -112,13 +114,47 @@ static inline void CircularBuffer_WriteChunk(Circular_Buffer_Type *Cbuff, uint8_
 	}
 }
 
-static inline void CircularBuffer_ReadSingle(Circular_Buffer_Type *Cbuff, uint8_t *data, const uint32_t buffer_size)
+static inline void CircularBuffer_WriteNoIncrement(uint8_t data, Circular_Buffer_Type *Cbuff, int *count, uint8_t *crc8, uint16_t *crc16)
 {
-	*data = Cbuff->buffer[Cbuff->tail];
-	Cbuff->tail = (Cbuff->tail + 1) % buffer_size;
+	/* Check if we have an error from previous write */
+	if (count >= 0)
+	{
+		/* Check if we have 2 bytes free, in case of data = SYNC */
+		if (CircularBuffer_SpaceLeft(Cbuff) >= 2)
+		{
+			Cbuff->buffer[(Cbuff->head + *count) % Cbuff->size] = data;
+			*count += 1;
+
+			if (crc8 != NULL)
+				*crc8 = CRC8_step(data, *crc8);
+
+			if (crc16 != NULL)
+				*crc16 = CRC16_step(data, *crc16);	
+
+			if (data == SYNC_BYTE)
+			{
+				Cbuff->buffer[(Cbuff->head + *count) % Cbuff->size] = SYNC_BYTE;
+				*count += 1;
+			}
+		}
+		else
+			*count = -1;
+	}	
 }
 
-static inline void CircularBuffer_ReadChunk(Circular_Buffer_Type *Cbuff, uint8_t *data, uint32_t count, const uint32_t buffer_size)
+
+static inline void CircularBuffer_ReadSingle(Circular_Buffer_Type *Cbuff, uint8_t *data)
+{
+	*data = Cbuff->buffer[Cbuff->tail];
+	Cbuff->tail = (Cbuff->tail + 1) % Cbuff->size;
+}
+
+static inline void CircularBuffer_ReadChunk(Circular_Buffer_Type *Cbuff, uint8_t *data, uint32_t count)
+{
+
+}
+
+static inline ErrorStatus CircularBuffer_Increment(uint32_t count, Circular_Buffer_Type *Cbuff)
 {
 
 }

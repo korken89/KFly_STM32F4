@@ -11,6 +11,7 @@
 #include "crc.h"
 #include "pid.h"
 #include "control.h"
+#include "circularbuffer.h"
 
 /* Scheduler includes. */
 #include "FreeRTOS.h"
