@@ -52,10 +52,3 @@ void vTaskUSBSerialManager(void *pvParameters)
 		vStatemachineDataEntry(in_data, &data_holder);
 	}
 }
-
-ErrorStatus GeneratePackage(KFly_Command_Type cmd, Circular_Buffer_Type *buffer)
-{
-	ErrorStatus status = SUCCESS;
-
-	return status;
-}
