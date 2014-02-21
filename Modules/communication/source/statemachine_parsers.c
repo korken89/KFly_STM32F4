@@ -9,8 +9,6 @@
 #include "stdint.h"
 #include "statemachine_parsers.h"
 
-typedef ErrorStatus (*Generator_Type)(Circular_Buffer_Type *);
-
 ErrorStatus GenerateMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbuff);
 ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff);
 
@@ -158,7 +156,6 @@ ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff)
 		return status;
 	else
 	{
-		/* Dump data into the buffer! */
 		int count = 0;
 		uint8_t crc8;
 

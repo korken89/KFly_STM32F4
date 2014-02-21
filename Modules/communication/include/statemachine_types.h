@@ -2,6 +2,7 @@
 #define __STATEMACHINE_TYPES_H
 
 #include "serialmanager_types.h"
+#include "circularbuffer_types.h"
 
 #define SYNC_BYTE				(0xa6)
 #define ACK_BIT					(0x80)
@@ -57,6 +58,11 @@ typedef struct _parser_holder
 	Bool AckRequested;											/* If an ACK was requested */
 } Parser_Holder_Type;
 
+/* Function pointer definition for the Message Parser lookup table */
 typedef void (*Parser_Type)(struct _parser_holder *);
+
+/* Function pointer definition for the Message Generator lookup table */
+typedef ErrorStatus (*Generator_Type)(Circular_Buffer_Type *);
+
 
 #endif
