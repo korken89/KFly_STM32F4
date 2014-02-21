@@ -11,11 +11,10 @@
 
 typedef ErrorStatus (*Generator_Type)(Circular_Buffer_Type *);
 
-
 ErrorStatus GenerateMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbuff);
 ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff);
 
-const static Generator_Type generator_lookup[128] = {
+static const Generator_Type generator_lookup[128] = {
 	NULL,						/* 0: 	Cmd_None 						*/
 	NULL,						/* 1: 	Cmd_ACK 						*/
 	GeneratePing,				/* 2: 	Cmd_Ping 						*/

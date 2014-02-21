@@ -159,14 +159,25 @@ static inline void CircularBuffer_WriteNoIncrement(uint8_t data, Circular_Buffer
 		}
 		else
 			*count = -1;
-	}	
+	}
 }
 
+static inline ErrorStatus CircularBuffer_Increment(uint32_t count, Circular_Buffer_Type *Cbuff)
+{
+	if (count == -1) /* Error! */
+		return ERROR;
+
+	else
+	{
+		Cbuff->head = ((Cbuff->head + count) % Cbuff->size);
+		return SUCCESS;
+	}
+}
 
 static inline void CircularBuffer_ReadSingle(Circular_Buffer_Type *Cbuff, uint8_t *data)
 {
 	*data = Cbuff->buffer[Cbuff->tail];
-	Cbuff->tail = (Cbuff->tail + 1) % Cbuff->size;
+	Cbuff->tail = ((Cbuff->tail + 1) % Cbuff->size);
 }
 
 static inline void CircularBuffer_ReadChunk(Circular_Buffer_Type *Cbuff, uint8_t *data, uint32_t count)
@@ -195,16 +206,5 @@ static inline void CircularBuffer_DMATransmit(DMA_Stream_TypeDef *DMAx_Streamy, 
 	}
 }
 
-static inline ErrorStatus CircularBuffer_Increment(uint32_t count, Circular_Buffer_Type *Cbuff)
-{
-	if (count == -1) /* Error! */
-		return ERROR;
-
-	else
-	{
-		Cbuff->head = (Cbuff->head + count) % Cbuff->size;
-		return SUCCESS;
-	}
-}
 
 #endif

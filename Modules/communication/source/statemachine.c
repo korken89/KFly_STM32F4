@@ -56,7 +56,7 @@
 
 #include "statemachine.h"
 
-const static Parser_Type parser_lookup[128] = {
+static const Parser_Type parser_lookup[128] = {
 	NULL,						/* 0: 	Cmd_None 						*/
 	NULL,						/* 1: 	Cmd_ACK 						*/
 	vPing,						/* 2: 	Cmd_Ping 						*/
