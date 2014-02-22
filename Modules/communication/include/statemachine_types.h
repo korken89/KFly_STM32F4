@@ -36,12 +36,13 @@ typedef enum
 	Cmd_SetVelocityControllerData = 35,
 	Cmd_GetPositionControllerData = 36,
 	Cmd_SetPositionControllerData = 37,
-	Cmd_GetChannelMix = 38,
-	Cmd_SetChannelMix = 39,
-	Cmd_GetRCCalibration = 40,
-	Cmd_SetRCCalibration = 41,
-	Cmd_GetRCValues = 42,
-	Cmd_GetSensorData = 43
+	Cmd_RESERVED = 38,
+	Cmd_GetChannelMix = 39,
+	Cmd_SetChannelMix = 40,
+	Cmd_GetRCCalibration = 41,
+	Cmd_SetRCCalibration = 42,
+	Cmd_GetRCValues = 43,
+	Cmd_GetSensorData = 44
 } KFly_Command_Type;
 
 /* The structure to keep track of transfers through the state machine */

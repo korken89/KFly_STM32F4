@@ -12,11 +12,12 @@
 ErrorStatus GenerateMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateHeaderOnlyCommand(KFly_Command_Type command, Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, const uint32_t data_count, Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateACK(Circular_Buffer_Type *Cbuff);
 ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff);
 
 static const Generator_Type generator_lookup[128] = {
 	NULL,						/* 0: 	Cmd_None 						*/
-	NULL,						/* 1: 	Cmd_ACK 						*/
+	GenerateACK,				/* 1: 	Cmd_ACK 						*/
 	GeneratePing,				/* 2: 	Cmd_Ping 						*/
 	NULL,						/* 3:	Cmd_DebugMessage				*/
 	NULL,						/* 4:	Cmd_GetRunningMode 				*/
@@ -50,9 +51,10 @@ static const Generator_Type generator_lookup[128] = {
 	NULL,						/* 32:	Cmd_GetAttitudeControllerData	*/
 	NULL,						/* 33:	Cmd_SetAttitudeControllerData	*/
 	NULL,						/* 34:	Cmd_GetVelocityControllerData	*/
-	NULL,						/* 36:	Cmd_SetVelocityControllerData	*/
-	NULL,						/* 37:	Cmd_GetPositionControllerData	*/
-	NULL,						/* 38:	Cmd_SetPositionControllerData	*/
+	NULL,						/* 35: 	Cmd_SetVelocityControllerData 	*/
+	NULL,						/* 36:	Cmd_GetPositionControllerData	*/
+	NULL,						/* 37:	Cmd_SetPositionControllerData	*/
+	NULL,						/* 38:	RESERVED						*/
 	NULL,						/* 39:	Cmd_GetChannelMix				*/
 	NULL,						/* 40:	Cmd_SetChannelMix				*/
 	NULL,						/* 41:	Cmd_GetRCCalibration			*/
@@ -242,6 +244,27 @@ ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, con
 	return CircularBuffer_Increment(count, Cbuff);	/* Check if the message fit inside the buffer */
 }
 
+/**
+ * @brief 			Generates an ACK.
+ * @details
+ * 
+ * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
+ * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
+ */
+ErrorStatus GenerateACK(Circular_Buffer_Type *Cbuff)
+{
+	return GenerateHeaderOnlyCommand(Cmd_ACK, Cbuff);	/* Return status */
+}
+
+/**
+ * @brief 			Generates a Ping.
+ * @details
+ * 
+ * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
+ * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
+ */
 ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff)
 {
 	return GenerateHeaderOnlyCommand(Cmd_Ping, Cbuff);	/* Return status */

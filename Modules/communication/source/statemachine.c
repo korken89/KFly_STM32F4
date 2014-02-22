@@ -92,9 +92,10 @@ static const Parser_Type parser_lookup[128] = {
 	NULL,						/* 32:	Cmd_GetAttitudeControllerData	*/
 	NULL,						/* 33:	Cmd_SetAttitudeControllerData	*/
 	NULL,						/* 34:	Cmd_GetVelocityControllerData	*/
-	NULL,						/* 36:	Cmd_SetVelocityControllerData	*/
-	NULL,						/* 37:	Cmd_GetPositionControllerData	*/
-	NULL,						/* 38:	Cmd_SetPositionControllerData	*/
+	NULL,						/* 35: 	Cmd_SetVelocityControllerData 	*/
+	NULL,						/* 36:	Cmd_GetPositionControllerData	*/
+	NULL,						/* 37:	Cmd_SetPositionControllerData	*/
+	NULL,						/* 38:	RESERVED						*/
 	NULL,						/* 39:	Cmd_GetChannelMix				*/
 	NULL,						/* 40:	Cmd_SetChannelMix				*/
 	NULL,						/* 41:	Cmd_GetRCCalibration			*/
