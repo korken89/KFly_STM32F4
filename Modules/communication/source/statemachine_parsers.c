@@ -11,7 +11,7 @@
 
 ErrorStatus GenerateMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateHeaderOnlyCommand(KFly_Command_Type command, Circular_Buffer_Type *Cbuff);
-ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, uint32_t data_count, Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, const uint32_t data_count, Circular_Buffer_Type *Cbuff);
 ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff);
 
 static const Generator_Type generator_lookup[128] = {
@@ -145,7 +145,7 @@ static const Generator_Type generator_lookup[128] = {
 };
 
  /**
-  * @brief Generate a message based on the Generators in the lookup table.
+  * @brief 			Generate a message based on the Generators in the lookup table.
   * @details 
   * 
   * @param command 	The command to generate a message for.
@@ -166,7 +166,6 @@ ErrorStatus GenerateMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbu
 			status = generator_lookup[command](Cbuff);
 		}
 		CircularBuffer_Release(Cbuff);
-
 		/* Release the circular buffer and return the status */
 	}
 	else
@@ -175,20 +174,44 @@ ErrorStatus GenerateMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbu
 	return status;
 }
 
+/**
+ * @brief 			Generates a message with no data part.
+ * @details
+ * 
+ * @param command 	Command to generate message for.
+ * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
+ * @return			Return ERROR if the message didn't fit or SUCCESS if it did fit.
+ */
 ErrorStatus GenerateHeaderOnlyCommand(KFly_Command_Type command, Circular_Buffer_Type *Cbuff)
 {
 	int32_t count = 0;
 	uint8_t crc8;
 
-	CircularBuffer_WriteSYNCNoIncrement(		Cbuff, &count, &crc8, NULL); /* Write the stating SYNC (without doubling it) */
-	CircularBuffer_WriteNoIncrement(command,	Cbuff, &count, &crc8, NULL); /* Add all data to the message */
+	/* Write the stating SYNC (without doubling it) */
+	CircularBuffer_WriteSYNCNoIncrement(		Cbuff, &count, &crc8, NULL); 
+
+	/* Add all the data to the message */
+	CircularBuffer_WriteNoIncrement(command,	Cbuff, &count, &crc8, NULL); 
 	CircularBuffer_WriteNoIncrement(0, 			Cbuff, &count, &crc8, NULL); 
 	CircularBuffer_WriteNoIncrement(crc8, 		Cbuff, &count, NULL,  NULL);
 
-	return CircularBuffer_Increment(count, Cbuff);	/* Check if the message fit inside the buffer */
+	/* Check if the message fit inside the buffer */
+	return CircularBuffer_Increment(count, Cbuff);	
 }
 
-ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, uint32_t data_count, Circular_Buffer_Type *Cbuff)
+/**
+ * @brief 				Generates a message with data and CRC16 part. 
+ * @details	
+ * 
+ * @param command 		Command to generate message for.
+ * @param data 			Pointer to where the data is located.
+ * @param data_count 	Number of data bytes.
+ * @param Cbuff 		Pointer to the circular buffer to put the data in.
+ * 
+ * @return				Return ERROR if the message didn't fit or SUCCESS if it did fit.
+ */
+ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, const uint32_t data_count, Circular_Buffer_Type *Cbuff)
 {
 	int32_t count = 0;
 	uint8_t crc8;
@@ -200,7 +223,7 @@ ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, uin
 		return ERROR;
 
 	/* Add the header */
-	/* Write the stating SYNC (without doubling it) */
+	/* Write the starting SYNC (without doubling it) */
 	CircularBuffer_WriteSYNCNoIncrement(		Cbuff, &count, &crc8, &crc16); 
 
 	/* Add all of the header to the message */
@@ -208,7 +231,7 @@ ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, uin
 	CircularBuffer_WriteNoIncrement(data_count, Cbuff, &count, &crc8, &crc16); 
 	CircularBuffer_WriteNoIncrement(crc8, 		Cbuff, &count, NULL,  &crc16);
 
-	/* Add data string to message */
+	/* Add the data to the message */
 	for (int i = 0; i < data_count; i++)
 		CircularBuffer_WriteNoIncrement(data[i], Cbuff, &count, NULL, &crc16); 
 
