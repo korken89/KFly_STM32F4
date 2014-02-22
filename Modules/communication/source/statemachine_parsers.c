@@ -142,36 +142,46 @@ static const Generator_Type generator_lookup[128] = {
 	NULL						/* 127 */
 };
 
+ /**
+  * @brief Generate a message based on the Generators in the lookup table.
+  * @details 
+  * 
+  * @param command 	The command to generate a message for.
+  * @param Cbuff 	Pointer to the circular buffer to put the data in.
+  * 
+  * @return 		Return ERROR if the message didn't fit or SUCCESS if it did fit.
+  */
 ErrorStatus GenerateMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbuff)
 {
-	return generator_lookup[command](Cbuff);
+	ErrorStatus status;
+
+	/* Claim the circular buffer for writing */
+	CircularBuffer_Claim(Cbuff, portMAX_DELAY);
+	{
+		/* Check so there is an aviable Generator function for this command */
+		if (generator_lookup[command] != NULL)
+			status = generator_lookup[command](Cbuff);
+		else
+			status = ERROR;
+	}
+	CircularBuffer_Release(Cbuff);
+
+	/* Release the circular buffer and return the status */
+	
+	return status;
 }
 
 ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff)
 {
-	uint32_t space_left = CircularBuffer_SpaceLeft(Cbuff);
-	ErrorStatus status = ERROR;
+	int32_t count = 0;
+	uint8_t crc8;
 
-	if (space_left < 4)
-		return status;
-	else
-	{
-		int count = 0;
-		uint8_t crc8;
+	CircularBuffer_WriteSYNCNoIncrement(		Cbuff, &count, &crc8, NULL); /* Write the stating SYNC (without doubling it) */
+	CircularBuffer_WriteNoIncrement(Cmd_Ping,	Cbuff, &count, &crc8, NULL); /* Add all data to the message */
+	CircularBuffer_WriteNoIncrement(0, 			Cbuff, &count, &crc8, NULL); 
+	CircularBuffer_WriteNoIncrement(crc8, 		Cbuff, &count, NULL,  NULL);
 
-		CircularBuffer_Claim(Cbuff, portMAX_DELAY);
-		{
-			CircularBuffer_WriteSYNCNoIncrement(		Cbuff, &count, &crc8, NULL); /* Write the stating SYNC (without doubling it) */
-			CircularBuffer_WriteNoIncrement(Cmd_Ping,	Cbuff, &count, &crc8, NULL); /* Add all data to the message */
-			CircularBuffer_WriteNoIncrement(0, 			Cbuff, &count, &crc8, NULL); 
-			CircularBuffer_WriteNoIncrement(crc8, 		Cbuff, &count, NULL,  NULL);
-
-			status = CircularBuffer_Increment(count, Cbuff);	/* Check if the message fit inside the buffer, if not return ERROR */
-		}
-		CircularBuffer_Release(Cbuff);
-
-		return status;
-	}
+	return CircularBuffer_Increment(count, Cbuff);	/* Check if the message fit inside the buffer */
 }
 
 /* *

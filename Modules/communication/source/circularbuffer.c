@@ -87,7 +87,7 @@ void CircularBuffer_WriteChunk(Circular_Buffer_Type *Cbuff, uint8_t *data, const
 	}
 }
 
-void CircularBuffer_WriteSYNCNoIncrement(Circular_Buffer_Type *Cbuff, int *count, uint8_t *crc8, uint16_t *crc16)
+void CircularBuffer_WriteSYNCNoIncrement(Circular_Buffer_Type *Cbuff, int32_t *count, uint8_t *crc8, uint16_t *crc16)
 {
 	/* Check if we have 4 byte free for SYNC + Header */
 	if (CircularBuffer_SpaceLeft(Cbuff) >= 4)
@@ -105,7 +105,7 @@ void CircularBuffer_WriteSYNCNoIncrement(Circular_Buffer_Type *Cbuff, int *count
 		*count = -1;
 }
 
-void CircularBuffer_WriteNoIncrement(uint8_t data, Circular_Buffer_Type *Cbuff, int *count, uint8_t *crc8, uint16_t *crc16)
+void CircularBuffer_WriteNoIncrement(uint8_t data, Circular_Buffer_Type *Cbuff, int32_t *count, uint8_t *crc8, uint16_t *crc16)
 {
 	/* Check if we have an error from previous write */
 	if (count >= 0)
