@@ -10,6 +10,8 @@
 #include "statemachine_parsers.h"
 
 ErrorStatus GenerateMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateHeaderOnlyCommand(KFly_Command_Type command, Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, uint32_t data_count, Circular_Buffer_Type *Cbuff);
 ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff);
 
 static const Generator_Type generator_lookup[128] = {
@@ -155,33 +157,71 @@ ErrorStatus GenerateMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbu
 {
 	ErrorStatus status;
 
-	/* Claim the circular buffer for writing */
-	CircularBuffer_Claim(Cbuff, portMAX_DELAY);
+	/* Check so there is an available Generator function for this command */
+	if (generator_lookup[command] != NULL)
 	{
-		/* Check so there is an aviable Generator function for this command */
-		if (generator_lookup[command] != NULL)
+		/* Claim the circular buffer for writing */
+		CircularBuffer_Claim(Cbuff, portMAX_DELAY);
+		{
 			status = generator_lookup[command](Cbuff);
-		else
-			status = ERROR;
-	}
-	CircularBuffer_Release(Cbuff);
+		}
+		CircularBuffer_Release(Cbuff);
 
-	/* Release the circular buffer and return the status */
+		/* Release the circular buffer and return the status */
+	}
+	else
+		status = ERROR;
 	
 	return status;
 }
 
-ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff)
+ErrorStatus GenerateHeaderOnlyCommand(KFly_Command_Type command, Circular_Buffer_Type *Cbuff)
 {
 	int32_t count = 0;
 	uint8_t crc8;
 
 	CircularBuffer_WriteSYNCNoIncrement(		Cbuff, &count, &crc8, NULL); /* Write the stating SYNC (without doubling it) */
-	CircularBuffer_WriteNoIncrement(Cmd_Ping,	Cbuff, &count, &crc8, NULL); /* Add all data to the message */
+	CircularBuffer_WriteNoIncrement(command,	Cbuff, &count, &crc8, NULL); /* Add all data to the message */
 	CircularBuffer_WriteNoIncrement(0, 			Cbuff, &count, &crc8, NULL); 
 	CircularBuffer_WriteNoIncrement(crc8, 		Cbuff, &count, NULL,  NULL);
 
 	return CircularBuffer_Increment(count, Cbuff);	/* Check if the message fit inside the buffer */
+}
+
+ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, uint32_t data_count, Circular_Buffer_Type *Cbuff)
+{
+	int32_t count = 0;
+	uint8_t crc8;
+	uint16_t crc16;
+
+	/* Check if the "best case" won't fit in the buffer which is
+	 * data_count + header + CRC16 = data_count + 6 bytes */
+	if (CircularBuffer_SpaceLeft(Cbuff) < (data_count + 6))
+		return ERROR;
+
+	/* Add the header */
+	/* Write the stating SYNC (without doubling it) */
+	CircularBuffer_WriteSYNCNoIncrement(		Cbuff, &count, &crc8, &crc16); 
+
+	/* Add all of the header to the message */
+	CircularBuffer_WriteNoIncrement(command,	Cbuff, &count, &crc8, &crc16); 
+	CircularBuffer_WriteNoIncrement(data_count, Cbuff, &count, &crc8, &crc16); 
+	CircularBuffer_WriteNoIncrement(crc8, 		Cbuff, &count, NULL,  &crc16);
+
+	/* Add data string to message */
+	for (int i = 0; i < data_count; i++)
+		CircularBuffer_WriteNoIncrement(data[i], Cbuff, &count, NULL, &crc16); 
+
+	/* Add the CRC16 */
+	CircularBuffer_WriteNoIncrement((uint8_t)(crc16 >> 8), 	Cbuff, &count, NULL, NULL);
+	CircularBuffer_WriteNoIncrement((uint8_t)(crc16), 		Cbuff, &count, NULL, NULL);
+
+	return CircularBuffer_Increment(count, Cbuff);	/* Check if the message fit inside the buffer */
+}
+
+ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff)
+{
+	return GenerateHeaderOnlyCommand(Cmd_Ping, Cbuff);	/* Return status */
 }
 
 /* *
