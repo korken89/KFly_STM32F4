@@ -9,7 +9,9 @@
 #include "stdint.h"
 #include "statemachine_parsers.h"
 
-ErrorStatus GenerateMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbuff);
+#include "usbd_cdc.h"
+ErrorStatus GenerateAUXMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateUSBMessage(KFly_Command_Type command);
 ErrorStatus GenerateHeaderOnlyCommand(KFly_Command_Type command, Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, const uint32_t data_count, Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateACK(Circular_Buffer_Type *Cbuff);
@@ -147,7 +149,7 @@ static const Generator_Type generator_lookup[128] = {
 };
 
  /**
-  * @brief 			Generate a message based on the Generators in the lookup table.
+  * @brief 			Generate a message for the AUX ports based on the Generators in the lookup table.
   * @details 
   * 
   * @param command 	The command to generate a message for.
@@ -155,9 +157,13 @@ static const Generator_Type generator_lookup[128] = {
   * 
   * @return 		Return ERROR if the message didn't fit or SUCCESS if it did fit.
   */
-ErrorStatus GenerateMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbuff)
+ErrorStatus GenerateAUXMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbuff)
 {
 	ErrorStatus status;
+
+	/* Check so the circular buffer address is valid */
+	if (Cbuff == NULL)
+		return ERROR;
 
 	/* Check so there is an available Generator function for this command */
 	if (generator_lookup[command] != NULL)
@@ -169,6 +175,55 @@ ErrorStatus GenerateMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbu
 		}
 		CircularBuffer_Release(Cbuff);
 		/* Release the circular buffer and return the status */
+	}
+	else
+		status = ERROR;
+	
+	return status;
+}
+
+
+ /**
+  * @brief 			Generate a message for the USB port based on the Generators in the lookup table.
+  * @details 
+  * 
+  * @param command 	The command to generate a message for.
+  * 
+  * @return 		Return ERROR if the message didn't fit or SUCCESS if it did fit.
+  */
+ErrorStatus GenerateUSBMessage(KFly_Command_Type command)
+{
+	/* The two APP_* are from the USB CDC core and points to the transmitting buffer's location and index */
+	extern uint8_t  APP_Rx_Buffer[]; /* Write CDC data to this buffer to send it over the USB */
+	extern uint32_t APP_Rx_ptr_in;   /* Increment this pointer to initiate the transfer */
+	ErrorStatus status;
+	Circular_Buffer_Type temp;
+
+	/* TODO: Check if the USB is available */
+
+	/* Check so there is an available Generator function for this command */
+	if (generator_lookup[command] != NULL)
+	{
+		/* Fake the USB Endpoint to look like an Circular Buffer */
+		temp.buffer = APP_Rx_Buffer;	/* 	Set the pointer to point at the USB buffer */
+		temp.head = APP_Rx_ptr_in;		/* 	Set the head of the temporary circular buffer to the
+											same location as where the USB pointer is now */
+		temp.tail = APP_Rx_ptr_in;		/* 	Since we don't know where the tail of the USB buffer
+											is, assume it is empty */
+		temp.size = APP_RX_DATA_SIZE;	/* 	The size of the buffer is given from the CDC core */
+
+		/* Claim the USB for writing */
+		/* TODO: ADD USB CLAIM CODE */
+		{
+			status = generator_lookup[command](&temp);
+
+			/* Increment the USB buffer pointer. The circular buffer code 
+			 * calculates the correct pointer location for us. */
+			APP_Rx_ptr_in = temp.head;
+		}
+		/* TODO: ADD USB RELEASE CODE */
+
+		/* Release the USB and return the status */
 	}
 	else
 		status = ERROR;
@@ -291,21 +346,10 @@ void vPing(Parser_Holder_Type *pHolder)
  * */
 void vGetRunningMode(Parser_Holder_Type *pHolder)
 {
-	uint8_t str[7];
-	uint16_t crc16;
-
-	str[0] = SYNC_BYTE;
-	str[1] = Cmd_GetRunningMode;
-	str[2] = 0;
-	str[3] = CRC8(str, 3);
-	str[4] = 'P'; /* P for program mode */
-	crc16 = CRC16(str, 5);
-
-	str[5] = (uint8_t)(crc16 >> 8);
-	str[6] = (uint8_t)(crc16);
-
 	if (pHolder->Port == PORT_USB)
-		xUSBSendData(str, 7);
+		GenerateUSBMessage(Cmd_GetRunningMode);
+	else if (pHolder->Port == PORT_AUX1)
+		GenerateAUXMessage(Cmd_GetRunningMode, NULL);
 }
 
 /* *
