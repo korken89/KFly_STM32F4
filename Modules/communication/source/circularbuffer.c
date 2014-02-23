@@ -40,7 +40,7 @@ void CircularBuffer_ReleaseFromISR(Circular_Buffer_Type *Cbuff)
 }
 
 
-uint32_t CircularBuffer_SpaceLeft(Circular_Buffer_Type *Cbuff)
+int32_t CircularBuffer_SpaceLeft(Circular_Buffer_Type *Cbuff)
 {
 	return (Cbuff->tail + Cbuff->size - Cbuff->head - 1) % Cbuff->size;
 }
@@ -116,6 +116,7 @@ void CircularBuffer_WriteNoIncrement(uint8_t data, Circular_Buffer_Type *Cbuff, 
 			Cbuff->buffer[(Cbuff->head + *count) % Cbuff->size] = data;
 			*count += 1;
 
+			/* Only add CRCs of they are needed */
 			if (crc8 != NULL)
 				*crc8 = CRC8_step(data, *crc8);
 

@@ -15,9 +15,9 @@
 static const Parser_Type parser_lookup[128] = {
 	NULL,						/* 0: 	Cmd_None 						*/
 	NULL,						/* 1: 	Cmd_ACK 						*/
-	vPing,						/* 2: 	Cmd_Ping 						*/
+	ParsePing,					/* 2: 	Cmd_Ping 						*/
 	NULL,						/* 3:	Cmd_DebugMessage				*/
-	vGetRunningMode,			/* 4:	Cmd_GetRunningMode 				*/
+	ParseGetRunningMode,		/* 4:	Cmd_GetRunningMode 				*/
 	NULL,						/* 5 */
 	NULL,						/* 6 */
 	NULL,						/* 7 */
@@ -30,8 +30,8 @@ static const Parser_Type parser_lookup[128] = {
 	NULL,						/* 14:	Cmd_ReadLastFirmwarePackage		*/
 	NULL,						/* 15:	Cmd_NextPackage					*/
 	NULL,						/* 16:	Cmd_ExitBootloader				*/
-	vGetBootloaderVersion,		/* 17:	Cmd_GetBootloaderVersion		*/
-	vGetFirmwareVersion,		/* 18:	Cmd_GetFirmwareVersion			*/
+	ParseGetBootloaderVersion,	/* 17:	Cmd_GetBootloaderVersion		*/
+	ParseGetFirmwareVersion,	/* 18:	Cmd_GetFirmwareVersion			*/
 	NULL,						/* 19:	Cmd_SaveToFlash					*/
 	NULL,						/* 20 */
 	NULL,						/* 21 */
@@ -43,7 +43,7 @@ static const Parser_Type parser_lookup[128] = {
 	NULL,						/* 27 */
 	NULL,						/* 28 */
 	NULL,						/* 29 */
-	vGetRateControllerData,		/* 30:	Cmd_GetRateControllerData		*/
+	ParseGetRateControllerData,	/* 30:	Cmd_GetRateControllerData		*/
 	NULL,						/* 31:	Cmd_SetRateControllerData		*/
 	NULL,						/* 32:	Cmd_GetAttitudeControllerData	*/
 	NULL,						/* 33:	Cmd_SetAttitudeControllerData	*/
@@ -153,23 +153,16 @@ Parser_Type GetParser(KFly_Command_Type command)
 /* *
  * Sends a ping.
  * */
-void vPing(Parser_Holder_Type *pHolder)
+void ParsePing(Parser_Holder_Type *pHolder)
 {
-	uint8_t str[4];
-
-	str[0] = SYNC_BYTE;
-	str[1] = Cmd_Ping;
-	str[2] = 0;
-	str[3] = CRC8(str, 3);
-
 	if (pHolder->Port == PORT_USB)
-		xUSBSendData(str, 4);
+		GenerateUSBMessage(Cmd_Ping);
 }
 
 /* *
  * Get the current running mode. P for program, B for bootloader.
  * */
-void vGetRunningMode(Parser_Holder_Type *pHolder)
+void ParseGetRunningMode(Parser_Holder_Type *pHolder)
 {
 	if (pHolder->Port == PORT_USB)
 		GenerateUSBMessage(Cmd_GetRunningMode);
@@ -180,8 +173,11 @@ void vGetRunningMode(Parser_Holder_Type *pHolder)
 /* *
  * Gets the bootloader version and sends it.
  * */
-void vGetBootloaderVersion(Parser_Holder_Type *pHolder)
+void ParseGetBootloaderVersion(Parser_Holder_Type *pHolder)
 {
+	
+
+	
 	uint8_t *msg;
 	msg = (uint8_t *)(BOOTLOADER_BASE + SW_VERSION_OFFSET); /* Text is at known location */
 	uint8_t str[128];
@@ -211,7 +207,7 @@ void vGetBootloaderVersion(Parser_Holder_Type *pHolder)
 /* *
  * Gets the firmware version and sends it.
  * */
-void vGetFirmwareVersion(Parser_Holder_Type *pHolder)
+void ParseGetFirmwareVersion(Parser_Holder_Type *pHolder)
 {
 	uint8_t *msg;
 	msg = (uint8_t *)(FIRMWARE_BASE + SW_VERSION_OFFSET); /* Text is at known location */
@@ -239,7 +235,7 @@ void vGetFirmwareVersion(Parser_Holder_Type *pHolder)
 		xUSBSendData(str, i);
 }
 
-void vGetRateControllerData(Parser_Holder_Type *pHolder)
+void ParseGetRateControllerData(Parser_Holder_Type *pHolder)
 {
 	uint8_t str[100];
 	PI_Data_Type *PI_settings;

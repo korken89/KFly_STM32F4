@@ -34,10 +34,10 @@
 
 /* Global function defines */
 Parser_Type GetParser(KFly_Command_Type command);
-void vPing(Parser_Holder_Type *);
-void vGetRunningMode(Parser_Holder_Type *);
-void vGetBootloaderVersion(Parser_Holder_Type *);
-void vGetFirmwareVersion(Parser_Holder_Type *);
-void vGetRateControllerData(Parser_Holder_Type *);
+void ParsePing(Parser_Holder_Type *);
+void ParseGetRunningMode(Parser_Holder_Type *);
+void ParseGetBootloaderVersion(Parser_Holder_Type *);
+void ParseGetFirmwareVersion(Parser_Holder_Type *);
+void ParseGetRateControllerData(Parser_Holder_Type *);
 
 #endif

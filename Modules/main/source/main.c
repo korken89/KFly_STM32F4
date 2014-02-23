@@ -1,12 +1,15 @@
 #include "main.h"
 #include <stdlib.h>
 #include "circularbuffer.h"
+#include "statemachine_generators.h"
 
 __attribute__((section(".sw_version"))) __I char build_version[] = KFLY_VERSION;
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 static uint8_t DMA_buffer[32];
 static uint8_t DMA_buffer2[32];
 static uint8_t DMA_transmit[100];
+
+void vTaskTest(void *pvParameters);
 
 void main(void)
 {
@@ -37,7 +40,7 @@ void main(void)
 	 * */
 	PWMInit();
 
-	static uint8_t buf1[] = "This is a short text to test the DMA transfers via USART...\r\n";
+	/*static uint8_t buf1[] = "This is a short text to test the DMA transfers via USART...\r\n";
 	Circular_Buffer_Type CBuff;
 	CircularBuffer_Init(&CBuff, DMA_transmit, 100);
 
@@ -45,17 +48,16 @@ void main(void)
 	DMA_Receive_Configuration(DMA_buffer, DMA_buffer2, 32);
 	DMA_Transmit_Configuration();
 
-	CBuff.head = 5;
-	CBuff.tail = 8;
-	USART_putc(USART3, (uint8_t)CircularBuffer_SpaceLeft(&CBuff));
+	uint8_t testbuff[5] = {0xde, 0xad, 0xbe, 0xef, 0xa6};
 
-	CBuff.head = 8;
-	CBuff.tail = 8;
-	USART_putc(USART3, (uint8_t)CircularBuffer_SpaceLeft(&CBuff));
+	ErrorStatus status = GenerateGenericCommand(Cmd_Ping, testbuff, 5, &CBuff);	
 
-	CBuff.head = 9;
-	CBuff.tail = 8;
-	USART_putc(USART3, (uint8_t)CircularBuffer_SpaceLeft(&CBuff));
+	if (status == SUCCESS)
+		USART_putc(USART3, 'S');
+	else
+		USART_putc(USART3, 'F');*/
+
+	//CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);
 
 	/*CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);
 
@@ -66,9 +68,6 @@ void main(void)
 	for (volatile uint32_t i = 0; i < 0xFFFFFF; i++);
 	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);*/
 	//DMA_Transmit_Buffer(DMA1_Stream3, buf1, 61);
-
-
-	while(1);
 
 	/* *
 	 *
@@ -135,6 +134,13 @@ void main(void)
 	 * */
 	vSerialManagerInit();
 
+	xTaskCreate(vTaskTest,
+				"TestTask",
+				256,
+				0,
+				tskSerialManagerPRIORITY,
+			    0);
+
 	/* *
 	 *
 	 * Start the scheduler.
@@ -145,6 +151,24 @@ void main(void)
 	/* We only get here if there was insufficient memory to start the Scheduler */
 
 	while(1);
+}
+
+void vTaskTest(void *pvParameters)
+{
+	extern uint8_t _start_sw_version;
+	extern uint8_t _end_sw_version;
+	uint32_t  sw_size;
+	uint32_t end = (uint32_t)(&_end_sw_version);
+	uint32_t start = (uint32_t)(&_start_sw_version);
+	uint8_t diff = (uint8_t)(end - start);
+
+	while(1)
+	{
+
+		vTaskDelay(5000);
+
+		xUSBSendData((uint8_t *)&diff, 1);
+	}
 }
 
 uint32_t itoa(int num, char *buf)

@@ -40,7 +40,7 @@ void CircularBuffer_InitMutex(Circular_Buffer_Type *Cbuff);
 portBASE_TYPE CircularBuffer_Claim(Circular_Buffer_Type *Cbuff, portTickType timeout);
 portBASE_TYPE CircularBuffer_Release(Circular_Buffer_Type *Cbuff);
 void CircularBuffer_ReleaseFromISR(Circular_Buffer_Type *Cbuff);
-uint32_t CircularBuffer_SpaceLeft(Circular_Buffer_Type *Cbuff);
+int32_t CircularBuffer_SpaceLeft(Circular_Buffer_Type *Cbuff);
 void CircularBuffer_WriteSingle(Circular_Buffer_Type *Cbuff, uint8_t data);
 void CircularBuffer_WriteChunk(Circular_Buffer_Type *Cbuff, uint8_t *data, const uint32_t count);
 void CircularBuffer_WriteSYNCNoIncrement(Circular_Buffer_Type *Cbuff, int32_t *count, uint8_t *crc8, uint16_t *crc16);
