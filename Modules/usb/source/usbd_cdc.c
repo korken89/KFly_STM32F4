@@ -189,7 +189,7 @@ static uint16_t cdc_DataRx (uint8_t* Buf, uint32_t Len)
 	// Loop through USB input buffer (frame)
 	for (uint32_t i = 0; i < Len; i++)
 	{
-		/* Send incomming data to RTOS queue for processing */
+		/* Send incoming data to RTOS queue for processing */
 		xQueueSendToBackFromISR(xUSBQueue.xUSBQueueHandle, (Buf + i), &xHigherPriorityTaskWoken);
 	}
 

@@ -11,7 +11,7 @@
 #include "comlink.h"
 
 /* Global variable defines */
-volatile USB_QUEUE_Type xUSBQueue = {NULL, FALSE};
+USB_QUEUE_Type xUSBQueue = {NULL, FALSE};
 
 /* Private function defines */
 
@@ -23,6 +23,7 @@ extern uint16_t cdc_DataTx(uint8_t *, uint32_t);
  * */
 void vUSBQueueInit(void)
 {
+	xUSBQueue.USB_Write_Lock  = xSemaphoreCreateMutex();
 	xUSBQueue.xUSBQueueHandle = xQueueCreate(xUSBQueueSize, sizeof(uint8_t));
 }
 
@@ -48,11 +49,11 @@ ErrorStatus xUSBSendData(uint8_t *data, uint32_t size)
 
 	else
 	{
-		vTaskSuspendAll();
+		xSemaphoreTake(xUSBQueue.USB_Write_Lock, portMAX_DELAY);
 		{
 			cdc_DataTx(data, size);
 		}
-		xTaskResumeAll();
+		xSemaphoreGive(xUSBQueue.USB_Write_Lock);
 
 		return SUCCESS;
 	}

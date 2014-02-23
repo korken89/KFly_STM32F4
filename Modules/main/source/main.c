@@ -45,15 +45,26 @@ void main(void)
 	DMA_Receive_Configuration(DMA_buffer, DMA_buffer2, 32);
 	DMA_Transmit_Configuration();
 
-	CircularBuffer_WriteChunk(&CBuff, buf1, 61);
-	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);
+	CBuff.head = 5;
+	CBuff.tail = 8;
+	USART_putc(USART3, (uint8_t)CircularBuffer_SpaceLeft(&CBuff));
+
+	CBuff.head = 8;
+	CBuff.tail = 8;
+	USART_putc(USART3, (uint8_t)CircularBuffer_SpaceLeft(&CBuff));
+
+	CBuff.head = 9;
+	CBuff.tail = 8;
+	USART_putc(USART3, (uint8_t)CircularBuffer_SpaceLeft(&CBuff));
+
+	/*CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);
 
 	for (volatile uint32_t i = 0; i < 0xFFFFFF; i++);
 	CircularBuffer_WriteChunk(&CBuff, buf1, 61);
 	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);
 
 	for (volatile uint32_t i = 0; i < 0xFFFFFF; i++);
-	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);
+	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);*/
 	//DMA_Transmit_Buffer(DMA1_Stream3, buf1, 61);
 
 

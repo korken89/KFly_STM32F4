@@ -2,7 +2,7 @@
 #define __STATEMACHINE_TYPES_H
 
 #include "serialmanager_types.h"
-#include "circularbuffer_types.h"
+#include "circularbuffer.h"
 
 #define SYNC_BYTE				(0xa6)
 #define ACK_BIT					(0x80)

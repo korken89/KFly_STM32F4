@@ -11,6 +11,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
+#include "semphr.h"
 
 /* KFly includes */
 
@@ -27,11 +28,12 @@
 typedef struct
 {
 	xQueueHandle xUSBQueueHandle;
-	Bool bUSBAvalible;
+	xSemaphoreHandle USB_Write_Lock;
+	volatile Bool bUSBAvalible;
 } USB_QUEUE_Type;
 
 /* Global variable defines */
-extern volatile USB_QUEUE_Type xUSBQueue;
+extern USB_QUEUE_Type xUSBQueue;
 
 /* Global function defines */
 void vUSBQueueInit(void);

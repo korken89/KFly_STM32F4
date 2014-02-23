@@ -7,6 +7,7 @@
 /* Driver includes */
 #include "serialmanager_types.h"
 #include "statemachine_types.h"
+#include "statemachine_generators.h"
 #include "comlink.h"
 #include "crc.h"
 #include "pid.h"
@@ -32,6 +33,7 @@
 /* Global variable defines */
 
 /* Global function defines */
+Parser_Type GetParser(KFly_Command_Type command);
 void vPing(Parser_Holder_Type *);
 void vGetRunningMode(Parser_Holder_Type *);
 void vGetBootloaderVersion(Parser_Holder_Type *);

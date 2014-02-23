@@ -17,7 +17,7 @@ void CircularBuffer_Init(Circular_Buffer_Type *Cbuff, uint8_t *buffer, uint32_t 
 
 void CircularBuffer_InitMutex(Circular_Buffer_Type *Cbuff)
 {
-	Cbuff->write_lock  = xSemaphoreCreateMutex();
+	Cbuff->write_lock = xSemaphoreCreateMutex();
 }
 
 portBASE_TYPE CircularBuffer_Claim(Circular_Buffer_Type *Cbuff, portTickType timeout)
@@ -42,7 +42,7 @@ void CircularBuffer_ReleaseFromISR(Circular_Buffer_Type *Cbuff)
 
 uint32_t CircularBuffer_SpaceLeft(Circular_Buffer_Type *Cbuff)
 {
-	return  ((Cbuff->head - Cbuff->tail + Cbuff->size) % Cbuff->size);
+	return (Cbuff->tail + Cbuff->size - Cbuff->head - 1) % Cbuff->size;
 }
 
 void CircularBuffer_WriteSingle(Circular_Buffer_Type *Cbuff, uint8_t data)
