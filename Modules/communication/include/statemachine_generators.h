@@ -12,6 +12,7 @@
 #include "crc.h"
 #include "pid.h"
 #include "sensor_read.h"
+#include "sensor_calibration.h"
 #include "control.h"
 #include "circularbuffer.h"
 
@@ -52,6 +53,7 @@ ErrorStatus GenerateGetChannelMix(Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateGetRCCalibration(Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateGetRCValues(Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateGetSensorData(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetSensorCalibration(Circular_Buffer_Type *Cbuff);
 uint32_t myStrlen(const uint8_t *str, const uint32_t max_length);
 
 #endif

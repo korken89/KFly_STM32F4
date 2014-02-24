@@ -61,8 +61,8 @@ static const Parser_Type parser_lookup[128] = {
 	ParseSetRCCalibration,				/* 42:	Cmd_SetRCCalibration			*/
 	ParseGetRCValues,					/* 43:	Cmd_GetRCValues					*/
 	ParseGetSensorData,					/* 44:	Cmd_GetSensorData				*/
-	NULL,								/* 45 */
-	NULL,								/* 46 */
+	ParseGetSensorCalibration,			/* 45:	Cmd_GetSensorCalibration 		*/
+	ParseSetSensorCalibration,			/* 46:	Cmd_SetSensorCalibration 		*/
 	NULL,								/* 47 */
 	NULL,								/* 48 */
 	NULL,								/* 49 */
@@ -498,4 +498,46 @@ void ParseGetSensorData(Parser_Holder_Type *pHolder)
 		GenerateUSBMessage(Cmd_GetSensorData);
 	else if (pHolder->Port == PORT_AUX1)
 		GenerateAUXMessage(Cmd_GetSensorData, NULL);
+}
+
+/**
+ * @brief 			Parses a GetSensorCalibration command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
+void ParseGetSensorCalibration(Parser_Holder_Type *pHolder)
+{
+	if (pHolder->Port == PORT_USB)
+		GenerateUSBMessage(Cmd_GetSensorCalibration);
+	else if (pHolder->Port == PORT_AUX1)
+		GenerateAUXMessage(Cmd_GetSensorCalibration, NULL);
+}
+
+/**
+ * @brief 			Parses a SetSensorCalibration command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
+void ParseSetSensorCalibration(Parser_Holder_Type *pHolder)
+{
+	uint32_t i;
+	uint8_t *save_location;
+
+	if (pHolder->buffer_count == (4*3*4))
+	{
+		save_location = (uint8_t *)ptrGetSensorCalibration();
+
+		for (i = 0; i < (4*3*4); i++)
+			save_location[i] = pHolder->buffer[i];
+
+		if (pHolder->AckRequested == TRUE)
+		{
+			if (pHolder->Port == PORT_USB)
+				GenerateUSBMessage(Cmd_ACK);
+			else if (pHolder->Port == PORT_AUX1)
+				GenerateAUXMessage(Cmd_ACK, NULL);
+		}	
+	}
 }

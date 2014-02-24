@@ -12,6 +12,8 @@
 #include "crc.h"
 #include "pid.h"
 #include "control.h"
+#include "sensor_calibration.h"
+#include "sensor_read.h"
 #include "circularbuffer.h"
 
 /* Scheduler includes. */
@@ -50,6 +52,7 @@ void ParseGetRCCalibration(Parser_Holder_Type *pHolder);
 void ParseSetRCCalibration(Parser_Holder_Type *pHolder);
 void ParseGetRCValues(Parser_Holder_Type *pHolder);
 void ParseGetSensorData(Parser_Holder_Type *pHolder);
-
+void ParseGetSensorCalibration(Parser_Holder_Type *pHolder);
+void ParseSetSensorCalibration(Parser_Holder_Type *pHolder);
 
 #endif
