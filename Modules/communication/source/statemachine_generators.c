@@ -353,7 +353,7 @@ ErrorStatus GenerateGenericGetControllerData(KFly_Command_Type command, const ui
 	}
 
 	/* Get only the controller constraints */
-	for (i = 0; i < RATE_LIMIT_COUNT; i++) 
+	for (i = 0; i < limit_count; i++) 
 		CircularBuffer_WriteNoIncrement(CL_settings[limit_offset + i],	Cbuff, &count, NULL,  &crc16);
 
 	/* Add the CRC16 */

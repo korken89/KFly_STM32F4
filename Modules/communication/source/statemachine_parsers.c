@@ -9,6 +9,9 @@
 #include "stdint.h"
 #include "statemachine_parsers.h"
 
+/* Private functions */
+void ParseGenericSetControllerData(const uint32_t pi_offset, const uint32_t limit_offset, const uint32_t limit_count, uint8_t *data);
+
 /**
  * Lookup table for all the serial parsers.
  */
@@ -143,24 +146,74 @@ static const Parser_Type parser_lookup[128] = {
 	NULL								/* 127 */
 };
 
-
+/**
+ * @brief 			Return the parser associated to the command.
+ * @details 
+ * 
+ * @param command 	Command to get the parser for.
+ * 
+ * @return 			Pointer to the associated parser.
+ */
 Parser_Type GetParser(KFly_Command_Type command)
 {
 	return parser_lookup[command];
 }
 
-/* *
- * Sends a ping.
- * */
+/**
+ * @brief A generic function to save controller data and control limits.
+ * @details
+ * 
+ * @param pi_offset 	The offset to the correct set of PI controllers.
+ * @param limit_offset 	The offset to the correct part of the limits structure.
+ * @param limit_count 	Number of bytes to write to the limits structure.
+ * @param data 			Input data so save.
+ */
+void ParseGenericSetControllerData(const uint32_t pi_offset, const uint32_t limit_offset, const uint32_t limit_count, uint8_t *data)
+{
+	PI_Data_Type *PI_settings;
+	uint8_t *save_location;
+	uint32_t i, j;
+
+	/* Cast the control data to an array of PI_Data_Type to access each PI controller */
+	PI_settings = (PI_Data_Type *)ptrGetControlData();
+
+	/* Write only the PI coefficients */
+	for (i = 0; i < 3; i++) 
+	{
+		save_location = (uint8_t *)&PI_settings[pi_offset + i];
+
+		for (j = 0; j < 12; j++)
+			save_location[j + i*4] = data[j + i*4];
+	}
+
+	/* Cast the settings into bytes for saving */
+	save_location = (uint8_t *)ptrGetControlLimits();
+
+	/* Write only the controller constraints */
+	for (i = 0; i < limit_count; i++) 
+		save_location[limit_offset + i] = data[(3*3*4) + i];
+}
+
+/**
+ * @brief 			Parses a Ping command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParsePing(Parser_Holder_Type *pHolder)
 {
 	if (pHolder->Port == PORT_USB)
 		GenerateUSBMessage(Cmd_Ping);
+	else if (pHolder->Port == PORT_AUX1)
+		GenerateAUXMessage(Cmd_Ping, NULL);
 }
 
-/* *
- * Get the current running mode. P for program, B for bootloader.
- * */
+/**
+ * @brief 			Parses a GetRunningMode command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseGetRunningMode(Parser_Holder_Type *pHolder)
 {
 	if (pHolder->Port == PORT_USB)
@@ -169,9 +222,12 @@ void ParseGetRunningMode(Parser_Holder_Type *pHolder)
 		GenerateAUXMessage(Cmd_GetRunningMode, NULL);
 }
 
-/* *
- * Gets the bootloader version and sends it.
- * */
+/**
+ * @brief 			Parses a GetBootloaderVersion command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseGetBootloaderVersion(Parser_Holder_Type *pHolder)
 {
 	if (pHolder->Port == PORT_USB)
@@ -180,9 +236,12 @@ void ParseGetBootloaderVersion(Parser_Holder_Type *pHolder)
 		GenerateAUXMessage(Cmd_GetBootloaderVersion, NULL);
 }
 
-/* *
- * Gets the firmware version and sends it.
- * */
+/**
+ * @brief 			Parses a GetFirmwareVersion command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseGetFirmwareVersion(Parser_Holder_Type *pHolder)
 {
 	if (pHolder->Port == PORT_USB)
@@ -191,11 +250,23 @@ void ParseGetFirmwareVersion(Parser_Holder_Type *pHolder)
 		GenerateAUXMessage(Cmd_GetFirmwareVersion, NULL);
 }
 
+/**
+ * @brief 			Parses a SaveToFlash command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseSaveToFlash(Parser_Holder_Type *pHolder)
 {
-	
+
 }
 
+/**
+ * @brief 			Parses a GetRateControllerData command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseGetRateControllerData(Parser_Holder_Type *pHolder)
 {
 	if (pHolder->Port == PORT_USB)
@@ -204,81 +275,227 @@ void ParseGetRateControllerData(Parser_Holder_Type *pHolder)
 		GenerateAUXMessage(Cmd_GetRateControllerData, NULL);
 }
 
+/**
+ * @brief 			Parses a SetRateControllerData command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseSetRateControllerData(Parser_Holder_Type *pHolder)
 {
-
+	if (pHolder->buffer_count == (12 + RATE_LIMIT_COUNT))
+	{
+		ParseGenericSetControllerData(RATE_PI_OFFSET, RATE_LIMIT_OFFSET, RATE_LIMIT_COUNT, pHolder->buffer);
+		
+		if (pHolder->AckRequested == TRUE)
+		{
+			if (pHolder->Port == PORT_USB)
+				GenerateUSBMessage(Cmd_ACK);
+			else if (pHolder->Port == PORT_AUX1)
+				GenerateAUXMessage(Cmd_ACK, NULL);
+		}	
+	}
 }
 
-
+/**
+ * @brief 			Parses a GetAttitudeControllerData command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseGetAttitudeControllerData(Parser_Holder_Type *pHolder)
 {
-
+	if (pHolder->Port == PORT_USB)
+		GenerateUSBMessage(Cmd_GetAttitudeControllerData);
+	else if (pHolder->Port == PORT_AUX1)
+		GenerateAUXMessage(Cmd_GetAttitudeControllerData, NULL);
 }
 
-
+/**
+ * @brief 			Parses a SetAttitudeControllerData command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseSetAttitudeControllerData(Parser_Holder_Type *pHolder)
 {
-
+	if (pHolder->buffer_count == (12 + ATTITUDE_LIMIT_COUNT))
+	{
+		ParseGenericSetControllerData(ATTITUDE_PI_OFFSET, ATTITUDE_LIMIT_OFFSET, ATTITUDE_LIMIT_COUNT, pHolder->buffer);
+		
+		if (pHolder->AckRequested == TRUE)
+		{
+			if (pHolder->Port == PORT_USB)
+				GenerateUSBMessage(Cmd_ACK);
+			else if (pHolder->Port == PORT_AUX1)
+				GenerateAUXMessage(Cmd_ACK, NULL);
+		}	
+	}
 }
 
-
+/**
+ * @brief 			Parses a GetVelocityControllerData command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseGetVelocityControllerData(Parser_Holder_Type *pHolder)
 {
-
+	if (pHolder->Port == PORT_USB)
+		GenerateUSBMessage(Cmd_GetVelocityControllerData);
+	else if (pHolder->Port == PORT_AUX1)
+		GenerateAUXMessage(Cmd_GetVelocityControllerData, NULL);
 }
 
-
+/**
+ * @brief 			Parses a SetVelocityControllerData command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseSetVelocityControllerData(Parser_Holder_Type *pHolder)
 {
-
+	if (pHolder->buffer_count == (12 + VELOCITY_LIMIT_COUNT))
+	{
+		ParseGenericSetControllerData(VELOCITY_PI_OFFSET, VELOCITY_LIMIT_OFFSET, VELOCITY_LIMIT_COUNT, pHolder->buffer);
+		
+		if (pHolder->AckRequested == TRUE)
+		{
+			if (pHolder->Port == PORT_USB)
+				GenerateUSBMessage(Cmd_ACK);
+			else if (pHolder->Port == PORT_AUX1)
+				GenerateAUXMessage(Cmd_ACK, NULL);
+		}	
+	}
 }
 
-
+/**
+ * @brief 			Parses a GetPositionControllerData command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseGetPositionControllerData(Parser_Holder_Type *pHolder)
 {
-
+	if (pHolder->Port == PORT_USB)
+		GenerateUSBMessage(Cmd_GetPositionControllerData);
+	else if (pHolder->Port == PORT_AUX1)
+		GenerateAUXMessage(Cmd_GetPositionControllerData, NULL);
 }
 
-
+/**
+ * @brief 			Parses a SetPositionControllerData command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseSetPositionControllerData(Parser_Holder_Type *pHolder)
 {
-
+	if (pHolder->buffer_count == (12 + POSITION_LIMIT_COUNT))
+	{
+		ParseGenericSetControllerData(POSITION_PI_OFFSET, POSITION_LIMIT_OFFSET, POSITION_LIMIT_COUNT, pHolder->buffer);
+		
+		if (pHolder->AckRequested == TRUE)
+		{
+			if (pHolder->Port == PORT_USB)
+				GenerateUSBMessage(Cmd_ACK);
+			else if (pHolder->Port == PORT_AUX1)
+				GenerateAUXMessage(Cmd_ACK, NULL);
+		}	
+	}
 }
 
-
+/**
+ * @brief 			Parses a GetChannelMix command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseGetChannelMix(Parser_Holder_Type *pHolder)
 {
-
+	if (pHolder->Port == PORT_USB)
+		GenerateUSBMessage(Cmd_GetChannelMix);
+	else if (pHolder->Port == PORT_AUX1)
+		GenerateAUXMessage(Cmd_GetChannelMix, NULL);
 }
 
-
+/**
+ * @brief 			Parses a SetChannelMix command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseSetChannelMix(Parser_Holder_Type *pHolder)
 {
+	uint32_t i;
+	uint8_t *save_location;
 
+	if (pHolder->buffer_count == (4*8*4))
+	{
+		save_location = (uint8_t *)ptrGetOutputMixer();
+
+		for (i = 0; i < (4*8*4); i++)
+			save_location[i] = pHolder->buffer[i];
+
+		if (pHolder->AckRequested == TRUE)
+		{
+			if (pHolder->Port == PORT_USB)
+				GenerateUSBMessage(Cmd_ACK);
+			else if (pHolder->Port == PORT_AUX1)
+				GenerateAUXMessage(Cmd_ACK, NULL);
+		}	
+	}
 }
 
-
+/**
+ * @brief 			Parses a GetRCCalibration command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseGetRCCalibration(Parser_Holder_Type *pHolder)
 {
-
+	if (pHolder->Port == PORT_USB)
+		GenerateUSBMessage(Cmd_GetRCCalibration);
+	else if (pHolder->Port == PORT_AUX1)
+		GenerateAUXMessage(Cmd_GetRCCalibration, NULL);
 }
 
-
+/**
+ * @brief 			Parses a SetRCCalibration command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseSetRCCalibration(Parser_Holder_Type *pHolder)
 {
 
 }
 
-
+/**
+ * @brief 			Parses a GetRCValues command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseGetRCValues(Parser_Holder_Type *pHolder)
 {
-
+	if (pHolder->Port == PORT_USB)
+		GenerateUSBMessage(Cmd_GetRCValues);
+	else if (pHolder->Port == PORT_AUX1)
+		GenerateAUXMessage(Cmd_GetRCValues, NULL);
 }
 
-
+/**
+ * @brief 			Parses a GetSensorData command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
 void ParseGetSensorData(Parser_Holder_Type *pHolder)
 {
-
+	if (pHolder->Port == PORT_USB)
+		GenerateUSBMessage(Cmd_GetSensorData);
+	else if (pHolder->Port == PORT_AUX1)
+		GenerateAUXMessage(Cmd_GetSensorData, NULL);
 }
-
-
