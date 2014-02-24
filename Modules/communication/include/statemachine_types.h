@@ -49,6 +49,7 @@ typedef enum
 typedef struct _parser_holder
 {
 	Receiver_Source_Type Port; 									/* Which port the data came from */
+	Bool AckRequested;											/* If an ACK was requested */
 	uint8_t data_length;										/* The length of the data */
 	uint8_t *buffer;											/* Pointer to the buffer storing the data */
 	uint16_t buffer_count;										/* The current location in the buffer */
@@ -58,7 +59,6 @@ typedef struct _parser_holder
 	void (*current_state)(uint8_t, struct _parser_holder *);	/* Current state in the state machine */
 	void (*next_state)(uint8_t, struct _parser_holder *);		/* Next state in the state machine */
 	void (*parser)(struct _parser_holder *);					/* Parser to parse the data after a successful transfer */
-	Bool AckRequested;											/* If an ACK was requested */
 } Parser_Holder_Type;
 
 /* Function pointer definition for the Message Parser lookup table */

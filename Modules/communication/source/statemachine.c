@@ -93,10 +93,11 @@ void vWaitingForSYNC(uint8_t data, Parser_Holder_Type *pHolder)
 {
 	if (data == SYNC_BYTE)
 	{
+		pHolder->next_state = vRxCmd;
+
 		pHolder->buffer_count = 0;
 		pHolder->crc8 = CRC8_step(SYNC_BYTE, 0x00);
 		pHolder->crc16 = CRC16_step(SYNC_BYTE, 0xffff);
-		pHolder->next_state = vRxCmd;
 	}
 }
 
@@ -127,12 +128,16 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 	/* 0 is not an allowed command (Cmd_None) */
 	if ((data & ~ACK_BIT) > Cmd_None)
 	{
-		pHolder->crc8 = CRC8_step(data, pHolder->crc8);
-		pHolder->crc16 = CRC16_step(data, pHolder->crc16);
 		pHolder->next_state = vRxSize;
 
 		/* Get the correct parser from the parser lookup table */
 		pHolder->parser = GetParser(data & ~ACK_BIT);
+
+		/* If ACK is requested */
+		if (data & ACK_BIT)
+			pHolder->AckRequested = TRUE;
+		else
+			pHolder->AckRequested = FALSE;
 	}
 	else
 	{
@@ -147,6 +152,7 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 void vRxSize(uint8_t data, Parser_Holder_Type *pHolder)
 {
 	pHolder->next_state = vRxCRC8;
+
 	pHolder->crc8 = CRC8_step(data, pHolder->crc8);
 	pHolder->crc16 = CRC16_step(data, pHolder->crc16);
 	pHolder->data_length = data; /* Set the length of the message to that of the header. */
@@ -157,8 +163,6 @@ void vRxSize(uint8_t data, Parser_Holder_Type *pHolder)
  * */
 void vRxCRC8(uint8_t data, Parser_Holder_Type *pHolder)
 {
-	pHolder->crc16 = CRC16_step(data, pHolder->crc16);
-
 	if (pHolder->crc8 == data)
 	{
 		/* CRC OK! */
@@ -167,17 +171,15 @@ void vRxCRC8(uint8_t data, Parser_Holder_Type *pHolder)
 		{	/* If no data, parse now! */
 			pHolder->next_state = vWaitingForSYNC;
 
-			/* If ACK is requested */
-			if (pHolder->buffer[1] & ACK_BIT)
-				pHolder->AckRequested = TRUE;
-			else
-				pHolder->AckRequested = FALSE;
-
 			if (pHolder->parser != NULL)
 				pHolder->parser(pHolder);
 		}
 		else
+		{
 			pHolder->next_state = vRxData;
+
+			pHolder->crc16 = CRC16_step(data, pHolder->crc16);
+		}
 	}
 	else /* CRC error! */
 	{
@@ -227,11 +229,6 @@ void vRxCRC16_2(uint8_t data, Parser_Holder_Type *pHolder)
 
 	if (data == (uint8_t)(pHolder->crc16))
 	{
-		/* If ACK is requested */
-		if (pHolder->buffer[1] & ACK_BIT)
-			pHolder->AckRequested = TRUE;
-		else
-			pHolder->AckRequested = FALSE;
 		/* If there is a parser for the message, execute it */
 		if (pHolder->parser != NULL)
 			pHolder->parser(pHolder);
