@@ -50,16 +50,16 @@ typedef enum
 /* The structure to keep track of transfers through the state machine */
 typedef struct _parser_holder
 {
-	Receiver_Source_Type Port; 									/* Which port the data came from */
-	Bool AckRequested;											/* If an ACK was requested */
-	uint8_t data_length;										/* The length of the data */
-	uint8_t *buffer;											/* Pointer to the buffer storing the data */
-	uint16_t buffer_count;										/* The current location in the buffer */
-	uint8_t crc8;												/* The current CRC8 calculation */
-	uint16_t crc16;												/* The current CRC16 calculation */
-	uint32_t rx_error;											/* The number of receive errors */
-	void (*current_state)(uint8_t, struct _parser_holder *);	/* Current state in the state machine */
-	void (*next_state)(uint8_t, struct _parser_holder *);		/* Next state in the state machine */
+	Receiver_Source_Type Port; 									/* Which port the data came from 						*/
+	Bool AckRequested;											/* If an ACK was requested 								*/
+	uint8_t data_length;										/* The length of the data 								*/
+	uint8_t *buffer;											/* Pointer to the buffer storing the data 				*/
+	uint16_t buffer_count;										/* The current location in the buffer 					*/
+	uint8_t crc8;												/* The current CRC8 calculation 						*/
+	uint16_t crc16;												/* The current CRC16 calculation 						*/
+	uint32_t rx_error;											/* The number of receive errors 						*/
+	void (*current_state)(uint8_t, struct _parser_holder *);	/* Current state in the state machine 					*/
+	void (*next_state)(uint8_t, struct _parser_holder *);		/* Next state in the state machine 						*/
 	void (*parser)(struct _parser_holder *);					/* Parser to parse the data after a successful transfer */
 } Parser_Holder_Type;
 
