@@ -36,7 +36,7 @@ typedef enum
 	Cmd_SetVelocityControllerData = 35,
 	Cmd_GetPositionControllerData = 36,
 	Cmd_SetPositionControllerData = 37,
-	Cmd_RESERVED = 38,
+	/* 38 is reserved! Command 38 + ACK will become SYNC which is forbidden. */
 	Cmd_GetChannelMix = 39,
 	Cmd_SetChannelMix = 40,
 	Cmd_GetRCCalibration = 41,
