@@ -11,6 +11,7 @@
 #include "comlink.h"
 #include "crc.h"
 #include "pid.h"
+#include "sensor_read.h"
 #include "control.h"
 #include "circularbuffer.h"
 
@@ -24,6 +25,9 @@
 /* Includes */
 
 /* Defines */
+#define FIRMWARE_BASE		0x08000000
+#define BOOTLOADER_BASE		0x08000000
+#define SW_VERSION_OFFSET	0x184
 
 /* Typedefs */
 
@@ -36,5 +40,17 @@ ErrorStatus GenerateHeaderOnlyCommand(KFly_Command_Type command, Circular_Buffer
 ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, const uint32_t data_count, Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateACK(Circular_Buffer_Type *Cbuff);
 ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetRunningMode(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetBootloaderVersion(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetFirmwareVersion(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetRateControllerData(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetAttitudeControllerData(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetVelocityControllerData(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetPositionControllerData(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetChannelMix(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetRCCalibration(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetRCValues(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetSensorData(Circular_Buffer_Type *Cbuff);
+uint32_t myStrlen(const uint8_t *str, const uint32_t max_length);
 
 #endif

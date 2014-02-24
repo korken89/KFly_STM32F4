@@ -24,9 +24,6 @@
 /* Includes */
 
 /* Defines */
-#define FIRMWARE_BASE		0x08000000
-#define BOOTLOADER_BASE		0x08000000
-#define SW_VERSION_OFFSET	0x184
 
 /* Typedefs */
 

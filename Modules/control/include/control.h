@@ -16,6 +16,22 @@
 /* Includes */
 
 /* Defines */
+#define RATE_PI_OFFSET			0
+#define ATTITUDE_PI_OFFSET		3
+#define VELOCITY_PI_OFFSET		6
+#define POSITION_PI_OFFSET		9
+
+#define RATE_LIMIT_OFFSET		0
+#define ATTITUDE_LIMIT_OFFSET	12
+#define VELOCITY_LIMIT_OFFSET	32
+#define POSITION_LIMIT_OFFSET	40
+
+#define RATE_LIMIT_COUNT		12
+#define ATTITUDE_LIMIT_COUNT	20
+#define VELOCITY_LIMIT_COUNT	8
+#define POSITION_LIMIT_COUNT	0
+
+
 
 /* Typedefs */
 typedef enum
