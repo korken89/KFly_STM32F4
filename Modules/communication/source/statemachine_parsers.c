@@ -149,7 +149,6 @@ Parser_Type GetParser(KFly_Command_Type command)
 	return parser_lookup[command];
 }
 
-
 /* *
  * Sends a ping.
  * */

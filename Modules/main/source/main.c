@@ -134,12 +134,12 @@ void main(void)
 	 * */
 	vSerialManagerInit();
 
-	xTaskCreate(vTaskTest,
+	/*xTaskCreate(vTaskTest,
 				"TestTask",
 				256,
 				0,
 				tskSerialManagerPRIORITY,
-			    0);
+			    0);*/
 
 	/* *
 	 *

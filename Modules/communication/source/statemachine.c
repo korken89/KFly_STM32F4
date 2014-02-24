@@ -116,6 +116,7 @@ void vWaitingForSYNCorCMD(uint8_t data, Parser_Holder_Type *pHolder)
 		pHolder->buffer_count = 0;
 		pHolder->crc8 = CRC8_step(SYNC_BYTE, 0x00);
 		pHolder->crc16 = CRC16_step(SYNC_BYTE, 0xffff);
+
 		vRxCmd(data, pHolder);
 	}
 }
@@ -129,6 +130,10 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 	if ((data & ~ACK_BIT) > Cmd_None)
 	{
 		pHolder->next_state = vRxSize;
+
+		/* Update the CRCs */
+		pHolder->crc8 = CRC8_step(data, pHolder->crc8);
+		pHolder->crc16 = CRC16_step(data, pHolder->crc16);
 
 		/* Get the correct parser from the parser lookup table */
 		pHolder->parser = GetParser(data & ~ACK_BIT);
@@ -166,7 +171,6 @@ void vRxCRC8(uint8_t data, Parser_Holder_Type *pHolder)
 	if (pHolder->crc8 == data)
 	{
 		/* CRC OK! */
-
 		if (pHolder->data_length == 0)
 		{	/* If no data, parse now! */
 			pHolder->next_state = vWaitingForSYNC;
@@ -194,7 +198,7 @@ void vRxCRC8(uint8_t data, Parser_Holder_Type *pHolder)
  * */
 void vRxData(uint8_t data, Parser_Holder_Type *pHolder)
 {
-	if (pHolder->buffer_count < pHolder->data_length)
+	if (pHolder->buffer_count < (pHolder->data_length - 1))
 		pHolder->next_state = vRxData;
 	else
 		pHolder->next_state = vRxCRC16_1;
@@ -226,6 +230,7 @@ void vRxCRC16_1(uint8_t data, Parser_Holder_Type *pHolder)
 void vRxCRC16_2(uint8_t data, Parser_Holder_Type *pHolder)
 {
 	pHolder->next_state = vWaitingForSYNC;
+
 
 	if (data == (uint8_t)(pHolder->crc16))
 	{

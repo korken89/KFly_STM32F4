@@ -300,7 +300,7 @@ ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, con
 }
 
 /**
- * @brief Generatesa message for the transmission of PI controller data.
+ * @brief 				Generates a message for the transmission of PI controller data.
  * @details 
  * 
  * @param command 		Command to generate message for.
