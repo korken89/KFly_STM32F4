@@ -11,40 +11,40 @@
 /* These are all the commands for the serial protocol. */
 typedef enum
 {
-	Cmd_None = 0,
-	Cmd_ACK = 1,
-	Cmd_Ping = 2,
-	Cmd_DebugMessage = 3,
-	Cmd_GetRunningMode = 4,
+	Cmd_None 						= 0,
+	Cmd_ACK 						= 1,
+	Cmd_Ping 						= 2,
+	Cmd_DebugMessage 				= 3,
+	Cmd_GetRunningMode 				= 4,
 
-	Cmd_PrepareWriteFirmware = 10,   	/* Bootloader specific, shall always require ACK */
-	Cmd_WriteFirmwarePackage = 11,		/* Bootloader specific, shall always require ACK */
-	Cmd_WriteLastFirmwarePackage = 12,	/* Bootloader specific, shall always require ACK */
-	Cmd_ReadFirmwarePackage = 13,		/* Bootloader specific, shall always require ACK */
-	Cmd_ReadLastFirmwarePackage = 14,   /* Bootloader specific, shall always require ACK */
-	Cmd_NextPackage = 15,   			/* Bootloader specific, shall always require ACK */
-	Cmd_ExitBootloader = 16,   			/* Bootloader specific, shall always require ACK */
-	Cmd_GetBootloaderVersion = 17,
-	Cmd_GetFirmwareVersion = 18,
-	Cmd_SaveToFlash = 19,
+	Cmd_PrepareWriteFirmware 		= 10,   /* Bootloader specific, shall always require ACK */
+	Cmd_WriteFirmwarePackage 		= 11,	/* Bootloader specific, shall always require ACK */
+	Cmd_WriteLastFirmwarePackage 	= 12,	/* Bootloader specific, shall always require ACK */
+	Cmd_ReadFirmwarePackage 		= 13,	/* Bootloader specific, shall always require ACK */
+	Cmd_ReadLastFirmwarePackage 	= 14,   /* Bootloader specific, shall always require ACK */
+	Cmd_NextPackage 				= 15,   /* Bootloader specific, shall always require ACK */
+	Cmd_ExitBootloader 				= 16,   /* Bootloader specific, shall always require ACK */
+	Cmd_GetBootloaderVersion 		= 17,
+	Cmd_GetFirmwareVersion 			= 18,
+	Cmd_SaveToFlash 				= 19,
 
-	Cmd_GetRateControllerData = 30,
-	Cmd_SetRateControllerData = 31,
-	Cmd_GetAttitudeControllerData = 32,
-	Cmd_SetAttitudeControllerData = 33,
-	Cmd_GetVelocityControllerData = 34,
-	Cmd_SetVelocityControllerData = 35,
-	Cmd_GetPositionControllerData = 36,
-	Cmd_SetPositionControllerData = 37,
+	Cmd_GetRateControllerData 		= 30,
+	Cmd_SetRateControllerData 		= 31,
+	Cmd_GetAttitudeControllerData 	= 32,
+	Cmd_SetAttitudeControllerData 	= 33,
+	Cmd_GetVelocityControllerData 	= 34,
+	Cmd_SetVelocityControllerData 	= 35,
+	Cmd_GetPositionControllerData 	= 36,
+	Cmd_SetPositionControllerData 	= 37,
 	/* 38 is reserved! Command 38 + ACK will become SYNC which is forbidden. */
-	Cmd_GetChannelMix = 39,
-	Cmd_SetChannelMix = 40,
-	Cmd_GetRCCalibration = 41,
-	Cmd_SetRCCalibration = 42,
-	Cmd_GetRCValues = 43,
-	Cmd_GetSensorData = 44,
-	Cmd_GetSensorCalibration = 45,
-	Cmd_SetSensorCalibration = 46
+	Cmd_GetChannelMix 				= 39,
+	Cmd_SetChannelMix 				= 40,
+	Cmd_GetRCCalibration 			= 41,
+	Cmd_SetRCCalibration 			= 42,
+	Cmd_GetRCValues 				= 43,
+	Cmd_GetSensorData 				= 44,
+	Cmd_GetSensorCalibration 		= 45,
+	Cmd_SetSensorCalibration 		= 46
 } KFly_Command_Type;
 
 /* The structure to keep track of transfers through the state machine */
