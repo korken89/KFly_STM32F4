@@ -183,7 +183,7 @@ void ParseGenericSetControllerData(const uint32_t pi_offset, const uint32_t limi
 		save_location = (uint8_t *)&PI_settings[pi_offset + i];
 
 		for (j = 0; j < 12; j++)
-			save_location[(i*12) + j] = data[(i*12) + j];
+			save_location[j] = data[(i*12) + j];
 	}
 
 	/* Cast the settings into bytes for saving */
