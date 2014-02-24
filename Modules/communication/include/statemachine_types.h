@@ -52,6 +52,8 @@ typedef struct _parser_holder
 	uint8_t data_length;										/* The length of the data */
 	uint8_t *buffer;											/* Pointer to the buffer storing the data */
 	uint16_t buffer_count;										/* The current location in the buffer */
+	uint8_t crc8;												/* The current CRC8 calculation */
+	uint16_t crc16;												/* The current CRC16 calculation */
 	uint32_t rx_error;											/* The number of receive errors */
 	void (*current_state)(uint8_t, struct _parser_holder *);	/* Current state in the state machine */
 	void (*next_state)(uint8_t, struct _parser_holder *);		/* Next state in the state machine */

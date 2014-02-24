@@ -94,7 +94,8 @@ void vWaitingForSYNC(uint8_t data, Parser_Holder_Type *pHolder)
 	if (data == SYNC_BYTE)
 	{
 		pHolder->buffer_count = 0;
-		pHolder->buffer[pHolder->buffer_count++] = SYNC_BYTE;
+		pHolder->crc8 = CRC8_step(SYNC_BYTE, 0x00);
+		pHolder->crc16 = CRC16_step(SYNC_BYTE, 0xffff);
 		pHolder->next_state = vRxCmd;
 	}
 }
@@ -112,7 +113,8 @@ void vWaitingForSYNCorCMD(uint8_t data, Parser_Holder_Type *pHolder)
 	else /* If not SYNC, reset transfer and check if byte is command */
 	{
 		pHolder->buffer_count = 0;
-		pHolder->buffer[pHolder->buffer_count++] = SYNC_BYTE;
+		pHolder->crc8 = CRC8_step(SYNC_BYTE, 0x00);
+		pHolder->crc16 = CRC16_step(SYNC_BYTE, 0xffff);
 		vRxCmd(data, pHolder);
 	}
 }
@@ -125,8 +127,9 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 	/* 0 is not an allowed command (Cmd_None) */
 	if ((data & ~ACK_BIT) > Cmd_None)
 	{
+		pHolder->crc8 = CRC8_step(data, pHolder->crc8);
+		pHolder->crc16 = CRC16_step(data, pHolder->crc16);
 		pHolder->next_state = vRxSize;
-		pHolder->buffer[pHolder->buffer_count++] = data;
 
 		/* Get the correct parser from the parser lookup table */
 		pHolder->parser = GetParser(data & ~ACK_BIT);
@@ -144,7 +147,8 @@ void vRxCmd(uint8_t data, Parser_Holder_Type *pHolder)
 void vRxSize(uint8_t data, Parser_Holder_Type *pHolder)
 {
 	pHolder->next_state = vRxCRC8;
-	pHolder->buffer[pHolder->buffer_count++] = data;
+	pHolder->crc8 = CRC8_step(data, pHolder->crc8);
+	pHolder->crc16 = CRC16_step(data, pHolder->crc16);
 	pHolder->data_length = data; /* Set the length of the message to that of the header. */
 }
 
@@ -153,9 +157,9 @@ void vRxSize(uint8_t data, Parser_Holder_Type *pHolder)
  * */
 void vRxCRC8(uint8_t data, Parser_Holder_Type *pHolder)
 {
-	pHolder->buffer[pHolder->buffer_count++] = data;
+	pHolder->crc16 = CRC16_step(data, pHolder->crc16);
 
-	if (CRC8(pHolder->buffer, 3) == data)
+	if (pHolder->crc8 == data)
 	{
 		/* CRC OK! */
 
@@ -188,46 +192,53 @@ void vRxCRC8(uint8_t data, Parser_Holder_Type *pHolder)
  * */
 void vRxData(uint8_t data, Parser_Holder_Type *pHolder)
 {
-	pHolder->buffer[pHolder->buffer_count++] = data;
-
-	if (pHolder->buffer_count < (pHolder->data_length + 4))
+	if (pHolder->buffer_count < pHolder->data_length)
 		pHolder->next_state = vRxData;
 	else
-		pHolder->next_state = vRxCRC16;
-}
-/* *
- * Checks the whole message for errors and calls the parser if the
- * message was without errors.
- * */
-void vRxCRC16(uint8_t data, Parser_Holder_Type *pHolder)
-{
+		pHolder->next_state = vRxCRC16_1;
+
+	pHolder->crc16 = CRC16_step(data, pHolder->crc16);
 	pHolder->buffer[pHolder->buffer_count++] = data;
+}
 
-	if (pHolder->buffer_count < (pHolder->data_length + 6))
-		pHolder->next_state = vRxCRC16;
-
+/* *
+ * Checks the first CRC16 byte.
+ * */
+void vRxCRC16_1(uint8_t data, Parser_Holder_Type *pHolder)
+{
+	if (data == (uint8_t)(pHolder->crc16 >> 8))
+	{
+		/* CRC OK! */
+		pHolder->next_state = vRxCRC16_2;
+	}
 	else
 	{
 		pHolder->next_state = vWaitingForSYNC;
-		/* Cast the 2 bytes containing the CRC-CCITT to a 16-bit variable */
-		uint16_t crc = ((uint16_t)(pHolder->buffer[pHolder->buffer_count - 2]) << 8) | (uint16_t)pHolder->buffer[pHolder->buffer_count - 1];
+		pHolder->rx_error++;
+	}
+}
 
-		if (CRC16(pHolder->buffer, (pHolder->buffer_count - 2)) == crc)
-		{
-			/* If ACK is requested */
-			if (pHolder->buffer[1] & ACK_BIT)
-				pHolder->AckRequested = TRUE;
-			else
-				pHolder->AckRequested = FALSE;
+/* *
+ * Checks the second CRC16 byte. If OK: run parser.
+ * */
+void vRxCRC16_2(uint8_t data, Parser_Holder_Type *pHolder)
+{
+	pHolder->next_state = vWaitingForSYNC;
 
-			/* If there is a parser for the message, execute it */
-			if (pHolder->parser != NULL)
-				pHolder->parser(pHolder);
-		}
-		else /* CRC error! Discard data. */
-		{
-			pHolder->next_state = vWaitingForSYNC;
-			pHolder->rx_error++;
-		}
+	if (data == (uint8_t)(pHolder->crc16))
+	{
+		/* If ACK is requested */
+		if (pHolder->buffer[1] & ACK_BIT)
+			pHolder->AckRequested = TRUE;
+		else
+			pHolder->AckRequested = FALSE;
+		/* If there is a parser for the message, execute it */
+		if (pHolder->parser != NULL)
+			pHolder->parser(pHolder);
+	}
+	else /* CRC error! Discard data. */
+	{
+		pHolder->next_state = vWaitingForSYNC;
+		pHolder->rx_error++;
 	}
 }

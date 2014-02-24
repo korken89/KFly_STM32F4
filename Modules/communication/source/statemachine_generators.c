@@ -319,7 +319,9 @@ ErrorStatus GenerateGenericGetControllerData(KFly_Command_Type command, const ui
 	uint8_t crc8;
 	uint16_t crc16;
 	int32_t i, j;
-	const int32_t data_count = (3*12) + limit_count;
+
+	/* The PI data is always 3 Controllers, with 3 gains plus the limit structure */
+	const int32_t data_count = (3*3*4) + limit_count;
 	int32_t count = 0;
 
 	/* Check if the "best case" won't fit in the buffer */
@@ -437,7 +439,7 @@ ErrorStatus GenerateGetBootloaderVersion(Circular_Buffer_Type *Cbuff)
 	text = (uint8_t *)(BOOTLOADER_BASE + SW_VERSION_OFFSET);
 
 	/* Find the length of the string */
-	length = myStrlen(text, 100);
+	length = myStrlen(text, 200);
 
 	/* Send the string */
 	return GenerateGenericCommand(Cmd_GetBootloaderVersion, text, length, Cbuff);
@@ -460,7 +462,7 @@ ErrorStatus GenerateGetFirmwareVersion(Circular_Buffer_Type *Cbuff)
 	text = (uint8_t *)(FIRMWARE_BASE + SW_VERSION_OFFSET);
 
 	/* Find the length of the string */
-	length = myStrlen(text, 100);
+	length = myStrlen(text, 200);
 
 	/* Send the string */
 	return GenerateGenericCommand(Cmd_GetFirmwareVersion, text, length, Cbuff);
@@ -597,10 +599,7 @@ uint32_t myStrlen(const uint8_t *str, const uint32_t max_length)
 {
 	const uint8_t *s;
 	
-	for (s = str; *s; ++s);
+	for (s = str; (*s != '\0') && ((s - str) > max_length); ++s);
 
-	if ((s - str) > max_length)
-		return max_length;
-	else
-		return (s - str);
+	return (s - str);
 }
