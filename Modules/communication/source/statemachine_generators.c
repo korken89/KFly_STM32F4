@@ -308,6 +308,7 @@ ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, con
  * @param limit_offset 	Offset to the correct part of the Limits structure.
  * @param limit_count 	Number of bytes in Limit structure to read.
  * @param Cbuff 		Pointer to the circular buffer to put the data in.
+ * 
  * @return 				Return ERROR if the message didn't fit or SUCCESS if it did fit.
  */
 ErrorStatus GenerateGenericGetControllerData(KFly_Command_Type command, const uint32_t pi_offset, const uint32_t limit_offset, const uint32_t limit_count, Circular_Buffer_Type *Cbuff)
@@ -389,10 +390,29 @@ ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff)
 }
 
 /**
+ * @brief 			Generates a Debug Message.
+ * @details
+ * 
+ * @param data 		Pointer to the data.
+ * @param size 		Length of the data.
+ * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
+ * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
+ */
+ErrorStatus GenerateDebugMessage(uint8_t *data, uint32_t size, Circular_Buffer_Type *Cbuff)
+{
+	if (size > 256)
+		return GenerateGenericCommand(Cmd_DebugMessage, data, 256, Cbuff);
+	else
+		return GenerateGenericCommand(Cmd_DebugMessage, data, size, Cbuff);
+}
+
+/**
  * @brief 			Generates the message for the current running mode.
  * @details 
  * 
  * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
  * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
  */
 ErrorStatus GenerateGetRunningMode(Circular_Buffer_Type *Cbuff)
@@ -405,6 +425,7 @@ ErrorStatus GenerateGetRunningMode(Circular_Buffer_Type *Cbuff)
  * @details 
  * 
  * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
  * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
  */
 ErrorStatus GenerateGetBootloaderVersion(Circular_Buffer_Type *Cbuff)
@@ -427,6 +448,7 @@ ErrorStatus GenerateGetBootloaderVersion(Circular_Buffer_Type *Cbuff)
  * @details 
  * 
  * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
  * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
  */
 ErrorStatus GenerateGetFirmwareVersion(Circular_Buffer_Type *Cbuff)
@@ -449,6 +471,7 @@ ErrorStatus GenerateGetFirmwareVersion(Circular_Buffer_Type *Cbuff)
  * @details 
  * 
  * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
  * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
  */
 ErrorStatus GenerateGetRateControllerData(Circular_Buffer_Type *Cbuff)
@@ -465,6 +488,7 @@ ErrorStatus GenerateGetRateControllerData(Circular_Buffer_Type *Cbuff)
  * @details 
  * 
  * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
  * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
  */
 ErrorStatus GenerateGetAttitudeControllerData(Circular_Buffer_Type *Cbuff)
@@ -481,6 +505,7 @@ ErrorStatus GenerateGetAttitudeControllerData(Circular_Buffer_Type *Cbuff)
  * @details 
  * 
  * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
  * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
  */
 ErrorStatus GenerateGetVelocityControllerData(Circular_Buffer_Type *Cbuff)
@@ -497,6 +522,7 @@ ErrorStatus GenerateGetVelocityControllerData(Circular_Buffer_Type *Cbuff)
  * @details 
  * 
  * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
  * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
  */
 ErrorStatus GenerateGetPositionControllerData(Circular_Buffer_Type *Cbuff)
@@ -513,6 +539,7 @@ ErrorStatus GenerateGetPositionControllerData(Circular_Buffer_Type *Cbuff)
  * @details 
  * 
  * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
  * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
  */
 ErrorStatus GenerateGetChannelMix(Circular_Buffer_Type *Cbuff)
@@ -525,6 +552,7 @@ ErrorStatus GenerateGetChannelMix(Circular_Buffer_Type *Cbuff)
  * @details 
  * 
  * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
  * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
  */
 ErrorStatus GenerateGetRCCalibration(Circular_Buffer_Type *Cbuff)
@@ -536,6 +564,7 @@ ErrorStatus GenerateGetRCCalibration(Circular_Buffer_Type *Cbuff)
  * @details 
  * 
  * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
  * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
  */
 ErrorStatus GenerateGetRCValues(Circular_Buffer_Type *Cbuff)
@@ -547,6 +576,7 @@ ErrorStatus GenerateGetRCValues(Circular_Buffer_Type *Cbuff)
  * @details 
  * 
  * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
  * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
  */
 ErrorStatus GenerateGetSensorData(Circular_Buffer_Type *Cbuff)

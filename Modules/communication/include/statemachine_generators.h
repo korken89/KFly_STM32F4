@@ -40,6 +40,7 @@ ErrorStatus GenerateHeaderOnlyCommand(KFly_Command_Type command, Circular_Buffer
 ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, const uint32_t data_count, Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateACK(Circular_Buffer_Type *Cbuff);
 ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateDebugMessage(uint8_t *data, uint32_t size, Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateGetRunningMode(Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateGetBootloaderVersion(Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateGetFirmwareVersion(Circular_Buffer_Type *Cbuff);

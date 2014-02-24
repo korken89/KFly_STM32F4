@@ -194,43 +194,8 @@ void ParseGetFirmwareVersion(Parser_Holder_Type *pHolder)
 
 void ParseGetRateControllerData(Parser_Holder_Type *pHolder)
 {
-	uint8_t str[100];
-	PI_Data_Type *PI_settings;
-	uint8_t *CL_settings;
-	uint8_t *data;
-	uint32_t size = 4;
-	int i, j;
-	uint16_t crc16;
-
-	/* CasT the control data to an array of PI_Data_Type */
-	PI_settings = (PI_Data_Type *)ptrGetControlData();
-
-	/* Cast the settings into bytes for read out */
-	CL_settings = (uint8_t *)ptrGetControlLimits();
-
-	str[0] = SYNC_BYTE;
-	str[1] = Cmd_GetRateControllerData;
-	str[2] = 48;
-	str[3] = CRC8(str, 3);
-
-	for (i = 0; i < 3; i++) /* Get only the rate coefficients */
-	{
-		data = (uint8_t *)&PI_settings[i];
-
-		for (j = 0; j < 12; j++)
-			str[size++] = data[j];
-	}
-
-	for (i = 0; i < 12; i++) /* Get only the rate constraints */
-	{
-		str[size++] = CL_settings[i];
-	}
-
-	crc16 = CRC16(str, size - 1);
-
-	str[size++] = (uint8_t)(crc16 >> 8);
-	str[size++] = (uint8_t)(crc16);
-
 	if (pHolder->Port == PORT_USB)
-		xUSBSendData(str, size);
+		GenerateUSBMessage(Cmd_GetRateControllerData);
+	else if (pHolder->Port == PORT_AUX1)
+		GenerateAUXMessage(Cmd_GetRateControllerData, NULL);
 }
