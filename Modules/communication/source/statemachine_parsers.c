@@ -32,7 +32,7 @@ static const Parser_Type parser_lookup[128] = {
 	NULL,								/* 16:	Cmd_ExitBootloader				*/
 	ParseGetBootloaderVersion,			/* 17:	Cmd_GetBootloaderVersion		*/
 	ParseGetFirmwareVersion,			/* 18:	Cmd_GetFirmwareVersion			*/
-	NULL,								/* 19:	Cmd_SaveToFlash					*/
+	ParseSaveToFlash,					/* 19:	Cmd_SaveToFlash					*/
 	NULL,								/* 20 */
 	NULL,								/* 21 */
 	NULL,								/* 22 */
@@ -44,20 +44,20 @@ static const Parser_Type parser_lookup[128] = {
 	NULL,								/* 28 */
 	NULL,								/* 29 */
 	ParseGetRateControllerData,			/* 30:	Cmd_GetRateControllerData		*/
-	NULL,								/* 31:	Cmd_SetRateControllerData		*/
-	NULL,								/* 32:	Cmd_GetAttitudeControllerData	*/
-	NULL,								/* 33:	Cmd_SetAttitudeControllerData	*/
-	NULL,								/* 34:	Cmd_GetVelocityControllerData	*/
-	NULL,								/* 35: 	Cmd_SetVelocityControllerData 	*/
-	NULL,								/* 36:	Cmd_GetPositionControllerData	*/
-	NULL,								/* 37:	Cmd_SetPositionControllerData	*/
+	ParseSetRateControllerData,			/* 31:	Cmd_SetRateControllerData		*/
+	ParseGetAttitudeControllerData,		/* 32:	Cmd_GetAttitudeControllerData	*/
+	ParseSetAttitudeControllerData,		/* 33:	Cmd_SetAttitudeControllerData	*/
+	ParseGetVelocityControllerData,		/* 34:	Cmd_GetVelocityControllerData	*/
+	ParseSetVelocityControllerData,		/* 35: 	Cmd_SetVelocityControllerData 	*/
+	ParseGetPositionControllerData,		/* 36:	Cmd_GetPositionControllerData	*/
+	ParseSetPositionControllerData,		/* 37:	Cmd_SetPositionControllerData	*/
 	NULL,								/* 38:	RESERVED						*/
-	NULL,								/* 39:	Cmd_GetChannelMix				*/
-	NULL,								/* 40:	Cmd_SetChannelMix				*/
-	NULL,								/* 41:	Cmd_GetRCCalibration			*/
-	NULL,								/* 42:	Cmd_SetRCCalibration			*/
-	NULL,								/* 43:	Cmd_GetRCValues					*/
-	NULL,								/* 44:	Cmd_GetSensorData				*/
+	ParseGetChannelMix,					/* 39:	Cmd_GetChannelMix				*/
+	ParseSetChannelMix,					/* 40:	Cmd_SetChannelMix				*/
+	ParseGetRCCalibration,				/* 41:	Cmd_GetRCCalibration			*/
+	ParseSetRCCalibration,				/* 42:	Cmd_SetRCCalibration			*/
+	ParseGetRCValues,					/* 43:	Cmd_GetRCValues					*/
+	ParseGetSensorData,					/* 44:	Cmd_GetSensorData				*/
 	NULL,								/* 45 */
 	NULL,								/* 46 */
 	NULL,								/* 47 */
@@ -191,6 +191,11 @@ void ParseGetFirmwareVersion(Parser_Holder_Type *pHolder)
 		GenerateAUXMessage(Cmd_GetFirmwareVersion, NULL);
 }
 
+void ParseSaveToFlash(Parser_Holder_Type *pHolder)
+{
+	
+}
+
 void ParseGetRateControllerData(Parser_Holder_Type *pHolder)
 {
 	if (pHolder->Port == PORT_USB)
@@ -198,3 +203,82 @@ void ParseGetRateControllerData(Parser_Holder_Type *pHolder)
 	else if (pHolder->Port == PORT_AUX1)
 		GenerateAUXMessage(Cmd_GetRateControllerData, NULL);
 }
+
+void ParseSetRateControllerData(Parser_Holder_Type *pHolder)
+{
+
+}
+
+
+void ParseGetAttitudeControllerData(Parser_Holder_Type *pHolder)
+{
+
+}
+
+
+void ParseSetAttitudeControllerData(Parser_Holder_Type *pHolder)
+{
+
+}
+
+
+void ParseGetVelocityControllerData(Parser_Holder_Type *pHolder)
+{
+
+}
+
+
+void ParseSetVelocityControllerData(Parser_Holder_Type *pHolder)
+{
+
+}
+
+
+void ParseGetPositionControllerData(Parser_Holder_Type *pHolder)
+{
+
+}
+
+
+void ParseSetPositionControllerData(Parser_Holder_Type *pHolder)
+{
+
+}
+
+
+void ParseGetChannelMix(Parser_Holder_Type *pHolder)
+{
+
+}
+
+
+void ParseSetChannelMix(Parser_Holder_Type *pHolder)
+{
+
+}
+
+
+void ParseGetRCCalibration(Parser_Holder_Type *pHolder)
+{
+
+}
+
+
+void ParseSetRCCalibration(Parser_Holder_Type *pHolder)
+{
+
+}
+
+
+void ParseGetRCValues(Parser_Holder_Type *pHolder)
+{
+
+}
+
+
+void ParseGetSensorData(Parser_Holder_Type *pHolder)
+{
+
+}
+
+
