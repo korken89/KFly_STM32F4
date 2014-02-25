@@ -1,5 +1,5 @@
-#ifndef __EEMUL_H
-#define __EEMUL_H
+#ifndef __EXT_FLASH_H
+#define __EXT_FLASH_H
 
 /* Standard includes */
 #include "stm32f4xx.h"

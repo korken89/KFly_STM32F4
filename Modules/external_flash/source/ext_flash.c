@@ -1,10 +1,10 @@
 /* *
  *
- * Hardware Abstraction Layer for EEPROM Emulation
+ * Hardware Abstraction Layer for External Flash
  *
  * */
 
-#include "eemul.h"
+#include "ext_flash.h"
 
 /* Global variable defines */
 

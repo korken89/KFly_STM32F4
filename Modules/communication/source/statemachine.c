@@ -1,12 +1,7 @@
-/* *
+/**
  *
  * OS layer for Serial Communication.
  * Handles package coding/decoding.
- *
- * ----------!!!----------
- * A warning to those who wants to read the code:
- * This is an orgie of function pointers and buffers.
- * ----------!!!----------
  *
  * Serial Communication Protocol
  * -----------------------------
@@ -45,14 +40,14 @@
  *
  *
  * -------------------- OBSERVE! --------------------
- * A command is build up by 8 bits (1 byte) and the 8-th bit is the ACK Request bit.
+ * A command is build up by 8 bits (1 byte) and the 8-th bit (MSB) is the ACK Request bit.
  * So all command must not use the ACK bit unless they need an ACK.
  * Command 0bAxxx xxxx <- A is ACK-bit.
  * Also the value 0xa6/166d/0b10100110 is reserved as the SYNC-byte.
  *
  * This gives 126 commands for the user.
  *
- * */
+ */
 
 #include "statemachine.h"
 
