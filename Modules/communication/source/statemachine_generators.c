@@ -364,7 +364,6 @@ ErrorStatus GenerateGenericGetControllerData(KFly_Command_Type command, const ui
 	return CircularBuffer_Increment(count, Cbuff);
 }
 
-
 /**
  * @brief 			Generates an ACK.
  * @details
@@ -604,15 +603,17 @@ ErrorStatus GenerateGetSensorCalibration(Circular_Buffer_Type *Cbuff)
  * @details
  * 
  * @param str 			Pointer to the string.
- * @param max_length 	Maximum length.
+ * @param max_length 	Maximum length/timeout.
  * 
  * @return 				Returns the length of the string.
  */
 uint32_t myStrlen(const uint8_t *str, const uint32_t max_length)
 {
 	const uint8_t *s;
-	
-	for (s = str; (*s != '\0') && ((s - str) > max_length); ++s);
+	s = str;
+
+	while ((*s != '\0') && ((s - str) < max_length))
+		s++;
 
 	return (s - str);
 }
