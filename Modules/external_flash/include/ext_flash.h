@@ -12,7 +12,7 @@
 
 /* KFly includes */
 
-/* Driver Incudes */
+/* Driver Includes */
 
 /* Includes */
 
@@ -50,6 +50,13 @@
 #define FLASH_SECTOR_7			0x00070000
 
 #define EXTERNAL_FLASH_SPI		SPI1
+
+/* Typedefs */
+typedef struct {
+	uintptr_t ptr;		/* Holds the pointer of where the data should be saved to/read from */
+	uint32_t count;		/* Holds the number of bytes to write/read */
+} Flash_Save_Template_Type;
+
 
 /* Macros */
 #define FLASH_CS_LOW()       	SPI1_CS_LOW()
