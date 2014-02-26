@@ -25,8 +25,8 @@
 
 typedef enum
 {
-	LED_RED = 0,
-	LED_GREEN = 1
+	LED_GREEN = 0,
+	LED_RED = 1
 } LED_TypeDef;
 
 void LEDInit(void);

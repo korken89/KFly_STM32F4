@@ -28,6 +28,7 @@
 #include "crc.h"
 #include "pwm.h"
 #include "spi.h"
+#include "ext_flash.h"
 #include "sensor_read.h"
 #include "estimation.h"
 #include "circularbuffer.h"

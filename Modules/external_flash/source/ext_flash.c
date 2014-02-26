@@ -15,8 +15,15 @@
 
 void InitExternalFlash(void)
 {
-	if (ExternalFlash_ReadID() != FLASH_M25P40_ID)
-		while(1);
+	if (ExternalFlash_ReadID() != FLASH_OTHER_ID)
+	{
+		while(1)
+		{
+			for (volatile uint32_t i = 0; i < 0x1FFFFF; i++);
+
+			LEDToggle(LED_RED);
+		}
+	}
 }
 
 /**
@@ -26,12 +33,12 @@ void InitExternalFlash(void)
  */
 uint32_t ExternalFlash_ReadID(void)
 {
-  uint32_t t1, t2, t3;
+  uint32_t t1 = 0, t2 = 0, t3 = 0;
 
   /* Select the External Flash: Chip Select low */
   FLASH_CS_LOW();
 
-  /* Send "RDID" instruction */
+  /* Send "Read ID" instruction */
   SPI_SendBytePolling(FLASH_CMD_RDID, EXTERNAL_FLASH_SPI);
 
   /* Read the three ID bytes from the External Flash */
@@ -80,11 +87,11 @@ void ExternalFlash_WritePage(uint8_t *buffer, uint32_t address, uint16_t count)
 }
 
 /**
- * @brief 				Read a block of data from the External Flash.
+ * @brief 			Read a block of data from the External Flash.
  * 
- * @param buffer 		Pointer to the buffer saving the data.
- * @param address 		Where in the Flash to read the data.
- * @param count 		Number of bytes to write.
+ * @param buffer 	Pointer to the buffer saving the data.
+ * @param address 	Where in the Flash to read the data.
+ * @param count 	Number of bytes to write.
  */
 void ExternalFlash_ReadBuffer(uint8_t *buffer, uint32_t address, uint16_t count)
 {

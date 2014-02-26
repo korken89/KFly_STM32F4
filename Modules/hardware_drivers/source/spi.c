@@ -54,7 +54,7 @@ void SPI1Init(void)
 
   SPI1_CS_HIGH();
 
-  /*  */
+  /* Configure the SPI as Master, Full Duplex */
   SPI_InitStructure.SPI_Direction           = SPI_Direction_2Lines_FullDuplex;
   SPI_InitStructure.SPI_Mode                = SPI_Mode_Master;
   SPI_InitStructure.SPI_DataSize            = SPI_DataSize_8b;
@@ -66,7 +66,7 @@ void SPI1Init(void)
   SPI_InitStructure.SPI_CRCPolynomial       = 7;
   SPI_Init(SPI1, &SPI_InitStructure); 
 
-  SPI_Cmd(SPI1, ENABLE); // enable SPI1
+  SPI_Cmd(SPI1, ENABLE);
 }
 
  /**

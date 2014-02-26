@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "circularbuffer.h"
 #include "statemachine_generators.h"
+#include "led.h"
 
 __attribute__((section(".sw_version"))) __I char build_version[] = KFLY_VERSION;
 USB_OTG_CORE_HANDLE USB_OTG_dev;
@@ -46,7 +47,8 @@ void main(void)
 	 * Initializes and sets up SPI1.
 	 *
 	 * */
-	//SPI1Init();
+	SPI1Init();
+	InitExternalFlash();
 
 	/*static uint8_t buf1[] = "This is a short text to test the DMA transfers via USART...\r\n";
 	Circular_Buffer_Type CBuff;
@@ -69,7 +71,7 @@ void main(void)
 
 	/*CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);
 
-	for (volatile uint32_t i = 0; i < 0xFFFFFF; i++);
+	for (volatile uint32_t i = 0; i < 0x1FFFFF; i++);
 	CircularBuffer_WriteChunk(&CBuff, buf1, 61);
 	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);
 
@@ -163,19 +165,14 @@ void main(void)
 
 void vTaskTest(void *pvParameters)
 {
-	extern uint8_t _start_sw_version;
-	extern uint8_t _end_sw_version;
-	uint32_t  sw_size;
-	uint32_t end = (uint32_t)(&_end_sw_version);
-	uint32_t start = (uint32_t)(&_start_sw_version);
-	uint8_t diff = (uint8_t)(end - start);
+	uint32_t  sw_version;
 
 	while(1)
 	{
 
 		vTaskDelay(5000);
-
-		xUSBSendData((uint8_t *)&diff, 1);
+		sw_version = ExternalFlash_ReadID();
+		xUSBSendData((uint8_t *)&sw_version, 4);
 	}
 }
 
