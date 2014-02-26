@@ -27,6 +27,7 @@
 #include "hmc5883l.h"
 #include "crc.h"
 #include "pwm.h"
+#include "spi.h"
 #include "sensor_read.h"
 #include "estimation.h"
 #include "circularbuffer.h"

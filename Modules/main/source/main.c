@@ -40,6 +40,14 @@ void main(void)
 	 * */
 	PWMInit();
 
+	/* *
+	 *
+	 * SPI1 init.
+	 * Initializes and sets up SPI1.
+	 *
+	 * */
+	//SPI1Init();
+
 	/*static uint8_t buf1[] = "This is a short text to test the DMA transfers via USART...\r\n";
 	Circular_Buffer_Type CBuff;
 	CircularBuffer_Init(&CBuff, DMA_transmit, 100);
