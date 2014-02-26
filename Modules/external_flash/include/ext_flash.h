@@ -5,6 +5,7 @@
 #include "stm32f4xx.h"
 
 /* System includes */
+#include "spi.h"
 
 /* Scheduler includes. */
 

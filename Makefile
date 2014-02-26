@@ -48,6 +48,7 @@ CSTD += $(STDLIBDIR)stm32f4xx_i2c.c
 CSTD += $(STDLIBDIR)stm32f4xx_usart.c
 CSTD += $(STDLIBDIR)stm32f4xx_flash.c
 CSTD += $(STDLIBDIR)stm32f4xx_dma.c
+CSTD += $(STDLIBDIR)stm32f4xx_spi.c
 CSTD += $(STDLIBDIR)misc.c
 
 
