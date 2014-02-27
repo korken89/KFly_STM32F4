@@ -595,7 +595,7 @@ ErrorStatus GenerateGetSensorData(Circular_Buffer_Type *Cbuff)
  */
 ErrorStatus GenerateGetRawSensorData(Circular_Buffer_Type *Cbuff)
 {
-	return GenerateGenericCommand(Cmd_GetSensorData, (uint8_t *)ptrGetRawSensorDataPointer(), (22), Cbuff);
+	return GenerateGenericCommand(Cmd_GetRawSensorData, (uint8_t *)ptrGetRawSensorDataPointer(), (22), Cbuff);
 }
 
 /**

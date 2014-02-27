@@ -15,8 +15,8 @@
 /* Private Typedefs */
 
 /* Private variable defines */
-static Sensor_Data_Type Sensor_Data;
-static Sensor_Raw_Data_Type Sensor_Raw_Data;
+static Sensor_Data_Type Sensor_Data;			/* Holds the sensor data after applying calibration */
+static Sensor_Raw_Data_Type Sensor_Raw_Data;	/* Holds the raw sensor data */
 
 /* Global variable defines */
 

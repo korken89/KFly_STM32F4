@@ -77,6 +77,14 @@ typedef struct
 	int32_t pressure;
 } Sensor_Raw_Data_Type;
 
+typedef struct
+{
+	xSemaphoreHandle accelerometer;
+	xSemaphoreHandle gyroscope;
+	xSemaphoreHandle magnetometer;
+	xSemaphoreHandle barometer;
+} Sensor_NewMeasurementAvailable_Type;
+
 /* Global variable defines */
 extern xSemaphoreHandle NewMeasurementAvaiable;
 
