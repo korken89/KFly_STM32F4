@@ -16,6 +16,7 @@
 
 /* Private variable defines */
 static Sensor_Data_Type Sensor_Data;
+static Sensor_Raw_Data_Type Sensor_Raw_Data;
 
 /* Global variable defines */
 
@@ -91,6 +92,11 @@ Sensor_Data_Type *ptrGetSensorDataPointer(void)
 	return &Sensor_Data;
 }
 
+Sensor_Raw_Data_Type *ptrGetRawSensorDataPointer(void)
+{
+	return &Sensor_Raw_Data;
+}
+
 /* *
  *
  * Function runs if the MPU6050 interrupt has fired.
@@ -130,6 +136,17 @@ static void MPU6050ParseData(void)
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
 	RevMPU6050Data(MPU6050_Data.data);
+
+	/* Move the raw data to the raw data structure */
+	Sensor_Raw_Data.acc_x = MPU6050_Data.value.acc_x;
+	Sensor_Raw_Data.acc_y = MPU6050_Data.value.acc_y;
+	Sensor_Raw_Data.acc_z = MPU6050_Data.value.acc_z;
+
+	Sensor_Raw_Data.gyro_x = MPU6050_Data.value.gyro_x;
+	Sensor_Raw_Data.gyro_y = MPU6050_Data.value.gyro_y;
+	Sensor_Raw_Data.gyro_z = MPU6050_Data.value.gyro_z;
+
+
 
 	/* Move the data to the public data holder and compensate for gains and biases from calibration */
 	Sensor_Data.acc_x = (((float)MPU6050_Data.value.acc_x) - sensor_calibration->accelerometer_bias.x) * sensor_calibration->accelerometer_gain.x;
@@ -190,7 +207,10 @@ static void HMC5883LParseData(void)
 
 	RevHMC5883LData(HMC5883L_Data.data);
 
-	LEDToggle(LED_RED);
+	/* Move the raw data to the raw data structure */
+	Sensor_Raw_Data.mag_x = HMC5883L_Data.value.mag_x;
+	Sensor_Raw_Data.mag_y = HMC5883L_Data.value.mag_y;
+	Sensor_Raw_Data.mag_z = HMC5883L_Data.value.mag_z;
 
 	/* Move the data to the public data holder and convert signs */
 	Sensor_Data.mag_x = (((float)HMC5883L_Data.value.mag_x) - sensor_calibration->magnetometer_bias.x) * sensor_calibration->magnetometer_gain.x;

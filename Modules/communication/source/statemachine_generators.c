@@ -59,9 +59,9 @@ static const Generator_Type generator_lookup[128] = {
 	NULL,									/* 42:	Cmd_SetRCCalibration			*/
 	GenerateGetRCValues,					/* 43:	Cmd_GetRCValues					*/
 	GenerateGetSensorData,					/* 44:	Cmd_GetSensorData				*/
-	GenerateGetSensorCalibration,			/* 45:	Cmd_GetSensorCalibration	 	*/
-	NULL,									/* 46:  Cmd_SetSensorCalibration 		*/
-	NULL,									/* 47 */
+	GenerateGetRawSensorData,				/* 45:  Cmd_GetRawSensorData	 		*/
+	GenerateGetSensorCalibration,			/* 46:	Cmd_GetSensorCalibration 		*/
+	NULL,									/* 47:  Cmd_SetSensorCalibration 		*/
 	NULL,									/* 48 */
 	NULL,									/* 49 */
 	NULL,									/* 50 */
@@ -583,6 +583,19 @@ ErrorStatus GenerateGetRCValues(Circular_Buffer_Type *Cbuff)
 ErrorStatus GenerateGetSensorData(Circular_Buffer_Type *Cbuff)
 {
 	return GenerateGenericCommand(Cmd_GetSensorData, (uint8_t *)ptrGetSensorDataPointer(), (10*4), Cbuff);
+}
+
+/**
+ * @brief 			Generates the message for sending the raw sensor data.
+ * @details 
+ * 
+ * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
+ * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
+ */
+ErrorStatus GenerateGetRawSensorData(Circular_Buffer_Type *Cbuff)
+{
+	return GenerateGenericCommand(Cmd_GetSensorData, (uint8_t *)ptrGetRawSensorDataPointer(), (22), Cbuff);
 }
 
 /**

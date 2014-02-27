@@ -61,9 +61,9 @@ static const Parser_Type parser_lookup[128] = {
 	ParseSetRCCalibration,				/* 42:	Cmd_SetRCCalibration			*/
 	ParseGetRCValues,					/* 43:	Cmd_GetRCValues					*/
 	ParseGetSensorData,					/* 44:	Cmd_GetSensorData				*/
-	ParseGetSensorCalibration,			/* 45:	Cmd_GetSensorCalibration 		*/
-	ParseSetSensorCalibration,			/* 46:	Cmd_SetSensorCalibration 		*/
-	NULL,								/* 47 */
+	ParseGetRawSensorData,				/* 45:	Cmd_GetRarSensorData 			*/
+	ParseGetSensorCalibration,			/* 46:	Cmd_GetSensorCalibration 		*/
+	ParseSetSensorCalibration,			/* 47:	Cmd_SetSensorCalibration 		*/
 	NULL,								/* 48 */
 	NULL,								/* 49 */
 	NULL,								/* 50 */
@@ -498,6 +498,20 @@ void ParseGetSensorData(Parser_Holder_Type *pHolder)
 		GenerateUSBMessage(Cmd_GetSensorData);
 	else if (pHolder->Port == PORT_AUX1)
 		GenerateAUXMessage(Cmd_GetSensorData, NULL);
+}
+
+/**
+ * @brief 			Parses a GetRawSensorData command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
+void ParseGetRawSensorData(Parser_Holder_Type *pHolder)
+{
+	if (pHolder->Port == PORT_USB)
+		GenerateUSBMessage(Cmd_GetRawSensorData);
+	else if (pHolder->Port == PORT_AUX1)
+		GenerateAUXMessage(Cmd_GetRawSensorData, NULL);
 }
 
 /**

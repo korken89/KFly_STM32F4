@@ -63,12 +63,27 @@ typedef struct
 	int32_t pressure;
 } Sensor_Data_Type;
 
+typedef struct
+{
+	int16_t acc_x;
+	int16_t acc_y;
+	int16_t acc_z;
+	int16_t gyro_x;
+	int16_t gyro_y;
+	int16_t gyro_z;
+	int16_t mag_x;
+	int16_t mag_y;
+	int16_t mag_z;
+	int32_t pressure;
+} Sensor_Raw_Data_Type;
+
 /* Global variable defines */
 extern xSemaphoreHandle NewMeasurementAvaiable;
 
 /* Global function defines */
 void SensorsInterruptReadInit(void);
 Sensor_Data_Type *ptrGetSensorDataPointer(void);
+Sensor_Raw_Data_Type *ptrGetRawSensorDataPointer(void);
 void vTaskGetMPU6050Data(void *);
 void vTaskGetHMC5883LData(void *);
 void EXTI15_10_IRQHandler(void);

@@ -52,6 +52,7 @@ void ParseGetRCCalibration(Parser_Holder_Type *pHolder);
 void ParseSetRCCalibration(Parser_Holder_Type *pHolder);
 void ParseGetRCValues(Parser_Holder_Type *pHolder);
 void ParseGetSensorData(Parser_Holder_Type *pHolder);
+void ParseGetRawSensorData(Parser_Holder_Type *pHolder);
 void ParseGetSensorCalibration(Parser_Holder_Type *pHolder);
 void ParseSetSensorCalibration(Parser_Holder_Type *pHolder);
 
