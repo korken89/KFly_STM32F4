@@ -20,13 +20,37 @@ ELFDIR = ./build
 ifeq ($(OS),Windows_NT)
   $(shell md $(subst /,\\,$(OBJDIR)) 2>NUL)
   REMOVE = del
-  DATE = no timestamp
+  DATE = $(shell $(subst /,\\,./make/date.bat))
 else
   $(shell mkdir -p $(OBJDIR) 2>/dev/null)
   REMOVE = rm -f
   DATE = 20$(shell date +'%y%m%d-%H%M')
 endif
 
+# Get current Git HASH
+EMPTY:=
+SPACE:=$(EMPTY) $(EMPTY)
+
+GIT_HASH := $(shell git rev-parse Head)
+TMP := $(subst a,a , \
+$(subst b,b , \
+$(subst c,c , \
+$(subst d,d , \
+$(subst e,e , \
+$(subst f,f , \
+$(subst 0,0 , \
+$(subst 1,1 , \
+$(subst 2,2 , \
+$(subst 3,3 , \
+$(subst 4,4 , \
+$(subst 5,5 , \
+$(subst 6,6 , \
+$(subst 7,7 , \
+$(subst 8,8 , \
+$(subst 9,9 , \
+$(GIT_HASH)))))))))))))))))
+TMP := $(wordlist 1,7,$(TMP))
+GIT_HASH_SUBSTR := $(subst $(SPACE),,$(TMP))
 
 # External high speed crystal frequency
 F_HSE = 12000000

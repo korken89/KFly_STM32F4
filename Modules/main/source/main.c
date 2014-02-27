@@ -47,8 +47,8 @@ void main(void)
 	 * Initializes and sets up SPI1.
 	 *
 	 * */
-	SPI1Init();
-	InitExternalFlash();
+	//SPI1Init();
+	//InitExternalFlash();
 
 	/*static uint8_t buf1[] = "This is a short text to test the DMA transfers via USART...\r\n";
 	Circular_Buffer_Type CBuff;
@@ -99,22 +99,22 @@ void main(void)
 	 * Initializes the I2C-bus.
 	 *
 	 * */
-	//SensorBusInit();
+	SensorBusInit();
 
 	/* *
 	 *
 	 * Initialize all sensors
 	 *
 	 * */
-	//MPU6050Init();
-	//HMC5883LInit();
+	MPU6050Init();
+	HMC5883LInit();
 
 	/* *
 	 *
 	 * Initializes the sensor interrupts.
 	 *
 	 * */
-	//SensorsInterruptReadInit();
+	SensorsInterruptReadInit();
 
 	/* *
 	 *

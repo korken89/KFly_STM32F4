@@ -30,14 +30,12 @@ SECTIONS
   } >FLASH
   
   /* Software version goes after the ISR */
-  _start_sw_version = .;
   .sw_version :
   {
     . = ALIGN(4);
     *(.sw_version)
     . = ALIGN(4);
   } >FLASH
-  _end_sw_version = .;
   
   /* The program code and other data goes into FLASH */
   .text :
