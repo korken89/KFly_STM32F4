@@ -70,6 +70,18 @@ void SensorsInterruptReadInit(void)
 	Sensor_Data.mag_z = 0.0f;
 	Sensor_Data.pressure = 0;
 
+	/* Zero raw sensor data */
+	Sensor_Raw_Data.acc_x = 0;
+	Sensor_Raw_Data.acc_y = 0;
+	Sensor_Raw_Data.acc_z = 0;
+	Sensor_Raw_Data.gyro_x = 0;
+	Sensor_Raw_Data.gyro_y = 0;
+	Sensor_Raw_Data.gyro_z = 0;
+	Sensor_Raw_Data.mag_x = 0;
+	Sensor_Raw_Data.mag_y = 0;
+	Sensor_Raw_Data.mag_z = 0;
+	Sensor_Raw_Data.pressure = 0;
+
 	/* Create task to retrieve Accelerometer and Gyro data */
 	xTaskCreate(vTaskGetMPU6050Data,
 			"Get MPU6050 Data",
@@ -145,8 +157,6 @@ static void MPU6050ParseData(void)
 	Sensor_Raw_Data.gyro_x = MPU6050_Data.value.gyro_x;
 	Sensor_Raw_Data.gyro_y = MPU6050_Data.value.gyro_y;
 	Sensor_Raw_Data.gyro_z = MPU6050_Data.value.gyro_z;
-
-
 
 	/* Move the data to the public data holder and compensate for gains and biases from calibration */
 	Sensor_Data.acc_x = (((float)MPU6050_Data.value.acc_x) - sensor_calibration->accelerometer_bias.x) * sensor_calibration->accelerometer_gain.x;
@@ -257,7 +267,7 @@ static void EXTI_MPU6050Init(void)
 	EXTI_Init(&EXTI_InitStructure);
 
 	NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY+2;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 2;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 
@@ -292,7 +302,7 @@ static void EXTI_HMC5883LInit(void)
 	EXTI_Init(&EXTI_InitStructure);
 
 	NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY+2;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 2;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 

@@ -18,13 +18,13 @@ OBJDIR = ./build/obj
 ELFDIR = ./build
 
 ifeq ($(OS),Windows_NT)
-  $(shell md $(subst /,\\,$(OBJDIR)) 2>NUL)
-  REMOVE = del
-  DATE = $(shell $(subst /,\\,./make/date.bat))
+$(shell md $(subst /,\\,$(OBJDIR)) 2>NUL)
+REMOVE = del
+DATE = $(shell $(subst /,\\,./make/date.bat))
 else
-  $(shell mkdir -p $(OBJDIR) 2>/dev/null)
-  REMOVE = rm -f
-  DATE = 20$(shell date +'%y%m%d-%H%M')
+$(shell mkdir -p $(OBJDIR) 2>/dev/null)
+REMOVE = rm -f
+DATE = 20$(shell date +'%y%m%d-%H%M')
 endif
 
 # Get current Git HASH
@@ -32,7 +32,7 @@ EMPTY:=
 SPACE:=$(EMPTY) $(EMPTY)
 
 GIT_HASH := $(shell git rev-parse Head)
-TMP := $(subst a,a , \
+GIT_TMP := $(subst a,a , \
 $(subst b,b , \
 $(subst c,c , \
 $(subst d,d , \
@@ -49,8 +49,8 @@ $(subst 7,7 , \
 $(subst 8,8 , \
 $(subst 9,9 , \
 $(GIT_HASH)))))))))))))))))
-TMP := $(wordlist 1,7,$(TMP))
-GIT_HASH_SUBSTR := $(subst $(SPACE),,$(TMP))
+GIT_TMP2 := $(wordlist 1,7,$(GIT_TMP))
+GIT_HASH_SUBSTR := $(subst $(SPACE),,$(GIT_TMP2))
 
 # External high speed crystal frequency
 F_HSE = 12000000
