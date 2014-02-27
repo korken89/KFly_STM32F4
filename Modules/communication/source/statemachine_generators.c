@@ -8,7 +8,7 @@
 #include "statemachine_parsers.h"
 
 /* Private functions */
- ErrorStatus GenerateGenericGetControllerData(KFly_Command_Type command, const uint32_t pi_offset, const uint32_t limit_offset, const uint32_t limit_count, Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGenericGetControllerData(KFly_Command_Type command, const uint32_t pi_offset, const uint32_t limit_offset, const uint32_t limit_count, Circular_Buffer_Type *Cbuff);
 
 /**
  * The message generation lookup table
