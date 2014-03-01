@@ -7,6 +7,7 @@
 /* Driver includes */
 #include "usbd_cdc.h"
 #include "serialmanager_types.h"
+#include "serialmanager.h"
 #include "statemachine_types.h"
 #include "comlink.h"
 #include "crc.h"
@@ -35,7 +36,7 @@
 /* Global variable defines */
 
 /* Global function defines */
-ErrorStatus GenerateAUXMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateAUXMessage(KFly_Command_Type command, Port_Type port);
 ErrorStatus GenerateUSBMessage(KFly_Command_Type command);
 ErrorStatus GenerateHeaderOnlyCommand(KFly_Command_Type command, Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, const uint32_t data_count, Circular_Buffer_Type *Cbuff);

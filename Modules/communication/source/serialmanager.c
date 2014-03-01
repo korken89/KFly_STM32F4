@@ -52,3 +52,8 @@ void vTaskUSBSerialManager(void *pvParameters)
 		vStatemachineDataEntry(in_data, &data_holder);
 	}
 }
+
+Circular_Buffer_Type *GetCircularBufferFromAUXPort(Port_Type aux_port)
+{
+	return NULL;
+}

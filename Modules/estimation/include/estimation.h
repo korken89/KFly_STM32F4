@@ -30,12 +30,10 @@
 typedef struct
 {
 	quaternion_t q;
-	vector3f_t w;
 	vector3f_t wb;
 } Estimation_State_Struct;
 
 /* Global variable defines */
-extern volatile Estimation_State_Struct Estimation_State;
 
 /* Global function defines */
 void EstimationInit(void);

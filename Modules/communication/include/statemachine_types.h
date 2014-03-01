@@ -51,7 +51,7 @@ typedef enum
 /* The structure to keep track of transfers through the state machine */
 typedef struct _parser_holder
 {
-	Receiver_Source_Type Port; 									/* Which port the data came from 						*/
+	Port_Type Port; 											/* Which port the data came from 						*/
 	Bool AckRequested;											/* If an ACK was requested 								*/
 	uint8_t data_length;										/* The length of the data 								*/
 	uint8_t *buffer;											/* Pointer to the buffer storing the data 				*/

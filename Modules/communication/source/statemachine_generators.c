@@ -153,9 +153,12 @@ static const Generator_Type generator_lookup[128] = {
   * 
   * @return 		Return ERROR if the message didn't fit or SUCCESS if it did fit.
   */
-ErrorStatus GenerateAUXMessage(KFly_Command_Type command, Circular_Buffer_Type *Cbuff)
+ErrorStatus GenerateAUXMessage(KFly_Command_Type command, Port_Type port)
 {
 	ErrorStatus status;
+	Circular_Buffer_Type *Cbuff;
+
+	Cbuff = GetCircularBufferFromAUXPort(port);
 
 	/* Check so the circular buffer address is valid */
 	if (Cbuff == NULL)

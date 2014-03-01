@@ -29,6 +29,6 @@
 /* Global function defines */
 void vSerialManagerInit(void);
 void vTaskUSBSerialManager(void *);
-
+Circular_Buffer_Type *GetCircularBufferFromAUXPort(Port_Type aux_port);
 
 #endif

@@ -2,13 +2,13 @@
 #define __SERIALMANAGER_TYPES_H
 
 typedef enum
-{	/* This will help the parser function to identity the Port receiving data */
+{	/* This will help the parser function to identity the port receiving data */
 	PORT_USB = 0,
 	PORT_AUX1,
 	PORT_AUX2,
 	PORT_AUX3,
 	PORT_AUX4		/* CAN port */
-} Receiver_Source_Type;
+} Port_Type;
 
 typedef union
 {
