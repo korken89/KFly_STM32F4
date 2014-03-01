@@ -494,11 +494,11 @@ void ParseSetSensorCalibration(Parser_Holder_Type *pHolder)
 	uint32_t i;
 	uint8_t *save_location;
 
-	if (pHolder->buffer_count == (4*3*4))
+	if (pHolder->buffer_count == SENSOR_CALIBERATION_SIZE)
 	{
 		save_location = (uint8_t *)ptrGetSensorCalibration();
 
-		for (i = 0; i < (4*3*4); i++)
+		for (i = 0; i < SENSOR_CALIBERATION_SIZE; i++)
 			save_location[i] = pHolder->buffer[i];
 	}
 }

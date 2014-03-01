@@ -41,9 +41,12 @@
 	#define DATE 		"no timestamp"
 #endif
 
-#define MAINVERSION	 	"0"
-#define SUBVERSION 		"01 alpha"
-#define KFLY_VERSION	"KFly v" MAINVERSION "." SUBVERSION " (" DATE ")\0"
+#ifndef GIT_HASH
+	#define GIT_HASH 		"no hash"
+#endif
+
+#define VERSION 		"0.1"
+#define KFLY_VERSION	"KFly v" VERSION ", Build date: " DATE ", Git hash: " GIT_HASH "\0"
 
 
 void main(void);

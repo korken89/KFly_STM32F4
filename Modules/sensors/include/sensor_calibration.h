@@ -14,6 +14,7 @@
 #include "quaternion.h"
 
 /* Defines */
+#define SENSOR_CALIBERATION_SIZE  		(4*3*4 + 4)
 
 /* Typedefs */
 typedef struct
@@ -22,6 +23,7 @@ typedef struct
 	vector3f_t accelerometer_gain;
 	vector3f_t magnetometer_bias;
 	vector3f_t magnetometer_gain;
+	uint32_t timestamp;
 } Sensor_Calibration_Type;
 
 /* Global variable defines */

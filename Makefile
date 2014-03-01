@@ -24,7 +24,7 @@ DATE = $(shell $(subst /,\\,./make/date.bat))
 else
 $(shell mkdir -p $(OBJDIR) 2>/dev/null)
 REMOVE = rm -f
-DATE = 20$(shell date +'%y%m%d-%H%M')
+DATE = 20$(shell date +'%y%m%d-%H:%M')
 endif
 
 # Get current Git HASH
@@ -110,7 +110,7 @@ CSTD    += $(USBLIB)
 
 ifeq ($(USE_STD_LIBS),1)
 	CSRCS += $(CSTD)
-	COMMON = -DHSE_VALUE=$(F_HSE) -DUSE_STDPERIPH_DRIVER -DUSE_USB_OTG_FS -DDATE="\"$(DATE)\""
+	COMMON = -DHSE_VALUE=$(F_HSE) -DUSE_STDPERIPH_DRIVER -DUSE_USB_OTG_FS -DDATE="\"$(DATE)\"" -DGIT_HASH="\"$(GIT_HASH_SUBSTR)\""
 else
 	COMMON = -DHSE_VALUE=$(F_HSE)
 endif
