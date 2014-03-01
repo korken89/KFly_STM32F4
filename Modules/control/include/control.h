@@ -31,8 +31,6 @@
 #define VELOCITY_LIMIT_COUNT	8
 #define POSITION_LIMIT_COUNT	0
 
-
-
 /* Typedefs */
 typedef enum
 {
@@ -79,22 +77,22 @@ typedef struct
 	/* The controller limits for rate, angles and velocity */
 	struct /* Belongs to the rate controller */
 	{	/* Rate control limits */
-		float roll;
 		float pitch;
+		float roll;
 		float yaw;
 	} max_rate;
 
 	struct /* Belongs to the attitude controller */
 	{	/* Rate control limits whilst in attitude mode */
-		float roll;
 		float pitch;
+		float roll;
 		float yaw;
 	} max_rate_attitude;
 
 	struct /* Belongs to the attitude controller */
 	{	/* Attitude control limits */
-		float roll;
 		float pitch;
+		float roll;
 	} max_angle;
 
 	struct /* Belongs to the velocity controller */
