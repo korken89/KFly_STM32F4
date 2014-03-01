@@ -149,7 +149,7 @@ static const Generator_Type generator_lookup[128] = {
   * @details 
   * 
   * @param command 	The command to generate a message for.
-  * @param Cbuff 	Pointer to the circular buffer to put the data in.
+  * @param port 	Port to which send the data.
   * 
   * @return 		Return ERROR if the message didn't fit or SUCCESS if it did fit.
   */
@@ -270,7 +270,10 @@ ErrorStatus GenerateHeaderOnlyCommand(KFly_Command_Type command, Circular_Buffer
  * 
  * @return				Return ERROR if the message didn't fit or SUCCESS if it did fit.
  */
-ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, const uint32_t data_count, Circular_Buffer_Type *Cbuff)
+ErrorStatus GenerateGenericCommand(	KFly_Command_Type command, 
+									uint8_t *data, 
+									const uint32_t data_count, 
+									Circular_Buffer_Type *Cbuff)
 {
 	int32_t count = 0;
 	uint8_t crc8;
@@ -314,7 +317,11 @@ ErrorStatus GenerateGenericCommand(KFly_Command_Type command, uint8_t *data, con
  * 
  * @return 				Return ERROR if the message didn't fit or SUCCESS if it did fit.
  */
-ErrorStatus GenerateGenericGetControllerData(KFly_Command_Type command, const uint32_t pi_offset, const uint32_t limit_offset, const uint32_t limit_count, Circular_Buffer_Type *Cbuff)
+ErrorStatus GenerateGenericGetControllerData(	KFly_Command_Type command, 
+												const uint32_t pi_offset, 
+												const uint32_t limit_offset, 
+												const uint32_t limit_count, 
+												Circular_Buffer_Type *Cbuff)
 {
 	PI_Data_Type *PI_settings;
 	uint8_t *CL_settings;
@@ -406,7 +413,7 @@ ErrorStatus GeneratePing(Circular_Buffer_Type *Cbuff)
 ErrorStatus GenerateDebugMessage(uint8_t *data, uint32_t size, Circular_Buffer_Type *Cbuff)
 {
 	if (size > 256)
-		return GenerateGenericCommand(Cmd_DebugMessage, data, 256, Cbuff);
+		return ERROR;
 	else
 		return GenerateGenericCommand(Cmd_DebugMessage, data, size, Cbuff);
 }
@@ -441,7 +448,7 @@ ErrorStatus GenerateGetBootloaderVersion(Circular_Buffer_Type *Cbuff)
 	text = (uint8_t *)(BOOTLOADER_BASE + SW_VERSION_OFFSET);
 
 	/* Find the length of the string */
-	length = myStrlen(text, 200);
+	length = myStrlen(text, 255);
 
 	/* Send the string */
 	return GenerateGenericCommand(Cmd_GetBootloaderVersion, text, length, Cbuff);
@@ -464,7 +471,7 @@ ErrorStatus GenerateGetFirmwareVersion(Circular_Buffer_Type *Cbuff)
 	text = (uint8_t *)(FIRMWARE_BASE + SW_VERSION_OFFSET);
 
 	/* Find the length of the string */
-	length = myStrlen(text, 200);
+	length = myStrlen(text, 255);
 
 	/* Send the string */
 	return GenerateGenericCommand(Cmd_GetFirmwareVersion, text, length, Cbuff);

@@ -168,7 +168,10 @@ Parser_Type GetParser(KFly_Command_Type command)
  * @param limit_count 	Number of bytes to write to the limits structure.
  * @param data 			Input data so save.
  */
-void ParseGenericSetControllerData(const uint32_t pi_offset, const uint32_t limit_offset, const uint32_t limit_count, uint8_t *data)
+void ParseGenericSetControllerData(	const uint32_t pi_offset,
+									const uint32_t limit_offset, 
+									const uint32_t limit_count, 
+									uint8_t *data)
 {
 	PI_Data_Type *PI_settings;
 	uint8_t *save_location;
