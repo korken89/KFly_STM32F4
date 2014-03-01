@@ -28,10 +28,22 @@ else
   DATE = 20$(shell date +'%y%m%d-%H:%M')
 endif
 
-# Get current Git HASH
 EMPTY:=
 SPACE:=$(EMPTY) $(EMPTY)
 
+# Get Git Tags
+GIT_TAGS = $(shell git describe --tags HEAD)
+GIT_SHORTSTAT = $(shell git diff --name-only)
+
+ifeq ($(GIT_SHORTSTAT),$(EMPTY))
+	GIT_DIRTY :=
+else
+	GIT_DIRTY := ~dirty
+endif
+
+GIT_VERSION := $(GIT_TAGS)$(GIT_DIRTY)
+
+# Get current Git HASH
 GIT_HASH := $(shell git rev-parse Head)
 GIT_TMP := $(subst a,a , \
 $(subst b,b , \
@@ -111,7 +123,8 @@ CSTD    += $(USBLIB)
 
 ifeq ($(USE_STD_LIBS),1)
 	CSRCS += $(CSTD)
-	COMMON = -DHSE_VALUE=$(F_HSE) -DUSE_STDPERIPH_DRIVER -DUSE_USB_OTG_FS -DDATE="\"$(DATE)\"" -DGIT_HASH="\"$(GIT_HASH_SUBSTR)\""
+	COMMON = -DHSE_VALUE=$(F_HSE) -DUSE_STDPERIPH_DRIVER -DUSE_USB_OTG_FS -DDATE="\"$(DATE)\""
+	COMMON += -DGIT_HASH="\"$(GIT_HASH_SUBSTR)\""  -DGIT_VERSION="\"$(GIT_VERSION)\"" 
 else
 	COMMON = -DHSE_VALUE=$(F_HSE)
 endif
@@ -129,7 +142,7 @@ include make/defs.mk
 
 all: build
 
-build: elf bin hex lss sym dump size
+build: elf bin hex lss sym size
 
 # Link: Create elf output file from object files.
 $(eval $(call LINK_TEMPLATE, $(ELFDIR)/$(TARGET).elf, $(ALLOBJECTS)))

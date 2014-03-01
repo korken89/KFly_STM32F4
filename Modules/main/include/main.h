@@ -38,15 +38,18 @@
 #include "linear_algebra.h"
 
 #ifndef DATE
-	#define DATE 		"no timestamp"
+	#define DATE 			"no timestamp"
 #endif
 
 #ifndef GIT_HASH
 	#define GIT_HASH 		"no hash"
 #endif
 
-#define VERSION 		"0.1"
-#define KFLY_VERSION	"KFly v" VERSION ", Build date: " DATE ", Git hash: " GIT_HASH "\0"
+#ifndef GIT_VERSION
+	#define GIT_VERSION 	"no version"
+#endif
+
+#define KFLY_VERSION	"KFly v" GIT_VERSION ", Build date: " DATE ", Git hash: " GIT_HASH "\0"
 
 
 void main(void);
