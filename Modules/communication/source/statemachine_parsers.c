@@ -284,17 +284,7 @@ void ParseGetRateControllerData(Parser_Holder_Type *pHolder)
 void ParseSetRateControllerData(Parser_Holder_Type *pHolder)
 {
 	if (pHolder->buffer_count == (12 + RATE_LIMIT_COUNT))
-	{
 		ParseGenericSetControllerData(RATE_PI_OFFSET, RATE_LIMIT_OFFSET, RATE_LIMIT_COUNT, pHolder->buffer);
-		
-		if (pHolder->AckRequested == TRUE)
-		{
-			if (pHolder->Port == PORT_USB)
-				GenerateUSBMessage(Cmd_ACK);
-			else if (pHolder->Port == PORT_AUX1)
-				GenerateAUXMessage(Cmd_ACK, NULL);
-		}	
-	}
 }
 
 /**
@@ -320,17 +310,7 @@ void ParseGetAttitudeControllerData(Parser_Holder_Type *pHolder)
 void ParseSetAttitudeControllerData(Parser_Holder_Type *pHolder)
 {
 	if (pHolder->buffer_count == (12 + ATTITUDE_LIMIT_COUNT))
-	{
 		ParseGenericSetControllerData(ATTITUDE_PI_OFFSET, ATTITUDE_LIMIT_OFFSET, ATTITUDE_LIMIT_COUNT, pHolder->buffer);
-		
-		if (pHolder->AckRequested == TRUE)
-		{
-			if (pHolder->Port == PORT_USB)
-				GenerateUSBMessage(Cmd_ACK);
-			else if (pHolder->Port == PORT_AUX1)
-				GenerateAUXMessage(Cmd_ACK, NULL);
-		}	
-	}
 }
 
 /**
@@ -356,17 +336,7 @@ void ParseGetVelocityControllerData(Parser_Holder_Type *pHolder)
 void ParseSetVelocityControllerData(Parser_Holder_Type *pHolder)
 {
 	if (pHolder->buffer_count == (12 + VELOCITY_LIMIT_COUNT))
-	{
-		ParseGenericSetControllerData(VELOCITY_PI_OFFSET, VELOCITY_LIMIT_OFFSET, VELOCITY_LIMIT_COUNT, pHolder->buffer);
-		
-		if (pHolder->AckRequested == TRUE)
-		{
-			if (pHolder->Port == PORT_USB)
-				GenerateUSBMessage(Cmd_ACK);
-			else if (pHolder->Port == PORT_AUX1)
-				GenerateAUXMessage(Cmd_ACK, NULL);
-		}	
-	}
+		ParseGenericSetControllerData(VELOCITY_PI_OFFSET, VELOCITY_LIMIT_OFFSET, VELOCITY_LIMIT_COUNT, pHolder->buffer);	
 }
 
 /**
@@ -392,17 +362,7 @@ void ParseGetPositionControllerData(Parser_Holder_Type *pHolder)
 void ParseSetPositionControllerData(Parser_Holder_Type *pHolder)
 {
 	if (pHolder->buffer_count == (12 + POSITION_LIMIT_COUNT))
-	{
 		ParseGenericSetControllerData(POSITION_PI_OFFSET, POSITION_LIMIT_OFFSET, POSITION_LIMIT_COUNT, pHolder->buffer);
-		
-		if (pHolder->AckRequested == TRUE)
-		{
-			if (pHolder->Port == PORT_USB)
-				GenerateUSBMessage(Cmd_ACK);
-			else if (pHolder->Port == PORT_AUX1)
-				GenerateAUXMessage(Cmd_ACK, NULL);
-		}	
-	}
 }
 
 /**
@@ -436,14 +396,6 @@ void ParseSetChannelMix(Parser_Holder_Type *pHolder)
 
 		for (i = 0; i < (4*8*4); i++)
 			save_location[i] = pHolder->buffer[i];
-
-		if (pHolder->AckRequested == TRUE)
-		{
-			if (pHolder->Port == PORT_USB)
-				GenerateUSBMessage(Cmd_ACK);
-			else if (pHolder->Port == PORT_AUX1)
-				GenerateAUXMessage(Cmd_ACK, NULL);
-		}	
 	}
 }
 
@@ -545,13 +497,5 @@ void ParseSetSensorCalibration(Parser_Holder_Type *pHolder)
 
 		for (i = 0; i < (4*3*4); i++)
 			save_location[i] = pHolder->buffer[i];
-
-		if (pHolder->AckRequested == TRUE)
-		{
-			if (pHolder->Port == PORT_USB)
-				GenerateUSBMessage(Cmd_ACK);
-			else if (pHolder->Port == PORT_AUX1)
-				GenerateAUXMessage(Cmd_ACK, NULL);
-		}	
 	}
 }
