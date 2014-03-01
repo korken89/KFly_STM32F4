@@ -100,6 +100,20 @@ void vInitControl(void)
 	Control_Data.rate_controller[2].I_gain = 1.0f;
 	Control_Data.rate_controller[2].I_limit = 0.2f;
 
+
+	Control_Limits.max_rate.pitch = 200.0f;
+	Control_Limits.max_rate.roll = 200.0f;
+	Control_Limits.max_rate.yaw = 90.0f;
+
+	Control_Limits.max_rate_attitude.pitch = 200.0f;
+	Control_Limits.max_rate_attitude.roll = 200.0f;
+	Control_Limits.max_rate_attitude.yaw = 90.0f;
+
+	Control_Limits.max_angle.pitch = 50.0f;
+	Control_Limits.max_angle.roll = 50.0f;
+
+	Control_Limits.max_velocity.horizontal = 10.0f;
+	Control_Limits.max_velocity.vertical = 2.0f;
 }
 
 void vUpdateControlAction(Control_Reference_Type *reference, Control_Limits_Type *limits, float dt)

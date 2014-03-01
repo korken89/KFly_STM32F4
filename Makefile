@@ -18,8 +18,8 @@ OBJDIR = ./build/obj
 ELFDIR = ./build
 
 ifeq ($(OS),Windows_NT)
-  $(shell mkdir $(subst /,\\,$(ELFDIR)))
-  $(shell mkdir $(subst /,\\,$(OBJDIR)))
+  $(shell mkdir -p $(subst /,\\,$(ELFDIR)))
+  $(shell mkdir -p $(subst /,\\,$(OBJDIR)))
   REMOVE = del
   DATE = $(shell $(subst /,\\,./make/date.bat))
 else
