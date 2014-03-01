@@ -49,6 +49,57 @@ static void vUpdateOutputs(float, float, float, float);
 void vInitControl(void)
 {
 	/* Initialize the controllers here */
+	Control_Data.position_controller[0].P_gain = 2.0f;
+	Control_Data.position_controller[0].I_gain = 1.0f;
+	Control_Data.position_controller[0].I_limit = 0.2f;
+
+	Control_Data.position_controller[1].P_gain = 2.0f;
+	Control_Data.position_controller[1].I_gain = 1.0f;
+	Control_Data.position_controller[1].I_limit = 0.2f;
+
+	Control_Data.position_controller[2].P_gain = 2.0f;
+	Control_Data.position_controller[2].I_gain = 1.0f;
+	Control_Data.position_controller[2].I_limit = 0.2f;
+
+
+	Control_Data.velocity_controller[0].P_gain = 2.0f;
+	Control_Data.velocity_controller[0].I_gain = 1.0f;
+	Control_Data.velocity_controller[0].I_limit = 0.2f;
+
+	Control_Data.velocity_controller[1].P_gain = 2.0f;
+	Control_Data.velocity_controller[1].I_gain = 1.0f;
+	Control_Data.velocity_controller[1].I_limit = 0.2f;
+
+	Control_Data.velocity_controller[2].P_gain = 2.0f;
+	Control_Data.velocity_controller[2].I_gain = 1.0f;
+	Control_Data.velocity_controller[2].I_limit = 0.2f;
+
+
+	Control_Data.attitude_controller[0].P_gain = 2.0f;
+	Control_Data.attitude_controller[0].I_gain = 1.0f;
+	Control_Data.attitude_controller[0].I_limit = 0.2f;
+
+	Control_Data.attitude_controller[1].P_gain = 2.0f;
+	Control_Data.attitude_controller[1].I_gain = 1.0f;
+	Control_Data.attitude_controller[1].I_limit = 0.2f;
+
+	Control_Data.attitude_controller[2].P_gain = 2.0f;
+	Control_Data.attitude_controller[2].I_gain = 1.0f;
+	Control_Data.attitude_controller[2].I_limit = 0.2f;
+
+
+	Control_Data.rate_controller[0].P_gain = 2.0f;
+	Control_Data.rate_controller[0].I_gain = 1.0f;
+	Control_Data.rate_controller[0].I_limit = 0.2f;
+
+	Control_Data.rate_controller[1].P_gain = 2.0f;
+	Control_Data.rate_controller[1].I_gain = 1.0f;
+	Control_Data.rate_controller[1].I_limit = 0.2f;
+
+	Control_Data.rate_controller[2].P_gain = 2.0f;
+	Control_Data.rate_controller[2].I_gain = 1.0f;
+	Control_Data.rate_controller[2].I_limit = 0.2f;
+
 }
 
 void vUpdateControlAction(Control_Reference_Type *reference, Control_Limits_Type *limits, float dt)

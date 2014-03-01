@@ -18,13 +18,14 @@ OBJDIR = ./build/obj
 ELFDIR = ./build
 
 ifeq ($(OS),Windows_NT)
-$(shell md $(subst /,\\,$(OBJDIR)) 2>NUL)
-REMOVE = del
-DATE = $(shell $(subst /,\\,./make/date.bat))
+  $(shell mkdir $(subst /,\\,$(ELFDIR)))
+  $(shell mkdir $(subst /,\\,$(OBJDIR)))
+  REMOVE = del
+  DATE = $(shell $(subst /,\\,./make/date.bat))
 else
-$(shell mkdir -p $(OBJDIR) 2>/dev/null)
-REMOVE = rm -f
-DATE = 20$(shell date +'%y%m%d-%H:%M')
+  $(shell mkdir -p $(OBJDIR) 2>/dev/null)
+  REMOVE = rm -f
+  DATE = 20$(shell date +'%y%m%d-%H:%M')
 endif
 
 # Get current Git HASH

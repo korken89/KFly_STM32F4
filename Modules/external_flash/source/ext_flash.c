@@ -12,19 +12,20 @@
 
 /* Area to hold the design of the external flash memory */
 static const Flash_Save_Template_Type Flash_Save_Structure[] = {
-	{	.ptr = 0,
+	{	
+		.ptr = 0,
 		.count = 32
 	},
-
-	{	.ptr = 1,
+	{	
+		.ptr = 1,
 		.count = 40
 	},
-
-	{	.ptr = 2,
+	{	
+		.ptr = 2,
 		.count = 6
 	},
-
-	{	.ptr = 3,
+	{	
+		.ptr = 3,
 		.count = 12
 	}
 };
@@ -34,14 +35,14 @@ static const Flash_Save_Template_Type Flash_Save_Structure[] = {
 /* Private external functions */
 
 
-void InitExternalFlash(void)
+void ExternalFlashInit(void)
 {
 	if (ExternalFlash_ReadID() != FLASH_OTHER_ID)
 	{
-		while(1)
+		for (int j = 0; j < 10; j++)
 		{
 			for (volatile uint32_t i = 0; i < 0x1FFFFF; i++);
-			volatile uintptr_t test = Flash_Save_Structure[0].ptr ;
+
 			LEDToggle(LED_RED);
 		}
 	}

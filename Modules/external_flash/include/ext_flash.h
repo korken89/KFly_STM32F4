@@ -63,7 +63,7 @@ typedef struct {
 #define FLASH_CS_HIGH()      	SPI1_CS_HIGH()
 
 /* Global functions */
-void InitExternalFlash(void);
+void ExternalFlashInit(void);
 uint32_t ExternalFlash_ReadID(void);
 void ExternalFlash_WritePage(uint8_t *buffer, uint32_t address, uint16_t count);
 void ExternalFlash_ReadBuffer(uint8_t *buffer, uint32_t address, uint16_t count);
