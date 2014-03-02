@@ -56,6 +56,12 @@ ErrorStatus GenerateGetRCValues(Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateGetSensorData(Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateGetRawSensorData(Circular_Buffer_Type *Cbuff);
 ErrorStatus GenerateGetSensorCalibration(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetSensorCalibration(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetEstimationRate(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetEstimationAttitude(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetEstimationVelocity(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetEstimationPosition(Circular_Buffer_Type *Cbuff);
+ErrorStatus GenerateGetEstimationAllStates(Circular_Buffer_Type *Cbuff);
 uint32_t myStrlen(const uint8_t *str, const uint32_t max_length);
 
 #endif

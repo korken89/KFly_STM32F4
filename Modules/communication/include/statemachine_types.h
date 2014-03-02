@@ -45,7 +45,12 @@ typedef enum
 	Cmd_GetSensorData 				= 44,
 	Cmd_GetRawSensorData			= 45,
 	Cmd_GetSensorCalibration 		= 46,
-	Cmd_SetSensorCalibration 		= 47
+	Cmd_SetSensorCalibration 		= 47,
+	Cmd_GetEstimationRate 			= 48,
+	Cmd_GetEstimationAttitude 		= 49,
+	Cmd_GetEstimationVelocity 		= 50,
+	Cmd_GetEstimationPosition 		= 51,
+	Cmd_GetEstimationAllStates 		= 52
 } KFly_Command_Type;
 
 /* The structure to keep track of transfers through the state machine */

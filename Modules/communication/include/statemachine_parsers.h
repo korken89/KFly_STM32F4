@@ -55,5 +55,10 @@ void ParseGetSensorData(Parser_Holder_Type *pHolder);
 void ParseGetRawSensorData(Parser_Holder_Type *pHolder);
 void ParseGetSensorCalibration(Parser_Holder_Type *pHolder);
 void ParseSetSensorCalibration(Parser_Holder_Type *pHolder);
+void ParseGetEstimationRate(Parser_Holder_Type *pHolder);
+void ParseGetEstimationAttitude(Parser_Holder_Type *pHolder);
+void ParseGetEstimationVelocity(Parser_Holder_Type *pHolder);
+void ParseGetEstimationPosition(Parser_Holder_Type *pHolder);
+void ParseGetEstimationAllStates(Parser_Holder_Type *pHolder);
 
 #endif

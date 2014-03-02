@@ -61,12 +61,12 @@ static const Generator_Type generator_lookup[128] = {
 	GenerateGetSensorData,					/* 44:	Cmd_GetSensorData				*/
 	GenerateGetRawSensorData,				/* 45:  Cmd_GetRawSensorData	 		*/
 	GenerateGetSensorCalibration,			/* 46:	Cmd_GetSensorCalibration 		*/
-	NULL,									/* 47:  Cmd_SetSensorCalibration 		*/
-	NULL,									/* 48 */
-	NULL,									/* 49 */
-	NULL,									/* 50 */
-	NULL,									/* 51 */
-	NULL,									/* 52 */
+	NULL,									/* 47 */
+	GenerateGetEstimationRate,				/* 48: 	Cmd_GetEstimationRate 			*/
+	GenerateGetEstimationAttitude,			/* 49: 	Cmd_GetEstimationAttitude 		*/
+	GenerateGetEstimationVelocity,			/* 50: 	Cmd_GetEstimationVelocity 		*/
+	GenerateGetEstimationPosition,			/* 51: 	Cmd_GetEstimationPosition 		*/
+	GenerateGetEstimationAllStates,			/* 52: 	Cmd_GetEstimationAllStates 		*/
 	NULL,									/* 53 */
 	NULL,									/* 54 */
 	NULL,									/* 55 */
@@ -619,6 +619,71 @@ ErrorStatus GenerateGetRawSensorData(Circular_Buffer_Type *Cbuff)
 ErrorStatus GenerateGetSensorCalibration(Circular_Buffer_Type *Cbuff)
 {
 	return GenerateGenericCommand(Cmd_GetSensorCalibration, (uint8_t *)ptrGetSensorCalibration(), SENSOR_CALIBERATION_SIZE, Cbuff);
+}
+
+/**
+ * @brief 			Generates the message for sending the rate estimation data.
+ * @details 
+ * 
+ * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
+ * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
+ */
+ErrorStatus GenerateGetEstimationRate(Circular_Buffer_Type *Cbuff)
+{
+	return ERROR;
+}
+
+/**
+ * @brief 			Generates the message for sending the attitude estimation data.
+ * @details 
+ * 
+ * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
+ * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
+ */
+ErrorStatus GenerateGetEstimationAttitude(Circular_Buffer_Type *Cbuff)
+{
+	return ERROR;
+}
+
+/**
+ * @brief 			Generates the message for sending the velocity estimation data.
+ * @details 
+ * 
+ * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
+ * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
+ */
+ErrorStatus GenerateGetEstimationVelocity(Circular_Buffer_Type *Cbuff)
+{
+	return ERROR;
+}
+
+/**
+ * @brief 			Generates the message for sending the position estimation data.
+ * @details 
+ * 
+ * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
+ * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
+ */
+ErrorStatus GenerateGetEstimationPosition(Circular_Buffer_Type *Cbuff)
+{
+	return ERROR;
+}
+
+/**
+ * @brief 			Generates the message for sending all the estimation data.
+ * @details 
+ * 
+ * @param Cbuff 	Pointer to the circular buffer to put the data in.
+ * 
+ * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
+ */
+ErrorStatus GenerateGetEstimationAllStates(Circular_Buffer_Type *Cbuff)
+{
+	return ERROR;
 }
 
 /**
