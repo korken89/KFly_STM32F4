@@ -14,20 +14,6 @@
 
 /* Private function defines */
 
-void qmult(quaternion_t *a, quaternion_t *b, quaternion_t *r)
-{
-	/**
-	 * q = [a(1)*b(1) - a(2)*b(2) - a(3)*b(3) - a(4)*b(4);
-     * 		a(1)*b(2) + a(2)*b(1) + a(3)*b(4) - a(4)*b(3);
-     * 		a(1)*b(3) - a(2)*b(4) + a(3)*b(1) + a(4)*b(2);
-     * 		a(1)*b(4) + a(2)*b(3) - a(3)*b(2) + a(4)*b(1)]
-     * */
-	r->q0 = a->q0*b->q0 - a->q1*b->q1 - a->q2*b->q2 - a->q3*b->q3;
-	r->q1 = a->q0*b->q1 + a->q1*b->q0 + a->q2*b->q3 - a->q3*b->q2;
-	r->q2 = a->q0*b->q2 - a->q1*b->q3 + a->q2*b->q0 + a->q3*b->q1;
-	r->q3 = a->q0*b->q3 + a->q1*b->q2 - a->q2*b->q1 + a->q3*b->q0;
-}
-
 void qconj(quaternion_t *q)
 {
 	q->q1 = - q->q1;
@@ -57,16 +43,7 @@ void qvqc(quaternion_t *q, vector3f_t *v, vector3f_t *vr)
 	 *	v_r = q * v * q'
 	 *
 	 * */
-	quaternion_t qc = {q->q0, - q->q1, - q->q2, - q->q3};
-	quaternion_t qv = {0.0f, v->x, v->y, v->z};
-	quaternion_t qr1, qr2;
 
-	qmult(q, &qv, &qr1);
-	qmult(&qr1, &qc, &qr2);
-
-	vr->x = qr2.q1;
-	vr->y = qr2.q2;
-	vr->z = qr2.q3;
 }
 
 /*

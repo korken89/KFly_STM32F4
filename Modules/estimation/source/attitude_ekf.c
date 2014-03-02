@@ -39,20 +39,41 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 							float dt)
 {
 	float R[3][3];
-	float theta_x, theta_y, theta_z;
+	float w_hat_x, w_hat_y, w_hat_z, w_norm, theta_x, theta_y, theta_z, dtheta, sdtheta, cdtheta;
+	quaternion_t dq_int;
 
 	/* Cast the settings for better looking code, ex: settings->Sp[1][1] is now Sp[1][1] */
 	float (*Sp)[6] = settings->Sp;
 	float (*Sq)[6] = settings->Sq;
 	float (*Sr)[3] = settings->Sr;
 
+	/* Calculate w_hat */
+	w_hat_x = sensor_data->gyro_x - states->wb.x;
+	w_hat_y = sensor_data->gyro_y - states->wb.y;
+	w_hat_z = sensor_data->gyro_z - states->wb.z;
+
+	/* Calculate the delta quaternion */
+	w_norm = sqrtf(w_hat_x * w_hat_x + w_hat_y * w_hat_y + w_hat_z * w_hat_z);
+	dtheta = 0.5f * w_norm * dt;	
+	sdtheta = fast_sin(dtheta);
+	cdtheta = fast_cos(dtheta);
+
+	dq_int.q0 = cdtheta;
+	dq_int.q0 = sdtheta * (w_hat_x / w_norm);
+	dq_int.q0 = sdtheta * (w_hat_y / w_norm);
+	dq_int.q0 = sdtheta * (w_hat_z / w_norm);
+
+	/* Use the delta quaternion to produce the current estimate of the attitude */
+	states->q = qmult(dq_int, states->q);
+
+	/* Calculate dtheta for each axis */
+	theta_x = w_hat_x * dt;
+	theta_y = w_hat_y * dt;
+	theta_z = w_hat_z * dt;
+
 	/* Convert the current quaternion to a DCM */
 	q2dcm(&R[0][0], &states->q);
-
-	/* Calculate dtheta for each axis based on the qyros, gyro bias and time step */
-	theta_x = (sensor_data->gyro_x - states->wb.x) * dt;
-	theta_y = (sensor_data->gyro_y - states->wb.y) * dt;
-	theta_z = (sensor_data->gyro_z - states->wb.z) * dt;
+	
 
 	/****************************
 	 *							*
@@ -74,9 +95,9 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 
 	Sp[1][0] += Sp[1][1] * theta_z - Sp[1][3] * dt - Sp[1][2] * theta_y;
 	Sp[1][1] += Sp[1][2] * theta_x - Sp[1][4] * dt;
-	Sp[1][2] += - Sp[1][5] * dt - Sp[1][1] * theta_x;
+	Sp[1][2] += -Sp[1][5] * dt - Sp[1][1] * theta_x;
 
-	Sp[2][0] += - Sp[2][3] * dt - Sp[2][2] * theta_y;
+	Sp[2][0] += -Sp[2][3] * dt - Sp[2][2] * theta_y;
 	Sp[2][1] += Sp[2][2] * theta_x - Sp[2][4] * dt;
 	Sp[2][2] += -Sp[2][5] * dt;
 

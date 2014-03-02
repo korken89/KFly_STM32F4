@@ -46,8 +46,26 @@ typedef struct
 
 /* Private function defines */
 
+/* Inline functions */
+static inline quaternion_t qmult(quaternion_t a, quaternion_t b)
+{
+	/**
+	 * q = [a(1)*b(1) - a(2)*b(2) - a(3)*b(3) - a(4)*b(4);
+     * 		a(1)*b(2) + a(2)*b(1) + a(3)*b(4) - a(4)*b(3);
+     * 		a(1)*b(3) - a(2)*b(4) + a(3)*b(1) + a(4)*b(2);
+     * 		a(1)*b(4) + a(2)*b(3) - a(3)*b(2) + a(4)*b(1)]
+     * */
+	quaternion_t r;
+
+	r.q0 = a.q0*b.q0 - a.q1*b.q1 - a.q2*b.q2 - a.q3*b.q3;
+	r.q1 = a.q0*b.q1 + a.q1*b.q0 + a.q2*b.q3 - a.q3*b.q2;
+	r.q2 = a.q0*b.q2 - a.q1*b.q3 + a.q2*b.q0 + a.q3*b.q1;
+	r.q3 = a.q0*b.q3 + a.q1*b.q2 - a.q2*b.q1 + a.q3*b.q0;
+
+	return r;
+}
+
 /* Global function defines */
-void qmult(quaternion_t *, quaternion_t *, quaternion_t *);
 void qconj(quaternion_t *);
 float qnorm(quaternion_t *);
 void qnormalize(quaternion_t *);

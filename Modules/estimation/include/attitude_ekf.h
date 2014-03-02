@@ -8,6 +8,7 @@
 #include "quaternion.h"
 #include "sensor_read.h"
 #include "linear_algebra.h"
+#include "trigonometry.h"
 
 /* Scheduler includes */
 
