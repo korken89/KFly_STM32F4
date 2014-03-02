@@ -2,7 +2,7 @@
 #define __QUATERNION_H
 
 /* Standard includes */
-#include <math.h>
+#include "linear_algebra.h"
 
 /* System includes */
 
@@ -53,5 +53,6 @@ float qnorm(quaternion_t *);
 void qnormalize(quaternion_t *);
 void qvqc(quaternion_t *, vector3f_t *, vector3f_t *);
 void euler2quat(float, float, float, quaternion_t *);
+void q2dcm(float *a, quaternion_t *q);
 
 #endif
