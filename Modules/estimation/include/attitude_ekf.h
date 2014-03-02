@@ -30,8 +30,8 @@ typedef struct
 {
 	float Sp[6][6];		/* Square-root error covariance matrix */
 	float Sq[6][6];		/* Square-root process covariance matrix */
-	float Sr[3][3];		/* Square-root observation covariance matrix */
 	float Ss[6][3];		/* Square-root innovation covariance matrix */
+	float Sr[3][3];		/* Square-root observation covariance matrix */
 } Attitude_Estimation_Settings_Type;
 
 /* Global variable defines */

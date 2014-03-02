@@ -164,11 +164,8 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	/* Perform the QR decomposition : Ss_k = QR([H_k * Sp_k|k-1, Sr]^T)^T */
 	qr_decomp(&Ss[0][0], 6, 3);
 
-	/* 3) Calculate the Kalman gain: */
-
-
-	/* 4) Calculate the updated state: */
-
+	/* 3) Calculate the Kalman gain & 4) Calculate the updated state: */
+	
 
 	/* 5) Calculate the square-root factor of the corresponding error covariance matrix: */
 
