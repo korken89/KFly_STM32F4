@@ -41,6 +41,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	float R[3][3];
 	float w_hat_x, w_hat_y, w_hat_z, w_norm, theta_x, theta_y, theta_z, dtheta, sdtheta, cdtheta;
 	quaternion_t dq_int;
+	vector3f_t mag_B, acc_B, y;
 
 	/* Cast the settings for better looking code, ex: settings->Sp[1][1] is now Sp[1][1] */
 	float (*Sp)[6] = settings->Sp;
@@ -48,9 +49,9 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	float (*Sr)[3] = settings->Sr;
 
 	/* Calculate w_hat */
-	w_hat_x = sensor_data->gyro_x - states->wb.x;
-	w_hat_y = sensor_data->gyro_y - states->wb.y;
-	w_hat_z = sensor_data->gyro_z - states->wb.z;
+	w_hat_x = sensor_data->gyro.x - states->wb.x;
+	w_hat_y = sensor_data->gyro.y - states->wb.y;
+	w_hat_z = sensor_data->gyro.z - states->wb.z;
 
 	/* Calculate the delta quaternion */
 	w_norm = sqrtf(w_hat_x * w_hat_x + w_hat_y * w_hat_y + w_hat_z * w_hat_z);
@@ -73,7 +74,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 
 	/* Convert the current quaternion to a DCM */
 	q2dcm(&R[0][0], &states->q);
-	
+
 
 	/****************************
 	 *							*
@@ -120,24 +121,31 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	 * 							*
 	 ****************************/
 
-	 /* 1) Subtract the predicted measurement from the true measurement: */
+	/* 1) Subtract the predicted measurement from the true measurement: */
 
-	 /* Create the measurement */
+	/* Create the measurements */
+	acc_B = vecrot_Rtransposed(R, sensor_data->acc);
+	mag_B = vecrot_Rtransposed(R, sensor_data->mag);
 
+	/* Since the measurement prediction is based on the states and the 
+	   states are zero, then the measurement prediction is zero */
+	y.x = - acc_B.y / acc_B.z;
+	y.y = - acc_B.x / acc_B.z;
+	y.z =   mag_B.y / mag_B.x;
 
-	 /* 2) Estimate the square-root factor of the innovation covariance matrix: */
-
-
-	 /* 3) Calculate the Kalman gain: */
-
-
-	 /* 4) Calculate the updated state: */
-
-
-	 /* 5) Calculate the square-root factor of the corresponding error covariance matrix: */
+	/* 2) Estimate the square-root factor of the innovation covariance matrix: */
 
 
-	 /* 6) Apply the error states to the estimate */
+	/* 3) Calculate the Kalman gain: */
+
+
+	/* 4) Calculate the updated state: */
+
+
+	/* 5) Calculate the square-root factor of the corresponding error covariance matrix: */
+
+
+	/* 6) Apply the error states to the estimate */
 
 
 }

@@ -65,6 +65,28 @@ static inline quaternion_t qmult(quaternion_t a, quaternion_t b)
 	return r;
 }
 
+static inline vector3f_t vecrot(float R[3][3], vector3f_t v)
+{
+	vector3f_t rot;
+
+	rot.x = R[0][0] * v.x + R[0][1] * v.y + R[0][2] * v.z;
+ 	rot.y = R[1][0] * v.x + R[1][1] * v.y + R[1][2] * v.z;
+ 	rot.z = R[2][0] * v.x + R[2][1] * v.y + R[2][2] * v.z;
+
+ 	return rot;
+}
+
+static inline vector3f_t vecrot_Rtransposed(float R[3][3], vector3f_t v)
+{
+	vector3f_t rot;
+
+	rot.x = R[0][0] * v.x + R[1][0] * v.y + R[2][0] * v.z;
+ 	rot.y = R[0][1] * v.x + R[1][1] * v.y + R[2][1] * v.z;
+ 	rot.z = R[0][2] * v.x + R[1][2] * v.y + R[2][2] * v.z;
+
+ 	return rot;
+}
+
 /* Global function defines */
 void qconj(quaternion_t *);
 float qnorm(quaternion_t *);

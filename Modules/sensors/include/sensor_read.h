@@ -19,6 +19,7 @@
 
 /* Includes */
 #include "sensor_calibration.h"
+#include "quaternion.h"
 
 /* Defines */
 
@@ -51,15 +52,9 @@ typedef union
 
 typedef struct
 {
-	float acc_x;
-	float acc_y;
-	float acc_z;
-	float gyro_x;
-	float gyro_y;
-	float gyro_z;
-	float mag_x;
-	float mag_y;
-	float mag_z;
+	vector3f_t acc;
+	vector3f_t gyro;
+	vector3f_t mag;
 	int32_t pressure;
 } Sensor_Data_Type;
 
