@@ -45,6 +45,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 
 	/* Cast the settings for better looking code, ex: settings->Sp[1][1] is now Sp[1][1] */
 	float (*Sp)[6] = settings->Sp;
+	float (*T1)[6] = settings->T1;
 	float (*Sq)[6] = settings->Sq;
 	float (*Sr)[3] = settings->Sr;
 	float (*Ss)[3] = settings->Ss;
@@ -112,8 +113,36 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 
 	Sp[5][2] += -Sp[5][5] * dt;
 
+	/* Copy the Sq values to the temporary matrix for use in the decomposition */
+	T1[0][0] = Sq[0][0];
+	T1[0][1] = Sq[0][1];
+	T1[0][2] = Sq[0][2];
+	T1[0][3] = Sq[0][3];
+	T1[0][4] = Sq[0][4];
+	T1[0][5] = Sq[0][5];
+
+	T1[1][1] = Sq[1][1];
+	T1[1][2] = Sq[1][2];
+	T1[1][3] = Sq[1][3];
+	T1[1][4] = Sq[1][4];
+	T1[1][5] = Sq[1][5];
+
+	T1[2][2] = Sq[2][2];
+	T1[2][3] = Sq[2][3];
+	T1[2][4] = Sq[2][4];
+	T1[2][5] = Sq[2][5];
+
+	T1[3][3] = Sq[3][3];
+	T1[3][4] = Sq[3][4];
+	T1[3][5] = Sq[3][5];
+
+	T1[4][4] = Sq[4][4];
+	T1[4][5] = Sq[4][5];
+
+	T1[5][5] = Sq[5][5];
+
 	/* Perform the QR decomposition: Sp_k|k-1 = QR([F_k * Sp_k-1|k-1, Sq]^T)^T */
-	qr_decomp(&Sp[0][0], 12, 6);
+	qr_decomp_tria(&Sp[0][0], 6);
 
 
 	/****************************
@@ -162,7 +191,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	Ss[5][2] = Sr[2][2];
 
 	/* Perform the QR decomposition : Ss_k = QR([H_k * Sp_k|k-1, Sr]^T)^T */
-	qr_decomp(&Ss[0][0], 6, 3);
+	qr_decomp_tria(&Ss[0][0], 3);
 
 	/* 3) Calculate the Kalman gain & 4) Calculate the updated state: */
 	

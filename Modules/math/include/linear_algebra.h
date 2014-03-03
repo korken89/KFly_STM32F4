@@ -194,22 +194,22 @@ static inline void qr_decomp(float *a, const int m, const int n)
 }
 
 /*
- * qr_decomp_diag - Optimized QR Decomposition of matrices where m = 2n
- *					and where the last n rows is an diagonal matrix. Returns
+ * qr_decomp_tria - Optimized QR Decomposition of matrices where m = 2n
+ *					and where the last n rows is an triangular matrix. Returns
  *					the upper triangular matrix R in the top of A.
  *					NOTE: This algorithm uses solving householder matrices.
  *
  *					Example input matrix with n = 2:
  *				          | x  x |
  *				      A = | x  x |
- *				          | x  0 |
+ *				          | x  x |
  *				          | 0  x |
  *
  * @author				Emil Fresk, Luleå University of Technology
  * @param[in/out] a		Input/output matrix, a points to the first element. 
  * @param[in] n			Number of columns in matrix.
  */
-static inline void qr_decomp_diag(float *a, const int n)
+static inline void qr_decomp_tria(float *a, const int n)
 {
 	int i, j, k;
 	float norm, sigma, sum, tau, u1, u2;
