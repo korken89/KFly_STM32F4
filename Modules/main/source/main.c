@@ -15,7 +15,7 @@ void vTaskTest(void *pvParameters);
 void main(void)
 {
 	/* Give the debugger time to halt the processor ~1s delay */
-	for (volatile uint32_t i = 0; i < 0xFFFFF; i++);
+	for (volatile uint32_t i = 0; i < 0xFFFF; i++);
 
 	/* *
 	 *
@@ -90,6 +90,20 @@ void main(void)
 
 	/* *
 	 *
+	 * 	USB init.
+	 * 	Running USB Full Speed as Virtual COM Port via the CDC interface
+	 * 	Shows as ttyACMxx in Linux and COMxx in Windows.
+	 * 	Linux version does not need a driver but Windows version uses STM serial driver.
+	 *
+	 * */
+	USBD_Init(	&USB_OTG_dev,
+				USB_OTG_FS_CORE_ID,
+				&USR_desc,
+				&USBD_CDC_cb,
+				&USR_cb);
+
+	/* *
+	 *
 	 * FastCounter init.
 	 * Initializes and sets up a timer as a 1MHz counter for timing.
 	 *
@@ -123,21 +137,7 @@ void main(void)
 	 * Estimation init.
 	 *
 	 * */
-	//EstimationInit();
-
-	/* *
-	 *
-	 * 	USB init.
-	 * 	Running USB Full Speed as Virtual COM Port via the CDC interface
-	 * 	Shows as ttyACMxx in Linux and COMxx in Windows.
-	 * 	Linux version does not need a driver but Windows version uses STM serial driver.
-	 *
-	 * */
-	USBD_Init(	&USB_OTG_dev,
-				USB_OTG_FS_CORE_ID,
-				&USR_desc,
-				&USBD_CDC_cb,
-				&USR_cb);
+	EstimationInit();
 
 	/* *
 	 *

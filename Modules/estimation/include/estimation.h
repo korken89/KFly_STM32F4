@@ -8,7 +8,6 @@
 #include "sensor_read.h"
 #include "filters.h"
 #include "comlink.h"
-#include "crc.h"
 #include "quaternion.h"
 #include <math.h>
 
