@@ -65,7 +65,7 @@ static inline quaternion_t qmult(quaternion_t a, quaternion_t b)
 	return r;
 }
 
-static inline vector3f_t vecrot(float R[3][3], vector3f_t v)
+static inline vector3f_t vector_rotation(float R[3][3], vector3f_t v)
 {
 	vector3f_t rot;
 
@@ -76,7 +76,7 @@ static inline vector3f_t vecrot(float R[3][3], vector3f_t v)
  	return rot;
 }
 
-static inline vector3f_t vecrot_Rtransposed(float R[3][3], vector3f_t v)
+static inline vector3f_t vector_rotation_transposed(float R[3][3], vector3f_t v)
 {
 	vector3f_t rot;
 

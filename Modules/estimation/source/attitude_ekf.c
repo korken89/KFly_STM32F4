@@ -154,8 +154,8 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	/* 1) Subtract the predicted measurement from the true measurement: */
 
 	/* Create the measurements */
-	acc_B = vecrot_Rtransposed(R, sensor_data->acc);
-	mag_B = vecrot_Rtransposed(R, sensor_data->mag);
+	acc_B = vector_rotation_transposed(R, sensor_data->acc);
+	mag_B = vector_rotation_transposed(R, sensor_data->mag);
 
 	/* Since the measurement prediction is based on the states and the 
 	   states are zero, then the measurement prediction is zero */
