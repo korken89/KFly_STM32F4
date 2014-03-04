@@ -65,6 +65,26 @@ static inline quaternion_t qmult(quaternion_t a, quaternion_t b)
 	return r;
 }
 
+static inline float vector_dot_product(vector3f_t v, vector3f_t w)
+{
+	float r;
+
+	r = v.x * w.x + v.y * w.y + v.z * w.z;
+
+ 	return r;
+}
+
+static inline vector3f_t vector_cross_product(vector3f_t v, vector3f_t w)
+{
+	vector3f_t r;
+
+	r.x = v.y * w.z - v.z * w.y;
+ 	r.y = v.z * w.x - v.x * w.z;
+ 	r.z = v.x * w.y - v.y * w.x;
+
+ 	return r;
+}
+
 static inline vector3f_t vector_rotation(float R[3][3], vector3f_t v)
 {
 	vector3f_t rot;

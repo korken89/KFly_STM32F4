@@ -142,7 +142,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 
 	T1[5][5] = Sq[5][5];
 
-	/* Perform the QR decomposition: Sp_k|k-1 = QR([F_k * Sp_k-1|k-1, Sq]^T)^T */
+	/* Perform the QR decomposition: Sp_k|k-1 = QR([F_k * Sp_k-1|k-1, Sq]^T) */
 	qr_decomp_tria(&Sp[0][0], 6);
 
 
@@ -192,7 +192,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	Ss[5][1] = 0.0f; 
 	Ss[5][2] = Sr[2][2];
 
-	/* Perform the QR decomposition : Ss_k = QR([H_k * Sp_k|k-1, Sr]^T)^T */
+	/* Perform the QR decomposition : Ss_k = QR([H_k * Sp_k|k-1, Sr]^T) */
 	qr_decomp_tria(&Ss[0][0], 3);
 
 	/* Invert Ss, since we only need the inverted version for future calculations */
@@ -235,9 +235,9 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	/* 3) Calculate the Kalman gain */
 
 	/* K = Sp * T2^T * Ss^-1 */
-	
-	
-	
+
+
+
 	/* 4) Calculate the updated state: */
 	
 
