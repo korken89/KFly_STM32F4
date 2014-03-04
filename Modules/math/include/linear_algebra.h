@@ -518,7 +518,7 @@ static inline void unit_l_inv(float *a, const int n)
 }
 
 /*
- * ul_mul - Multiplies a upper triangular matrix with a lower triangular matrix.
+ * ul_mul - Multiplies an upper triangular matrix with a lower triangular matrix.
  *			Specially made for the inverse from the result of lu_decomp().
  *
  * @author				Emil Fresk, Luleå University of Technology
@@ -570,6 +570,15 @@ static inline void ul_mul(float *a, const int n)
 	}
 }
 
+/*
+ * uu_mul - Multiplies an upper triangular matrix with another upper triangular matrix.
+ *			Returns the result of the product in the second matrix.
+ *
+ * @author				Emil Fresk, Luleå University of Technology
+ * @param[in] a			Input matrix, a points to the first element. 
+ * @param[in/out] b		Input/output matrix, b points to the first element.  
+ * @param[in] n			Number of rows and columns in matrix.
+ */
 static inline void uu_mul(float *a, float *b, const int n)
 {
 	/* *
