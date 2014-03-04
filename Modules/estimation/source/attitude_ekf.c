@@ -39,7 +39,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 							float dt)
 {
 	float R[3][3];
-	float w_norm, dtheta, sdtheta, cdtheta;
+	float w_norm, dtheta, sdtheta, cdtheta, t1, t2, t3;
 	quaternion_t dq_int;
 	vector3f_t w_hat, theta, mag_B, acc_B, y;
 
@@ -49,6 +49,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	float (*Sq)[6] = settings->Sq;
 	float (*Sr)[3] = settings->Sr;
 	float (*Ss)[3] = settings->Ss;
+	float (*T2)[6] = settings->T2;
 
 	/* Calculate w_hat */
 	w_hat.x = sensor_data->gyro.x - states->wb.x;
@@ -194,7 +195,50 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	/* Perform the QR decomposition : Ss_k = QR([H_k * Sp_k|k-1, Sr]^T)^T */
 	qr_decomp_tria(&Ss[0][0], 3);
 
-	/* 3) Calculate the Kalman gain & 4) Calculate the updated state: */
+	/* Invert Ss, since we only need the inverted version for future calculations */
+	u_inv(&Ss[0][0], 3);	
+
+	/* Create T2 = Ss^-1 * H * Sp */
+	t1 = R[0][0] * Ss[0][0] + R[0][1] * Ss[0][1] + R[0][2] * Ss[0][2];
+	t2 = R[1][0] * Ss[0][0] + R[1][1] * Ss[0][1] + R[1][2] * Ss[0][2];
+	t3 = R[2][0] * Ss[0][0] + R[2][1] * Ss[0][1] + R[2][2] * Ss[0][2];
+
+	T2[0][0] = Sp[0][0] * t1;
+	T2[0][1] = Sp[0][1] * t1 + Sp[1][1] * t2;
+	T2[0][2] = Sp[0][2] * t1 + Sp[1][2] * t2 + Sp[2][2] * t3;
+	T2[0][3] = Sp[0][3] * t1 + Sp[1][3] * t2 + Sp[2][3] * t3;
+	T2[0][4] = Sp[0][4] * t1 + Sp[1][4] * t2 + Sp[2][4] * t3;
+	T2[0][5] = Sp[0][5] * t1 + Sp[1][5] * t2 + Sp[2][5] * t3;
+	
+	t1 = R[0][1] * Ss[1][1] + R[0][2] * Ss[1][2];
+	t2 = R[1][1] * Ss[1][1] + R[1][2] * Ss[1][2];
+	t3 = R[2][1] * Ss[1][1] + R[2][2] * Ss[1][2];
+
+	T2[1][0] = Sp[0][0] * t1;
+	T2[1][1] = Sp[0][1] * t1 + Sp[1][1] * t2;
+	T2[1][2] = Sp[0][2] * t1 + Sp[1][2] * t2 + Sp[2][2] * t3;
+	T2[1][3] = Sp[0][3] * t1 + Sp[1][3] * t2 + Sp[2][3] * t3;
+	T2[1][4] = Sp[0][4] * t1 + Sp[1][4] * t2 + Sp[2][4] * t3;
+	T2[1][5] = Sp[0][5] * t1 + Sp[1][5] * t2 + Sp[2][5] * t3;
+	
+	t1 = R[0][2] * Ss[2][2];
+	t2 = R[1][2] * Ss[2][2];
+	t3 = R[2][2] * Ss[2][2];
+
+	T2[2][0] = Sp[0][0] * t1;
+	T2[2][1] = Sp[0][1] * t1 + Sp[1][1] * t2;
+	T2[2][2] = Sp[0][2] * t1 + Sp[1][2] * t2 + Sp[2][2] * t3;
+	T2[2][3] = Sp[0][3] * t1 + Sp[1][3] * t2 + Sp[2][3] * t3;
+	T2[2][4] = Sp[0][4] * t1 + Sp[1][4] * t2 + Sp[2][4] * t3;
+	T2[2][5] = Sp[0][5] * t1 + Sp[1][5] * t2 + Sp[2][5] * t3;
+
+	/* 3) Calculate the Kalman gain */
+
+	/* K = Sp * T2^T * Ss^-1 */
+	
+	
+	
+	/* 4) Calculate the updated state: */
 	
 
 	/* 5) Calculate the square-root factor of the corresponding error covariance matrix: */
