@@ -594,6 +594,30 @@ static inline void general_inv(float *a, const int n)
 	ul_mul(a, n);
 }
 
+/*
+ * create_identity - Creates an identity matrix.
+ *
+ * @author				Emil Fresk, Luleå University of Technology
+ * @param[in/out] a		Input/output matrix, a points to the first element.  
+ * @param[in] n			Number of rows and columns in matrix.
+ */
+static inline void create_identity(float *a, const int n)
+{
+	int i, j, k;
+
+	for (i = 0; i < n; i++)
+	{
+		A(i, i) = 1.0f;
+
+		for (j = i+1; j < n; j++)
+		{
+			A(i, j) = 0.0f;
+			A(j, i) = 0.0f;
+		}
+	}
+}
+
+
 /* Global function defines */
 
 #endif

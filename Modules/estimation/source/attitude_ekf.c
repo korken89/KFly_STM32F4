@@ -341,12 +341,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	 */
 
 	/* Create an 6x6 identity matrix */
- 	for (i = 0; i < 6; i++)
- 		for (j = 0; j < 6; j++)
- 			T1[i][j] = 0.0f;
-
- 	for (i = 0; i < 6; i++)
- 		T1[i][i] = 1.0f;
+ 	create_identity(&T1[0][0], 6);
 
  	/* Perform the Cholesky downdate */
  	chol_downdate(&T1[0][0], &T3[0][0], 6);
