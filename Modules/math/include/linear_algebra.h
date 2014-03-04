@@ -305,7 +305,6 @@ static inline void chol_decomp(float *a, const int n)
  * @param[in/out] a		Input/output matrix, a points to the first element.  
  * @param[in] x			Input vector for the update.  
  * @param[in] n			Number of rows and columns in matrix.
- * @param[in] m			Number of columns in matrix b.
  */
 static inline void chol_update(float *a, float *x, const int n)
 {
@@ -346,7 +345,6 @@ static inline void chol_update(float *a, float *x, const int n)
  * @param[in/out] a		Input/output matrix, a points to the first element.  
  * @param[in] x			Input vector for the update.  
  * @param[in] n			Number of rows and columns in matrix.
- * @param[in] m			Number of columns in matrix b.
  */
 static inline void chol_downdate(float *a, float *x, const int n)
 {
@@ -537,6 +535,41 @@ static inline void ul_mul(float *a, const int n)
 				sum += A(i, k) * A(k, j);
 
 			A(i, j) = sum;
+		}
+	}
+}
+
+static inline void uu_mul(float *a, float *b, const int n)
+{
+	/* *
+	 *
+	 * Illustration why we don't have to multiply and add every element:
+	 * x is some number in the matrix, but the x:es are not generally the same.
+	 *		 A 		 *		 B 		 = B_new
+	 * | x x x x x |   | x x x x x |
+	 * | 0 x x x x |   | 0 x x x x |
+	 * | 0 0 x x x | * | 0 0 x x x | = ...
+	 * | 0 0 0 x x |   | 0 0 0 x x |
+	 * | 0 0 0 0 x |   | 0 0 0 0 x |
+	 *
+	 * Many zeroes and ones that simplifies when multiplying!
+	 * Also if the 0-position data is not zeroed does not matter.
+	 *
+	 * */
+
+	int i, j, k;
+	float sum;
+
+	for (i = 0; i < n; i++)
+	{
+		for (j = i; j < n; j++)
+		{
+			sum = 0.0f;
+
+			for (k = i; k < j+1; k++)	
+				sum += A(i, k) * B(k, j);
+
+			B(i, j) = sum;
 		}
 	}
 }

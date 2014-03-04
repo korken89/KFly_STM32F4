@@ -38,8 +38,9 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 							Sensor_Data_Type *sensor_data,
 							float dt)
 {
+	uint32_t i, j;
 	float R[3][3];
-	float w_norm, dtheta, sdtheta, cdtheta, t1, t2, t3;
+	float w_norm, dtheta, sdtheta, cdtheta, t1, t2, t3, x_hat[6];
 	quaternion_t dq_int;
 	vector3f_t w_hat, theta, mag_B, acc_B, y;
 
@@ -65,9 +66,9 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	cdtheta = fast_cos(dtheta);
 
 	dq_int.q0 = cdtheta;
-	dq_int.q0 = sdtheta * (w_hat.x / w_norm);
-	dq_int.q0 = sdtheta * (w_hat.y / w_norm);
-	dq_int.q0 = sdtheta * (w_hat.z / w_norm);
+	dq_int.q1 = sdtheta * (w_hat.x / w_norm);
+	dq_int.q2 = sdtheta * (w_hat.y / w_norm);
+	dq_int.q3 = sdtheta * (w_hat.z / w_norm);
 
 	/* Use the delta quaternion to produce the current estimate of the attitude */
 	states->q = qmult(dq_int, states->q);
@@ -87,12 +88,16 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	 * 							*
 	 ****************************/
 
-	/* 1) Estimate the predicted state: */	 
+	/*
+	 * 1) Estimate the predicted state:
+	 */	 
 
 	/* Since the error dynamics predict a zero, no change is made */
 
 
-	/* 2) Estimate the square-root factor of the predicted error covariance matrix: */
+	/* 
+	 * 2) Estimate the square-root factor of the predicted error covariance matrix:
+	 */
 
 	/* Calculate F_k * Sp_k-1|k-1 part of the QR decomposition */
 
@@ -163,7 +168,9 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	 * 							*
 	 ****************************/
 
-	/* 1) Subtract the predicted measurement from the true measurement: */
+	/*
+	 * 1) Subtract the predicted measurement from the true measurement:
+	 */
 
 	/* Create the measurements */
 	acc_B = vector_rotation_transposed(R, sensor_data->acc);
@@ -176,7 +183,9 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	y.y = - acc_B.x / acc_B.z;
 	y.z =   mag_B.y / mag_B.x;
 
-	/* 2) Estimate the square-root factor of the innovation covariance matrix: */
+	/*
+	 * 2) Estimate the square-root factor of the innovation covariance matrix:
+	 */
 /*
 [ R00*Sp00 + R10*Sp01 + R20*Sp02, R01*Sp00 + R11*Sp01 + R21*Sp02, R02*Sp00 + R12*Sp01 + R22*Sp02]
 [            R10*Sp11 + R20*Sp12,            R11*Sp11 + R21*Sp12,            R12*Sp11 + R22*Sp12]
@@ -215,7 +224,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	qr_decomp_tria(&Ss[0][0], 3);
 
 	/* Invert Ss, since we only need the inverted version for future calculations */
-	u_inv(&Ss[0][0], 3);	
+	u_inv(&Ss[0][0], 3);
 
 	/* Create T3 = Ss^-1 * H * Sp */
 /*
@@ -247,7 +256,9 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	T3[2][1] = Sp[1][1] * t2 + Sp[1][2] * t3;
 	T3[2][2] = Sp[2][2] * t3;
 
-	/* 3) Calculate the Kalman gain */
+	/*
+	 * 3) Calculate the Kalman gain 
+	 */
 
 	/* K = Sp * T2^T * Ss^-1 */
 /*
@@ -307,14 +318,80 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	K[5][2] = Ss[2][2] * t3;
 
 
-	/* 4) Calculate the updated state: */
-	
+	/* 
+	 * 4) Calculate the updated state: 
+	 */
+/*
+ K00*yx + K01*yy + K02*yz
+ K10*yx + K11*yy + K12*yz
+ K20*yx + K21*yy + K22*yz
+ K30*yx + K31*yy + K32*yz
+ K40*yx + K41*yy + K42*yz
+ K50*yx + K51*yy + K52*yz
+*/
+ 	x_hat[0] = K[0][0] * y.x + K[0][1] * y.y + K[0][2] * y.z;
+ 	x_hat[1] = K[1][0] * y.x + K[1][1] * y.y + K[1][2] * y.z;
+ 	x_hat[2] = K[2][0] * y.x + K[2][1] * y.y + K[2][2] * y.z;
+ 	x_hat[3] = K[3][0] * y.x + K[3][1] * y.y + K[3][2] * y.z;
+ 	x_hat[4] = K[4][0] * y.x + K[4][1] * y.y + K[4][2] * y.z;
+ 	x_hat[5] = K[5][0] * y.x + K[5][1] * y.y + K[5][2] * y.z;
 
-	/* 5) Calculate the square-root factor of the corresponding error covariance matrix: */
+	/*
+	 * 5) Calculate the square-root factor of the corresponding error covariance matrix:
+	 */
 
+	/* Create an 6x6 identity matrix */
+ 	for (i = 0; i < 6; i++)
+ 		for (j = 0; j < 6; j++)
+ 			T1[i][j] = 0.0f;
 
-	/* 6) Apply the error states to the estimate */
+ 	for (i = 0; i < 6; i++)
+ 		T1[i][i] = 1.0f;
 
+ 	/* Perform the Cholesky downdate */
+ 	chol_downdate(&T1[0][0], &T3[0][0], 6);
+ 	chol_downdate(&T1[0][0], &T3[1][0], 6);
+ 	chol_downdate(&T1[0][0], &T3[2][0], 6);
 
+ 	/* Create the updated error covariance matrix
+ 	   (the chol_downdate creates an upper triangular matrix, no transpose needed)  */
+
+ 	/* Form  Sp = T1 * Sp */
+ 	uu_mul(&T1[0][0], &Sp[0][0], 6);
+
+	/*
+	 * 6) Apply the error states to the estimate
+	 */
+/*
+q_upd = [ 1; % (eq 238)
+           dq];
+q_upd = q_upd / norm(q_upd);
+q_hat = qmult(q_upd, q_hat); % Quaternion update (eq 240)  
+wb_hat = wb_hat +  dwb; % Bias update
+*/
+	dq_int.q0 = 1;
+	dq_int.q1 = 0.5f * x_hat[0];
+	dq_int.q2 = 0.5f * x_hat[1];
+	dq_int.q3 = 0.5f * x_hat[2];
+
+	/* Make sure the quaternion has length one */
+	qnormalize(&dq_int);
+
+	/* Use the delta quaternion to produce the current estimate of the attitude */
+	states->q = qmult(dq_int, states->q);
+
+	/* Update the estimation of the bias */
+	states->wb.x += x_hat[3];
+	states->wb.y += x_hat[4];
+	states->wb.z += x_hat[5];
+
+	/* Update the angular rate */
+	states->w.x = sensor_data->gyro.x - states->wb.x;
+	states->w.y = sensor_data->gyro.y - states->wb.y;
+	states->w.z = sensor_data->gyro.z - states->wb.z;
+
+	/*
+	 *		End of filter!
+	 */
 }
 
