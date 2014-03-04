@@ -264,15 +264,15 @@ static inline void qr_downdate(float *a, float *x, const int n)
 }
 
 /*
- * chol_decomp - Cholesky Decomposition (matrix square-root) of square
- *				 matrices. Returns the lower triangular matrix L in the
- *				 bottom of A so that L*L' = A.
+ * chol_decomp_lower - Cholesky Decomposition (matrix square-root) of square
+ *				 	   matrices. Returns the lower triangular matrix L in the
+ *				 	   bottom of A so that L*L' = A.
  *
  * @author				Emil Fresk, Luleå University of Technology
  * @param[in/out] a		Input/output matrix, a points to the first element.  
  * @param[in] n			Number of rows and columns in matrix.
  */
-static inline void chol_decomp(float *a, const int n)
+static inline void chol_decomp_lower(float *a, const int n)
 {
 	int i, j, k;
 	float sum;
@@ -290,6 +290,37 @@ static inline void chol_decomp(float *a, const int n)
 				sum -= A(i, k) * A(j, k);
 
 			A(i, j) = sum / A(j, j);
+		}
+	}
+}
+
+/*
+ * chol_decomp_upper - Cholesky Decomposition (matrix square-root) of square
+ *				 	   matrices. Returns the upper triangular matrix U in the
+ *				 	   top of A so that U'*U = A.
+ *
+ * @author				Emil Fresk, Luleå University of Technology
+ * @param[in/out] a		Input/output matrix, a points to the first element.  
+ * @param[in] n			Number of rows and columns in matrix.
+ */
+static inline void chol_decomp_upper(float *a, const int n)
+{
+	int i, j, k;
+	float sum;
+
+	for (j = 0; j < n; j++)
+	{
+		for (sum = A(j, j), k = 0; k < j; k++)
+			sum -= A(k, j) * A(k, j);
+
+		A(j, j) = sqrtf(sum);
+
+		for (i = j + 1; i < n; i++)
+		{
+			for (sum = A(j, i), k = 0; k < j; k++)
+				sum -= A(k, i) * A(k, j);
+
+			A(j, i) = sum / A(j, j);
 		}
 	}
 }
