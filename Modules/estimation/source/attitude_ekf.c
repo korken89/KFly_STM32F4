@@ -16,33 +16,47 @@ Attitude_Estimation_Settings_Type Attitude_Estimation_Settings;
 
 /* Private function defines */
 
-void AttitudeEstimationInit(void)
+void AttitudeEstimationInit(Attitude_Estimation_States_Type *states,
+							Attitude_Estimation_Settings_Type *settings,
+							quaternion_t *start_attitude,
+							vector3f_t *start_bias)
 {
 	/* Initialize states */
-	Attitude_Estimation_States.q.q0 = 1.0f;
-	Attitude_Estimation_States.q.q1 = 0.0f;
-	Attitude_Estimation_States.q.q2 = 0.0f;
-	Attitude_Estimation_States.q.q3 = 0.0f;
+	states->q.q0 = start_attitude->q0;
+	states->q.q1 = start_attitude->q1;
+	states->q.q2 = start_attitude->q2;
+	states->q.q3 = start_attitude->q3;
 
-	Attitude_Estimation_States.w.x = 0.0f;
-	Attitude_Estimation_States.w.y = 0.0f;
-	Attitude_Estimation_States.w.z = 0.0f;
-
-	Attitude_Estimation_States.wb.x = 0.0f;
-	Attitude_Estimation_States.wb.y = 0.0f;
-	Attitude_Estimation_States.wb.z = 0.0f;
+	states->wb.x = start_bias->x;
+	states->wb.y = start_bias->y;
+	states->wb.z = start_bias->z;
 }
 
+/**
+ * @brief [brief description]
+ * @details [long description]
+ * 
+ * @param states [description]
+ * @param settings [description]
+ * @param gyro [description]
+ * @param beta [description]
+ * @param u [description]
+ * @param dt [description]
+ */
 void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 							Attitude_Estimation_Settings_Type *settings, 
-							Sensor_Data_Type *sensor_data,
+							float gyro[3],
+							float acc[3],
+							float mag[3],
+							float beta,
+							float u,
 							float dt)
 {
 	uint32_t i, j;
 	float R[3][3];
 	float w_norm, dtheta, sdtheta, cdtheta, t1, t2, t3, x_hat[6];
 	quaternion_t dq_int;
-	vector3f_t w_hat, theta, mag_B, acc_B, y;
+	vector3f_t w_hat, theta, mag_v, acc_v, mag_B, acc_B, y;
 
 	/* Cast the settings for better looking code, ex: settings->Sp[1][1] is now Sp[1][1] */
 	float (*Sp)[6] = settings->Sp;
@@ -55,9 +69,9 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	float (*K)[3] = settings->K;
 
 	/* Calculate w_hat */
-	w_hat.x = sensor_data->gyro.x - states->wb.x;
-	w_hat.y = sensor_data->gyro.y - states->wb.y;
-	w_hat.z = sensor_data->gyro.z - states->wb.z;
+	w_hat.x = gyro[0] - states->wb.x;
+	w_hat.y = gyro[1] - states->wb.y;
+	w_hat.z = gyro[2] - states->wb.z;
 
 	/* Calculate the delta quaternion */
 	w_norm = sqrtf(w_hat.x * w_hat.x + w_hat.y * w_hat.y + w_hat.z * w_hat.z);
@@ -101,14 +115,14 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 
 	/* Calculate F_k * Sp_k-1|k-1 part of the QR decomposition */
 
-/*
-[ Sp01*theta_z - Sp03*dt - Sp02*theta_y, Sp02*theta_x - Sp00*theta_z - Sp04*dt, Sp00*theta_y - Sp05*dt - Sp01*theta_x, 0, 0, 0]
-[ Sp11*theta_z - Sp13*dt - Sp12*theta_y,                Sp12*theta_x - Sp14*dt,              - Sp15*dt - Sp11*theta_x, 0, 0, 0]
-[              - Sp23*dt - Sp22*theta_y,                Sp22*theta_x - Sp24*dt,                              -Sp25*dt, 0, 0, 0]
-[                              -Sp33*dt,                              -Sp34*dt,                              -Sp35*dt, 0, 0, 0]
-[                                     0,                              -Sp44*dt,                              -Sp45*dt, 0, 0, 0]
-[                                     0,                                     0,                              -Sp55*dt, 0, 0, 0]
-*/
+	/*
+	[ Sp01*theta_z - Sp03*dt - Sp02*theta_y, Sp02*theta_x - Sp00*theta_z - Sp04*dt, Sp00*theta_y - Sp05*dt - Sp01*theta_x, 0, 0, 0]
+	[ Sp11*theta_z - Sp13*dt - Sp12*theta_y,                Sp12*theta_x - Sp14*dt,              - Sp15*dt - Sp11*theta_x, 0, 0, 0]
+	[              - Sp23*dt - Sp22*theta_y,                Sp22*theta_x - Sp24*dt,                              -Sp25*dt, 0, 0, 0]
+	[                              -Sp33*dt,                              -Sp34*dt,                              -Sp35*dt, 0, 0, 0]
+	[                                     0,                              -Sp44*dt,                              -Sp45*dt, 0, 0, 0]
+	[                                     0,                                     0,                              -Sp55*dt, 0, 0, 0]
+	*/
 	Sp[0][0] += Sp[0][1] * theta.z - Sp[0][3] * dt - Sp[0][2] * theta.y;
 	Sp[0][1] += Sp[0][2] * theta.x - Sp[0][0] * theta.z - Sp[0][4] * dt;
 	Sp[0][2] += Sp[0][0] * theta.y - Sp[0][5] * dt - Sp[0][1] * theta.x;
@@ -173,8 +187,16 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	 */
 
 	/* Create the measurements */
-	acc_B = vector_rotation_transposed(R, sensor_data->acc);
-	mag_B = vector_rotation_transposed(R, sensor_data->mag);
+	acc_v.x = acc[0];
+	acc_v.y = acc[1];
+	acc_v.z = acc[2];
+
+	mag_v.x = mag[0];
+	mag_v.y = mag[1];
+	mag_v.z = mag[2];
+
+	acc_B = vector_rotation_transposed(R, acc_v);
+	mag_B = vector_rotation_transposed(R, mag_v);
 
 	/* Since the measurement prediction is based on the states and the 
 	   states are zero, then the measurement prediction is zero and the
@@ -186,14 +208,14 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	/*
 	 * 2) Estimate the square-root factor of the innovation covariance matrix:
 	 */
-/*
-[ R00*Sp00 + R10*Sp01 + R20*Sp02, R01*Sp00 + R11*Sp01 + R21*Sp02, R02*Sp00 + R12*Sp01 + R22*Sp02]
-[            R10*Sp11 + R20*Sp12,            R11*Sp11 + R21*Sp12,            R12*Sp11 + R22*Sp12]
-[                       R20*Sp22,                       R21*Sp22,                       R22*Sp22]
-[                              0,                              0,                              0]
-[                              0,                              0,                              0]
-[                              0,                              0,                              0]
-*/
+	/*
+	[ R00*Sp00 + R10*Sp01 + R20*Sp02, R01*Sp00 + R11*Sp01 + R21*Sp02, R02*Sp00 + R12*Sp01 + R22*Sp02]
+	[            R10*Sp11 + R20*Sp12,            R11*Sp11 + R21*Sp12,            R12*Sp11 + R22*Sp12]
+	[                       R20*Sp22,                       R21*Sp22,                       R22*Sp22]
+	[                              0,                              0,                              0]
+	[                              0,                              0,                              0]
+	[                              0,                              0,                              0]
+	*/
 	Ss[0][0] = R[0][0] * Sp[0][0] + R[1][0] * Sp[0][1] + R[2][0] * Sp[0][2]; 
 	Ss[0][1] = R[0][1] * Sp[0][0] + R[1][1] * Sp[0][1] + R[2][1] * Sp[0][2]; 
 	Ss[0][2] = R[0][2] * Sp[0][0] + R[1][2] * Sp[0][1] + R[2][2] * Sp[0][2]; 
@@ -227,11 +249,11 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	u_inv(&Ss[0][0], 3);
 
 	/* Create T3 = Ss^-1 * H * Sp */
-/*
-[                                                                         R00*Sp00*Ss00 + R10*Sp01*Ss00 + R20*Sp02*Ss00,                                                 R10*Sp11*Ss00 + R20*Sp12*Ss00,                         R20*Sp22*Ss00, 0, 0, 0]
-[                                  Sp00*(R00*Ss01 + R01*Ss11) + Sp01*(R10*Ss01 + R11*Ss11) + Sp02*(R20*Ss01 + R21*Ss11),                       Sp11*(R10*Ss01 + R11*Ss11) + Sp12*(R20*Ss01 + R21*Ss11),            Sp22*(R20*Ss01 + R21*Ss11), 0, 0, 0]
-[ Sp00*(R00*Ss02 + R01*Ss12 + R02*Ss22) + Sp01*(R10*Ss02 + R11*Ss12 + R12*Ss22) + Sp02*(R20*Ss02 + R21*Ss12 + R22*Ss22), Sp11*(R10*Ss02 + R11*Ss12 + R12*Ss22) + Sp12*(R20*Ss02 + R21*Ss12 + R22*Ss22), Sp22*(R20*Ss02 + R21*Ss12 + R22*Ss22), 0, 0, 0]
-*/
+	/*
+	[                                                                         R00*Sp00*Ss00 + R10*Sp01*Ss00 + R20*Sp02*Ss00,                                                 R10*Sp11*Ss00 + R20*Sp12*Ss00,                         R20*Sp22*Ss00, 0, 0, 0]
+	[                                  Sp00*(R00*Ss01 + R01*Ss11) + Sp01*(R10*Ss01 + R11*Ss11) + Sp02*(R20*Ss01 + R21*Ss11),                       Sp11*(R10*Ss01 + R11*Ss11) + Sp12*(R20*Ss01 + R21*Ss11),            Sp22*(R20*Ss01 + R21*Ss11), 0, 0, 0]
+	[ Sp00*(R00*Ss02 + R01*Ss12 + R02*Ss22) + Sp01*(R10*Ss02 + R11*Ss12 + R12*Ss22) + Sp02*(R20*Ss02 + R21*Ss12 + R22*Ss22), Sp11*(R10*Ss02 + R11*Ss12 + R12*Ss22) + Sp12*(R20*Ss02 + R21*Ss12 + R22*Ss22), Sp22*(R20*Ss02 + R21*Ss12 + R22*Ss22), 0, 0, 0]
+	*/
 	t1 = R[0][0] * Ss[0][0];
 	t2 = R[1][0] * Ss[0][0];
 	t3 = R[2][0] * Ss[0][0];
@@ -261,14 +283,14 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	 */
 
 	/* K = Sp * T2^T * Ss^-1 */
-/*
-[                                                                               Sp00*Ss00*T200 + Sp00*Ss01*T210 + Sp00*Ss02*T220,                                                     Sp00*Ss11*T210 + Sp00*Ss12*T220,                           Sp00*Ss22*T220]
-[                                     Ss00*(Sp01*T200 + Sp11*T201) + Ss01*(Sp01*T210 + Sp11*T211) + Ss02*(Sp01*T220 + Sp11*T221),                         Ss11*(Sp01*T210 + Sp11*T211) + Ss12*(Sp01*T220 + Sp11*T221),             Ss22*(Sp01*T220 + Sp11*T221)]
-[ Ss00*(Sp02*T200 + Sp12*T201 + Sp22*T202) + Ss01*(Sp02*T210 + Sp12*T211 + Sp22*T212) + Ss02*(Sp02*T220 + Sp12*T221 + Sp22*T222), Ss11*(Sp02*T210 + Sp12*T211 + Sp22*T212) + Ss12*(Sp02*T220 + Sp12*T221 + Sp22*T222), Ss22*(Sp02*T220 + Sp12*T221 + Sp22*T222)]
-[ Ss00*(Sp03*T200 + Sp13*T201 + Sp23*T202) + Ss01*(Sp03*T210 + Sp13*T211 + Sp23*T212) + Ss02*(Sp03*T220 + Sp13*T221 + Sp23*T222), Ss11*(Sp03*T210 + Sp13*T211 + Sp23*T212) + Ss12*(Sp03*T220 + Sp13*T221 + Sp23*T222), Ss22*(Sp03*T220 + Sp13*T221 + Sp23*T222)]
-[ Ss00*(Sp04*T200 + Sp14*T201 + Sp24*T202) + Ss01*(Sp04*T210 + Sp14*T211 + Sp24*T212) + Ss02*(Sp04*T220 + Sp14*T221 + Sp24*T222), Ss11*(Sp04*T210 + Sp14*T211 + Sp24*T212) + Ss12*(Sp04*T220 + Sp14*T221 + Sp24*T222), Ss22*(Sp04*T220 + Sp14*T221 + Sp24*T222)]
-[ Ss00*(Sp05*T200 + Sp15*T201 + Sp25*T202) + Ss01*(Sp05*T210 + Sp15*T211 + Sp25*T212) + Ss02*(Sp05*T220 + Sp15*T221 + Sp25*T222), Ss11*(Sp05*T210 + Sp15*T211 + Sp25*T212) + Ss12*(Sp05*T220 + Sp15*T221 + Sp25*T222), Ss22*(Sp05*T220 + Sp15*T221 + Sp25*T222)]
-*/
+	/*
+	[                                                                               Sp00*Ss00*T200 + Sp00*Ss01*T210 + Sp00*Ss02*T220,                                                     Sp00*Ss11*T210 + Sp00*Ss12*T220,                           Sp00*Ss22*T220]
+	[                                     Ss00*(Sp01*T200 + Sp11*T201) + Ss01*(Sp01*T210 + Sp11*T211) + Ss02*(Sp01*T220 + Sp11*T221),                         Ss11*(Sp01*T210 + Sp11*T211) + Ss12*(Sp01*T220 + Sp11*T221),             Ss22*(Sp01*T220 + Sp11*T221)]
+	[ Ss00*(Sp02*T200 + Sp12*T201 + Sp22*T202) + Ss01*(Sp02*T210 + Sp12*T211 + Sp22*T212) + Ss02*(Sp02*T220 + Sp12*T221 + Sp22*T222), Ss11*(Sp02*T210 + Sp12*T211 + Sp22*T212) + Ss12*(Sp02*T220 + Sp12*T221 + Sp22*T222), Ss22*(Sp02*T220 + Sp12*T221 + Sp22*T222)]
+	[ Ss00*(Sp03*T200 + Sp13*T201 + Sp23*T202) + Ss01*(Sp03*T210 + Sp13*T211 + Sp23*T212) + Ss02*(Sp03*T220 + Sp13*T221 + Sp23*T222), Ss11*(Sp03*T210 + Sp13*T211 + Sp23*T212) + Ss12*(Sp03*T220 + Sp13*T221 + Sp23*T222), Ss22*(Sp03*T220 + Sp13*T221 + Sp23*T222)]
+	[ Ss00*(Sp04*T200 + Sp14*T201 + Sp24*T202) + Ss01*(Sp04*T210 + Sp14*T211 + Sp24*T212) + Ss02*(Sp04*T220 + Sp14*T221 + Sp24*T222), Ss11*(Sp04*T210 + Sp14*T211 + Sp24*T212) + Ss12*(Sp04*T220 + Sp14*T221 + Sp24*T222), Ss22*(Sp04*T220 + Sp14*T221 + Sp24*T222)]
+	[ Ss00*(Sp05*T200 + Sp15*T201 + Sp25*T202) + Ss01*(Sp05*T210 + Sp15*T211 + Sp25*T212) + Ss02*(Sp05*T220 + Sp15*T221 + Sp25*T222), Ss11*(Sp05*T210 + Sp15*T211 + Sp25*T212) + Ss12*(Sp05*T220 + Sp15*T221 + Sp25*T222), Ss22*(Sp05*T220 + Sp15*T221 + Sp25*T222)]
+	*/
 	t1 = Sp[0][0] * T2[0][0];
 	t2 = Sp[0][0] * T2[1][0];
 	t3 = Sp[0][0] * T2[2][0];
@@ -321,14 +343,14 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	/* 
 	 * 4) Calculate the updated state: 
 	 */
-/*
- K00*yx + K01*yy + K02*yz
- K10*yx + K11*yy + K12*yz
- K20*yx + K21*yy + K22*yz
- K30*yx + K31*yy + K32*yz
- K40*yx + K41*yy + K42*yz
- K50*yx + K51*yy + K52*yz
-*/
+	/*
+	 K00*yx + K01*yy + K02*yz
+	 K10*yx + K11*yy + K12*yz
+	 K20*yx + K21*yy + K22*yz
+	 K30*yx + K31*yy + K32*yz
+	 K40*yx + K41*yy + K42*yz
+	 K50*yx + K51*yy + K52*yz
+	*/
  	x_hat[0] = K[0][0] * y.x + K[0][1] * y.y + K[0][2] * y.z;
  	x_hat[1] = K[1][0] * y.x + K[1][1] * y.y + K[1][2] * y.z;
  	x_hat[2] = K[2][0] * y.x + K[2][1] * y.y + K[2][2] * y.z;
@@ -357,13 +379,13 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	/*
 	 * 6) Apply the error states to the estimate
 	 */
-/*
-q_upd = [ 1; % (eq 238)
-           dq];
-q_upd = q_upd / norm(q_upd);
-q_hat = qmult(q_upd, q_hat); % Quaternion update (eq 240)  
-wb_hat = wb_hat +  dwb; % Bias update
-*/
+	/*
+	q_upd = [ 1; % (eq 238)
+	         dq];
+	q_upd = q_upd / norm(q_upd);
+	q_hat = qmult(q_upd, q_hat); % Quaternion update (eq 240)  
+	wb_hat = wb_hat +  dwb; % Bias update
+	*/
 	dq_int.q0 = 1;
 	dq_int.q1 = 0.5f * x_hat[0];
 	dq_int.q2 = 0.5f * x_hat[1];
@@ -379,11 +401,6 @@ wb_hat = wb_hat +  dwb; % Bias update
 	states->wb.x += x_hat[3];
 	states->wb.y += x_hat[4];
 	states->wb.z += x_hat[5];
-
-	/* Update the angular rate */
-	states->w.x = sensor_data->gyro.x - states->wb.x;
-	states->w.y = sensor_data->gyro.y - states->wb.y;
-	states->w.z = sensor_data->gyro.z - states->wb.z;
 
 	/*
 	 *		End of filter!

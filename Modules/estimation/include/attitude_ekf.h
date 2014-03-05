@@ -22,7 +22,6 @@
 typedef struct
 {
 	quaternion_t q;
-	vector3f_t w;
 	vector3f_t wb;
 } Attitude_Estimation_States_Type;
 
@@ -41,7 +40,18 @@ typedef struct
 /* Global variable defines */
 
 /* Global function defines */
-void AttitudeEstimationInit(void);
-void InnovateAttitudeEKF(Attitude_Estimation_States_Type *states, Attitude_Estimation_Settings_Type *settings, Sensor_Data_Type *sensor_data, float dt);
+void AttitudeEstimationInit(Attitude_Estimation_States_Type *states,
+							Attitude_Estimation_Settings_Type *settings,
+							quaternion_t *start_attitude,
+							vector3f_t *start_bias);
+
+void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
+							Attitude_Estimation_Settings_Type *settings, 
+							float gyro[3],
+							float acc[3],
+							float mag[3],
+							float beta,
+							float u,
+							float dt);
 
 #endif
