@@ -43,7 +43,8 @@ typedef struct
 void AttitudeEstimationInit(Attitude_Estimation_States_Type *states,
 							Attitude_Estimation_Settings_Type *settings,
 							quaternion_t *start_attitude,
-							vector3f_t *start_bias);
+							vector3f_t *start_bias,
+							float dt);
 
 void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 							Attitude_Estimation_Settings_Type *settings, 

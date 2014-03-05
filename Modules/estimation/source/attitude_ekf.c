@@ -19,8 +19,11 @@ Attitude_Estimation_Settings_Type Attitude_Estimation_Settings;
 void AttitudeEstimationInit(Attitude_Estimation_States_Type *states,
 							Attitude_Estimation_Settings_Type *settings,
 							quaternion_t *start_attitude,
-							vector3f_t *start_bias)
+							vector3f_t *start_bias,
+							float dt)
 {
+	float s_q, s_b, s_a, s_t, s_p;
+
 	/* Initialize states */
 	states->q.q0 = start_attitude->q0;
 	states->q.q1 = start_attitude->q1;
@@ -30,6 +33,65 @@ void AttitudeEstimationInit(Attitude_Estimation_States_Type *states,
 	states->wb.x = start_bias->x;
 	states->wb.y = start_bias->y;
 	states->wb.z = start_bias->z;
+
+	/* Initialize the gain matrices */
+	float (*Sp)[6] = settings->Sp;
+	float (*Sq)[6] = settings->Sq;
+	float (*Sr)[3] = settings->Sr;
+
+	/* Model settings */
+	s_q = 0.01f*dt;
+	s_b = 0.001f*dt*dt;
+
+	/* Measurement settings */
+	s_a = 100.0f;
+	s_t = 1000.0f;
+
+	/* Error setting */
+	s_p = 0.001f;
+
+	/* Zero matrices*/
+	create_zero(&Sp[0][0], 6);
+	create_zero(&Sq[0][0], 6);
+	create_zero(&Sr[0][0], 3);
+
+	/* Model covariance */
+	Sq[0][0] = s_q;
+	Sq[1][1] = s_q;
+	Sq[2][2] = s_q;
+
+	Sq[3][3] = s_b;
+	Sq[4][4] = s_b;
+	Sq[5][5] = s_b;
+
+	Sq[0][3] = -0.5f * s_b;
+	Sq[1][4] = -0.5f * s_b;
+	Sq[2][5] = -0.5f * s_b;
+
+	Sq[3][0] = -0.5f * s_b;
+	Sq[4][1] = -0.5f * s_b;
+	Sq[5][2] = -0.5f * s_b;
+
+	/* Create the model square-root factor */
+	chol_decomp_upper(&Sq[0][0], 6);
+
+	/* Mesurement covariance */
+	Sr[0][0] = s_a;
+	Sr[1][1] = s_a;
+	Sr[2][2] = s_t;
+
+	/* Create the measurement square-root factor */
+	chol_decomp_upper(&Sr[0][0], 3);
+
+
+	/* Set the starting error covariance matrix */
+	Sp[0][0] = s_p;
+	Sp[1][1] = s_p;
+	Sp[2][2] = s_p;
+	Sp[3][3] = s_p;
+	Sp[4][4] = s_p;
+	Sp[5][5] = s_p;
+	
 }
 
 /**
@@ -373,7 +435,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
  	/* Create the updated error covariance matrix
  	   (the chol_downdate creates an upper triangular matrix, no transpose needed)  */
 
- 	/* Form  Sp = T1 * Sp */
+ 	/* Form  Sp = T1 * 	Sp */
  	uu_mul(&T1[0][0], &Sp[0][0], 6);
 
 	/*
@@ -404,6 +466,6 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 
 	/*
 	 *		End of filter!
-	 */
+	 */	
 }
 

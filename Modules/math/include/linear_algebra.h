@@ -643,7 +643,7 @@ static inline void general_inv(float *a, const int n)
  */
 static inline void create_identity(float *a, const int n)
 {
-	int i, j, k;
+	int i, j;
 
 	for (i = 0; i < n; i++)
 	{
@@ -653,6 +653,26 @@ static inline void create_identity(float *a, const int n)
 		{
 			A(i, j) = 0.0f;
 			A(j, i) = 0.0f;
+		}
+	}
+}
+
+/*
+ * create_identity - Creates an zero matrix.
+ *
+ * @author				Emil Fresk, Luleå University of Technology
+ * @param[in/out] a		Input/output matrix, a points to the first element.  
+ * @param[in] n			Number of rows and columns in matrix.
+ */
+static inline void create_zero(float *a, const int n)
+{
+	int i, j;
+
+	for (i = 0; i < n; i++)
+	{
+		for (j = 0; j < n; j++)
+		{
+			A(i, j) = 0.0f;
 		}
 	}
 }
