@@ -9,6 +9,7 @@
 #include "sensor_read.h"
 #include "linear_algebra.h"
 #include "trigonometry.h"
+#include "debug_print.h"
 
 /* Scheduler includes */
 

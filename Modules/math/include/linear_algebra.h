@@ -658,21 +658,22 @@ static inline void create_identity(float *a, const int n)
 }
 
 /*
- * create_identity - Creates an zero matrix.
+ * create_zero - Creates an zero matrix.
  *
  * @author				Emil Fresk, Luleå University of Technology
  * @param[in/out] a		Input/output matrix, a points to the first element.  
- * @param[in] n			Number of rows and columns in matrix.
+ * @param[in] n			Number of rows in matrix.
+ * @param[in] m			Number of columns in matrix.
  */
-static inline void create_zero(float *a, const int n)
+static inline void create_zero(float *a, const int n, const int m)
 {
 	int i, j;
 
 	for (i = 0; i < n; i++)
 	{
-		for (j = 0; j < n; j++)
+		for (j = 0; j < m; j++)
 		{
-			A(i, j) = 0.0f;
+			As(i, j, m) = 0.0f;
 		}
 	}
 }

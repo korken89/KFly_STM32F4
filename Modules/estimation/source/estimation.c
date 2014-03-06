@@ -5,27 +5,72 @@
 
 /* Includes */
 #include "estimation.h"
-
+#include "debug_print.h"
 /* Private Defines */
 
 /* Private Typedefs */
 
-/* Global variable defines */
-Estimation_State_Struct Estimation_State;
-
-//int16_t raw_data[9000][6];
+/* Global variable defines */	
 
 /* Private function defines */
 
+
+
 void EstimationInit(void)
 {
-	/*xTaskCreate(vTaskRunEstimation,
-			"Estimation",
-			256, // 16kB
-			0,
-			configMAX_PRIORITIES - 1,
-			0);*/
+	xTaskCreate(vTaskRunEstimation,
+				"Estimation",
+				2048, // 16kB
+				0,
+				configMAX_PRIORITIES - 2,
+				0);
 }
+
+volatile float gyro[3] = {0.01f, 0.01f, 0.01f};
+volatile float acc[3] = {0.0f, 0.0f, 9.81f};
+volatile float mag[3] = {5.0f, 0.0f, 1.0f};
+
+void vTaskRunEstimation(void *pvParameters)
+{
+	uint32_t i = 0;
+
+	Attitude_Estimation_States_Type states;
+	Attitude_Estimation_Settings_Type settings;
+
+	quaternion_t q_init;
+
+	q_init.q0 = 1.0f;
+	q_init.q1 = 0.0f;
+	q_init.q2 = 0.0f;
+	q_init.q3 = 0.0f;
+
+	vector3f_t wb_init;
+
+	wb_init.x = 0.0f;
+	wb_init.y = 0.0f;
+	wb_init.z = 0.0f;
+
+	AttitudeEstimationInit(&states, &settings, &q_init, &wb_init, 0.005f);
+
+	while(1)
+	{
+		vTaskDelay(10000);
+
+		InnovateAttitudeEKF(&states,
+							&settings, 
+							(float *)gyro,
+							(float *)acc,
+							(float *)mag,
+							0.0f,
+							0.0f,
+							0.005f);
+
+	}
+}
+
+
+
+
 
 uint32_t myitoa(int16_t num, uint8_t *buf)
 {
@@ -60,76 +105,4 @@ uint32_t myitoa(int16_t num, uint8_t *buf)
 	
 	return (i+1);
 }
-/*
-void vTaskRunEstimation(void *pvParameters)
-{
-	const float throttle = 0.2f;
 
-	Sensor_Raw_Data_Type *data;
-	data = ptrGetRawSensorDataPointer();
-
-
-	uint8_t buff[10];
-	uint32_t cnt, i, j;
-
-	vSetRCOutput(0, 0.0f);
-	vSetRCOutput(1, 0.0f);
-	vSetRCOutput(2, 0.0f);
-	vSetRCOutput(3, 0.0f);
-
-	vTaskDelay(10000);
-
-	vSetRCOutput(0, 0.4f);
-	vSetRCOutput(1, 0.4f);
-	vSetRCOutput(2, 0.4f);
-	vSetRCOutput(3, 0.4f);
-
-	vTaskDelay(2000);
-
-	xUSBSendData("Starting data collection - finished in 10 seconds...\r\n", 54);
-
-	for (i = 0; i < 9000; i++)
-	{
-		xSemaphoreTake(NewMeasurementAvaiable, portMAX_DELAY);
-
-		raw_data[i][0] = data->acc_x;
-		raw_data[i][1] = data->acc_y;
-		raw_data[i][2] = data->acc_z;
-
-		raw_data[i][3] = data->gyro_x;
-		raw_data[i][4] = data->gyro_y;
-		raw_data[i][5] = data->gyro_z;
-	}
-
-	vSetRCOutput(0, 0.0f);
-	vSetRCOutput(1, 0.0f);
-	vSetRCOutput(2, 0.0f);
-	vSetRCOutput(3, 0.0f);
-
-	xUSBSendData("Finished data collection!\r\n", 27);
-
-	for (i = 0; i < 9000; i++)
-	{
-		for (j = 0; j < 5; j++)
-		{
-			cnt = myitoa(raw_data[i][j], buff);
-			xUSBSendData((buff + cnt), (11-cnt));
-			xUSBSendData(",", 1);
-		}
-
-		cnt = myitoa(raw_data[i][j], buff);
-		xUSBSendData((buff + cnt), (11-cnt));
-		xUSBSendData("\r\n", 2);
-
-		vTaskDelay(10);
-	}
-	
-
-
-
-	while(1)
-	{
-
-	}
-}
-*/

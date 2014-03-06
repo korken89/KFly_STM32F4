@@ -21,15 +21,11 @@
 
 /* Includes */
 #include "control.h"
+#include "attitude_ekf.h"
 
 /* Defines */
 
 /* Typedefs */
-typedef struct
-{
-	quaternion_t q;
-	vector3f_t wb;
-} Estimation_State_Struct;
 
 /* Global variable defines */
 

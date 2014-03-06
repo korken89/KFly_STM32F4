@@ -72,7 +72,7 @@ F_HSE = 12000000
 USE_STD_LIBS = 1
 
 # Optimization
-OPTIMIZATION = 2
+OPTIMIZATION = 1
 
 # StdLibs to use if wanted
 STDLIBDIR = ./Libraries/STM32F4xx_StdPeriph_Driver/src/
