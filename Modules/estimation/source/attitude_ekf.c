@@ -116,6 +116,8 @@ void AttitudeEstimationInit(Attitude_Estimation_States_Type *states,
  * @details 		An Square-root Multiplicative Extended Kalman Filter (SR-MEKF) based on 
  * 					Generalized Rodrigues Parameters (GRPs). Has very large dynamical range
  * 					due to the suate-root factors and is written with close to optimal code.
+ * 					If there is no new magnetometer value, insert NULL and the filter will
+ * 					do an update without the magnetometer.
  * 
  * @param states 	Poiter to structure holding the states
  * @param settings 	Pointer to structure holding the settings and temporary matrices
