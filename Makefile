@@ -1,6 +1,8 @@
 #-------------------------------------------
 # Makefile for STM32F4xx targets
 # Author: (C) Emil Fresk
+#
+# This makefile REQUIRES GIT in PATH.
 #-------------------------------------------
 
 WHEREAMI := $(dir $(lastword $(MAKEFILE_LIST)))
@@ -43,28 +45,6 @@ endif
 
 GIT_VERSION := $(GIT_TAGS)$(GIT_DIRTY)
 
-# Get current Git HASH
-GIT_HASH := $(shell git rev-parse Head)
-GIT_TMP := $(subst a,a , \
-$(subst b,b , \
-$(subst c,c , \
-$(subst d,d , \
-$(subst e,e , \
-$(subst f,f , \
-$(subst 0,0 , \
-$(subst 1,1 , \
-$(subst 2,2 , \
-$(subst 3,3 , \
-$(subst 4,4 , \
-$(subst 5,5 , \
-$(subst 6,6 , \
-$(subst 7,7 , \
-$(subst 8,8 , \
-$(subst 9,9 , \
-$(GIT_HASH)))))))))))))))))
-GIT_TMP2 := $(wordlist 1,7,$(GIT_TMP))
-GIT_HASH_SUBSTR := $(subst $(SPACE),,$(GIT_TMP2))
-
 # External high speed crystal frequency
 F_HSE = 12000000
 
@@ -72,7 +52,7 @@ F_HSE = 12000000
 USE_STD_LIBS = 1
 
 # Optimization
-OPTIMIZATION = 1
+OPTIMIZATION = 2
 
 # StdLibs to use if wanted
 STDLIBDIR = ./Libraries/STM32F4xx_StdPeriph_Driver/src/

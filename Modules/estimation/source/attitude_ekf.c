@@ -163,16 +163,6 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	dq_int.q2 = sdtheta * (w_hat.y / w_norm);
 	dq_int.q3 = sdtheta * (w_hat.z / w_norm);
 
-		 	//print_quaternion(&dq_int);
-	//print_quaternion(&states->q);
-	//print_vector(&w_hat);
-	//cprint_matrix(&Sp[0][0], 6, 6);
-
-
-	//print_vector(&states->wb);
-
-
-
 	/* Use the delta quaternion to produce the current estimate of the attitude */
 	states->q = qmult(dq_int, states->q);
 
@@ -202,29 +192,26 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	 * 2) Estimate the square-root factor of the predicted error covariance matrix:
 	 */
 
-	/* Calculate F_k * Sp_k-1|k-1 part of the QR decomposition */
+	/* Calculate F_k * Sp_k-1|k-1 part of the QR decomposition, with (I + F_k) * Sp_k-1|k-1 */
+	t1 = Sp[0][0];
+	t2 = Sp[0][1];
+	t3 = Sp[0][2];
 
-	/*
-	[ Sp01*theta_z - Sp03*dt - Sp02*theta_y, Sp02*theta_x - Sp00*theta_z - Sp04*dt, Sp00*theta_y - Sp05*dt - Sp01*theta_x, 0, 0, 0]
-	[ Sp11*theta_z - Sp13*dt - Sp12*theta_y,                Sp12*theta_x - Sp14*dt,              - Sp15*dt - Sp11*theta_x, 0, 0, 0]
-	[              - Sp23*dt - Sp22*theta_y,                Sp22*theta_x - Sp24*dt,                              -Sp25*dt, 0, 0, 0]
-	[                              -Sp33*dt,                              -Sp34*dt,                              -Sp35*dt, 0, 0, 0]
-	[                                     0,                              -Sp44*dt,                              -Sp45*dt, 0, 0, 0]
-	[                                     0,                                     0,                              -Sp55*dt, 0, 0, 0]
-	*/
-	print_matrix(&Sp[0][0], 6, 6);
-	vTaskDelay(100);
+	Sp[0][0] += t2 * theta.z - Sp[0][3] * dt - t3 * theta.y;
+	Sp[0][1] += t3 * theta.x - t1 * theta.z - Sp[0][4] * dt;
+	Sp[0][2] += t1 * theta.y - Sp[0][5] * dt - t2 * theta.x;
 
-	Sp[0][0] += Sp[0][1] * theta.z - Sp[0][3] * dt - Sp[0][2] * theta.y;
-	Sp[0][1] += Sp[0][2] * theta.x - Sp[0][0] * theta.z - Sp[0][4] * dt;
-	Sp[0][2] += Sp[0][0] * theta.y - Sp[0][5] * dt - Sp[0][1] * theta.x;
+	t2 = Sp[1][1];
+	t3 = Sp[1][2];
 
-	Sp[1][0] += Sp[1][1] * theta.z - Sp[1][3] * dt - Sp[1][2] * theta.y;
-	Sp[1][1] += Sp[1][2] * theta.x - Sp[1][4] * dt;
-	Sp[1][2] += -Sp[1][5] * dt - Sp[1][1] * theta.x;
+	Sp[1][0] += t2 * theta.z - Sp[1][3] * dt - t3 * theta.y;
+	Sp[1][1] += t3 * theta.x - Sp[1][4] * dt;
+	Sp[1][2] += -Sp[1][5] * dt - t2 * theta.x;
 
-	Sp[2][0] += -Sp[2][3] * dt - Sp[2][2] * theta.y;
-	Sp[2][1] += Sp[2][2] * theta.x - Sp[2][4] * dt;
+	t3 = Sp[2][2];
+
+	Sp[2][0] += -Sp[2][3] * dt - t3 * theta.y;
+	Sp[2][1] += t3 * theta.x - Sp[2][4] * dt;
 	Sp[2][2] += -Sp[2][5] * dt;
 
 	Sp[3][0] += -Sp[3][3] * dt;
@@ -235,8 +222,6 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	Sp[4][2] += -Sp[4][5] * dt;
 
 	Sp[5][2] += -Sp[5][5] * dt;
-
-
 
 	/* Copy the Sq values to the temporary matrix for use in the decomposition */
 	T1[0][0] = Sq[0][0];
@@ -269,8 +254,6 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	/* Perform the QR decomposition: Sp_k|k-1 = QR([F_k * Sp_k-1|k-1, Sq]^T) */
 	qr_decomp_tria(&Sp[0][0], 6);
 
-	print_matrix(&Sp[0][0], 6, 6);
-	vTaskDelay(100);
 
 	/****************************
 	 *							*
@@ -301,19 +284,10 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	y.y =   acc_B.x / acc_B.z;
 	y.z =   mag_B.y / mag_B.x;
 
-	print_vector(&y);
-	vTaskDelay(100);
+
 	/*
 	 * 2) Estimate the square-root factor of the innovation covariance matrix:
 	 */
-	/*
-	[ R00*Sp00 + R10*Sp01 + R20*Sp02, R01*Sp00 + R11*Sp01 + R21*Sp02, R02*Sp00 + R12*Sp01 + R22*Sp02]
-	[            R10*Sp11 + R20*Sp12,            R11*Sp11 + R21*Sp12,            R12*Sp11 + R22*Sp12]
-	[                       R20*Sp22,                       R21*Sp22,                       R22*Sp22]
-	[                              0,                              0,                              0]
-	[                              0,                              0,                              0]
-	[                              0,                              0,                              0]
-	*/
 	Ss[0][0] = R[0][0] * Sp[0][0] + R[1][0] * Sp[0][1] + R[2][0] * Sp[0][2]; 
 	Ss[0][1] = R[0][1] * Sp[0][0] + R[1][1] * Sp[0][1] + R[2][1] * Sp[0][2]; 
 	Ss[0][2] = R[0][2] * Sp[0][0] + R[1][2] * Sp[0][1] + R[2][2] * Sp[0][2]; 
@@ -340,25 +314,13 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	T2[2][1] = 0.0f; 
 	T2[2][2] = Sr[2][2];
 
-
 	/* Perform the QR decomposition : Ss_k = QR([H_k * Sp_k|k-1, Sr]^T) */
 	qr_decomp_tria(&Ss[0][0], 3);
 
-
-	print_matrix(&Ss[0][0], 3, 3);
-	vTaskDelay(100);
 	/* Invert Ss, since we only need the inverted version for future calculations */
 	u_inv(&Ss[0][0], 3);
 
-	print_matrix(&Ss[0][0], 3, 3);
-	vTaskDelay(100);
-
 	/* Create T3 = Ss^-1 * H * Sp */
-	/*
-	[                                                                         R00*Sp00*Ss00 + R10*Sp01*Ss00 + R20*Sp02*Ss00,                                                 R10*Sp11*Ss00 + R20*Sp12*Ss00,                         R20*Sp22*Ss00, 0, 0, 0]
-	[                                  Sp00*(R00*Ss01 + R01*Ss11) + Sp01*(R10*Ss01 + R11*Ss11) + Sp02*(R20*Ss01 + R21*Ss11),                       Sp11*(R10*Ss01 + R11*Ss11) + Sp12*(R20*Ss01 + R21*Ss11),            Sp22*(R20*Ss01 + R21*Ss11), 0, 0, 0]
-	[ Sp00*(R00*Ss02 + R01*Ss12 + R02*Ss22) + Sp01*(R10*Ss02 + R11*Ss12 + R12*Ss22) + Sp02*(R20*Ss02 + R21*Ss12 + R22*Ss22), Sp11*(R10*Ss02 + R11*Ss12 + R12*Ss22) + Sp12*(R20*Ss02 + R21*Ss12 + R22*Ss22), Sp22*(R20*Ss02 + R21*Ss12 + R22*Ss22), 0, 0, 0]
-	*/
 	t1 = R[0][0] * Ss[0][0];
 	t2 = R[1][0] * Ss[0][0];
 	t3 = R[2][0] * Ss[0][0];
@@ -384,22 +346,11 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	T3[2][2] = Sp[2][2] * t3;
 
 
-	print_matrix(&T3[0][0], 3, 6);
-	vTaskDelay(100);
-
 	/*
 	 * 3) Calculate the Kalman gain 
 	 */
 
-	/* K = Sp * T2^T * Ss^-1 */
-	/*
-[                                                                               Sp00*Ss00*T300 + Sp00*Ss01*T310 + Sp00*Ss02*T320,                                                     Sp00*Ss11*T310 + Sp00*Ss12*T320,                           Sp00*Ss22*T320]
-[                                     Ss00*(Sp01*T300 + Sp11*T301) + Ss01*(Sp01*T310 + Sp11*T311) + Ss02*(Sp01*T320 + Sp11*T321),                         Ss11*(Sp01*T310 + Sp11*T311) + Ss12*(Sp01*T320 + Sp11*T321),             Ss22*(Sp01*T320 + Sp11*T321)]
-[ Ss00*(Sp02*T300 + Sp12*T301 + Sp22*T302) + Ss01*(Sp02*T310 + Sp12*T311 + Sp22*T312) + Ss02*(Sp02*T320 + Sp12*T321 + Sp22*T322), Ss11*(Sp02*T310 + Sp12*T311 + Sp22*T312) + Ss12*(Sp02*T320 + Sp12*T321 + Sp22*T322), Ss22*(Sp02*T320 + Sp12*T321 + Sp22*T322)]
-[ Ss00*(Sp03*T300 + Sp13*T301 + Sp23*T302) + Ss01*(Sp03*T310 + Sp13*T311 + Sp23*T312) + Ss02*(Sp03*T320 + Sp13*T321 + Sp23*T322), Ss11*(Sp03*T310 + Sp13*T311 + Sp23*T312) + Ss12*(Sp03*T320 + Sp13*T321 + Sp23*T322), Ss22*(Sp03*T320 + Sp13*T321 + Sp23*T322)]
-[ Ss00*(Sp04*T300 + Sp14*T301 + Sp24*T302) + Ss01*(Sp04*T310 + Sp14*T311 + Sp24*T312) + Ss02*(Sp04*T320 + Sp14*T321 + Sp24*T322), Ss11*(Sp04*T310 + Sp14*T311 + Sp24*T312) + Ss12*(Sp04*T320 + Sp14*T321 + Sp24*T322), Ss22*(Sp04*T320 + Sp14*T321 + Sp24*T322)]
-[ Ss00*(Sp05*T300 + Sp15*T301 + Sp25*T302) + Ss01*(Sp05*T310 + Sp15*T311 + Sp25*T312) + Ss02*(Sp05*T320 + Sp15*T321 + Sp25*T322), Ss11*(Sp05*T310 + Sp15*T311 + Sp25*T312) + Ss12*(Sp05*T320 + Sp15*T321 + Sp25*T322), Ss22*(Sp05*T320 + Sp15*T321 + Sp25*T322)]
-	*/
+	/* K = Sp * T3^T * Ss^-1 */
 	t1 = Sp[0][0] * T3[0][0];
 	t2 = Sp[0][0] * T3[1][0];
 	t3 = Sp[0][0] * T3[2][0];
@@ -449,8 +400,6 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	K[5][2] = 					  			  Ss[2][2] * t3;
 
 
-	print_matrix(&K[0][0], 6, 3);
-	vTaskDelay(100);
 	/* 
 	 * 4) Calculate the updated state: 
 	 */
@@ -469,9 +418,6 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
  	x_hat[4] = K[4][0] * y.x + K[4][1] * y.y + K[4][2] * y.z;
  	x_hat[5] = K[5][0] * y.x + K[5][1] * y.y + K[5][2] * y.z;
 
- 	print_matrix(x_hat, 6, 1);
- 	vTaskDelay(100);
-
 	/*
 	 * 5) Calculate the square-root factor of the corresponding error covariance matrix:
 	 */
@@ -479,31 +425,19 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	/* Create an 6x6 identity matrix */
  	create_identity(&T1[0][0], 6);
 
- 	/* Perform the Cholesky downdate */
+ 	/* Perform the Cholesky downdate with each column of T3 */
  	chol_downdate(&T1[0][0], &T3[0][0], 6);
  	chol_downdate(&T1[0][0], &T3[1][0], 6);
  	chol_downdate(&T1[0][0], &T3[2][0], 6);
 
- 	/* Create the updated error covariance matrix
+ 	/* Create the updated error covariance matrix Sp = T1 * Sp 
  	   (the chol_downdate creates an upper triangular matrix, no transpose needed)  */
-
- 	/* Form  Sp = T1 * 	Sp */
  	uu_mul(&T1[0][0], &Sp[0][0], 6);
-
-
- 	print_matrix(&Sp[0][0], 6, 6);
- 	vTaskDelay(100);
 
 	/*
 	 * 6) Apply the error states to the estimate
 	 */
-	/*
-	q_upd = [ 1; % (eq 238)
-	         dq];
-	q_upd = q_upd / norm(q_upd);
-	q_hat = qmult(q_upd, q_hat); % Quaternion update (eq 240)  
-	wb_hat = wb_hat +  dwb; % Bias update
-	*/
+	/* TODO: Change to GRP conversion */
 	dq_int.q0 = 1;
 	dq_int.q1 = 0.5f * x_hat[0];
 	dq_int.q2 = 0.5f * x_hat[1];
@@ -523,9 +457,5 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	/*
 	 *		End of filter!
 	 */	
-
-	 while(1);	
-
-
 }
 
