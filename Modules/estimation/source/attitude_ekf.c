@@ -112,15 +112,19 @@ void AttitudeEstimationInit(Attitude_Estimation_States_Type *states,
 }
 
 /**
- * @brief [brief description]
- * @details [long description]
+ * @brief 			Attitude estimation update
+ * @details 		An Square-root Multiplicative Extended Kalman Filter (SR-MEKF) based on 
+ * 					Generalized Rodrigues Parameters (GRPs). Has very large dynamical range
+ * 					due to the suate-root factors and is written with close to optimal code.
  * 
- * @param states [description]
- * @param settings [description]
- * @param gyro [description]
- * @param beta [description]
- * @param u [description]
- * @param dt [description]
+ * @param states 	Poiter to structure holding the states
+ * @param settings 	Pointer to structure holding the settings and temporary matrices
+ * @param gyro 		Gyro input
+ * @param acc 		Accelerometer input
+ * @param mag 		Magnetometer input
+ * @param beta 		Mass compensated thrust coefficient
+ * @param u_sum		The sum of squared control signals
+ * @param dt 		The size of the time step
  */
 void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 							Attitude_Estimation_Settings_Type *settings, 
@@ -128,7 +132,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 							float acc[3],
 							float mag[3],
 							float beta,
-							float u,
+							float u_sum,
 							float dt)
 {
 	uint32_t i, j;

@@ -307,7 +307,7 @@ void print_quaternion(quaternion_t *q)
 void print_matrix(float *a, uint32_t r, uint32_t c)
 {
 	int i, j, k;
-	uint8_t buff[40];
+	uint8_t buff[20];
 
 	for (i = 0; i < r; i++)
 	{

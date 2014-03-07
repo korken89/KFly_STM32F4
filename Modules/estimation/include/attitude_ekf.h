@@ -28,14 +28,14 @@ typedef struct
 
 typedef struct
 {
-	float Sp[6][6];		/* Square-root error covariance matrix */
-	float T1[6][6];		/* Temporary matrix for the QR calculations */
-	float Sq[6][6];		/* Square-root process covariance matrix */
-	float Ss[3][3];		/* Square-root innovation covariance matrix */
-	float T2[3][3];
-	float Sr[3][3];		/* Square-root observation covariance matrix */
-	float T3[3][6];
-	float  K[6][3];		/* Kalman gain */
+	float Sp[6][6];		/* Square-root error covariance matrix 			*/
+	float T1[6][6];		/* Temporary matrix 							*/
+	float Sq[6][6];		/* Square-root process covariance matrix 		*/
+	float Ss[3][3];		/* Square-root innovation covariance matrix 	*/
+	float T2[3][3];		/* Temporary matrix 							*/
+	float Sr[3][3];		/* Square-root observation covariance matrix 	*/
+	float T3[3][6];		/* Temporary matrix 							*/
+	float  K[6][3];		/* Kalman gain matrix							*/
 } Attitude_Estimation_Settings_Type;
 
 /* Global variable defines */
@@ -53,7 +53,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 							float acc[3],
 							float mag[3],
 							float beta,
-							float u,
+							float u_sum,
 							float dt);
 
 #endif
