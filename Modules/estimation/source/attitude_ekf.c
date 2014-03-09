@@ -20,8 +20,6 @@ void AttitudeEstimationInit(Attitude_Estimation_States_Type *states,
 							vector3f_t *start_bias,
 							float dt)
 {
-	float s_q, s_b, s_a, s_t, s_p;
-
 	/* Initialize states */
 	states->q.q0 = start_attitude->q0;
 	states->q.q1 = start_attitude->q1;
@@ -44,9 +42,6 @@ void AttitudeEstimationInit(Attitude_Estimation_States_Type *states,
 	float (*T2)[3] = settings->T2;
 	float (*T3)[6] = settings->T3;
 	float (*K)[3] = settings->K;
-
-	/* Error setting */
-	s_p = 10.0;
 
 	/* Zero matrices*/
 	create_zero(&Sp[0][0], 6, 6);
