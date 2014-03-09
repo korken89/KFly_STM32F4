@@ -40,70 +40,29 @@ void AttitudeEstimationInit(Attitude_Estimation_States_Type *states,
 	/* Cast the settings for better looking code, ex: settings->Sp[1][1] is now Sp[1][1] */
 	float (*Sp)[6] = settings->Sp;
 	float (*T1)[6] = settings->T1;
-	float (*Sq)[6] = settings->Sq;
 	float (*Ss)[3] = settings->Ss;
 	float (*T2)[3] = settings->T2;
-	float (*Sr)[3] = settings->Sr;
 	float (*T3)[6] = settings->T3;
 	float (*K)[3] = settings->K;
-
-	/* Model settings */
-	s_q = 0.01f;
-	s_b = 0.001f*dt;
-
-	/* Measurement settings */
-	s_a = 100.0f;
-	s_t = 1000.0f;
 
 	/* Error setting */
 	s_p = 10.0;
 
 	/* Zero matrices*/
 	create_zero(&Sp[0][0], 6, 6);
-	create_zero(&Sq[0][0], 6, 6);
-	create_zero(&Sr[0][0], 3, 3);
 	create_zero(&Ss[0][0], 3, 3);
 	create_zero(&T1[0][0], 6, 6);
 	create_zero(&T2[0][0], 3, 3);
 	create_zero(&T3[0][0], 3, 6);
 	create_zero(&K[0][0], 6, 3);
 
-	/* Model covariance */
-	Sq[0][0] = s_q;
-	Sq[1][1] = s_q;
-	Sq[2][2] = s_q;
-
-	Sq[3][3] = s_b;
-	Sq[4][4] = s_b;
-	Sq[5][5] = s_b;
-
-	Sq[0][3] = -0.5f * s_b;
-	Sq[1][4] = -0.5f * s_b;
-	Sq[2][5] = -0.5f * s_b;
-
-	Sq[3][0] = -0.5f * s_b;
-	Sq[4][1] = -0.5f * s_b;
-	Sq[5][2] = -0.5f * s_b;
-
-	/* Create the model square-root factor */
-	chol_decomp_upper(&Sq[0][0], 6);
-
-	/* Mesurement covariance */
-	Sr[0][0] = s_a;
-	Sr[1][1] = s_a;
-	Sr[2][2] = s_t;
-
-	/* Create the measurement square-root factor */
-	chol_decomp_upper(&Sr[0][0], 3);
-
-
 	/* Set the starting error covariance matrix */
-	Sp[0][0] = s_p;
-	Sp[1][1] = s_p;
-	Sp[2][2] = s_p;
-	Sp[3][3] = s_p;
-	Sp[4][4] = s_p;
-	Sp[5][5] = s_p;
+	Sp[0][0] = S_P;
+	Sp[1][1] = S_P;
+	Sp[2][2] = S_P;
+	Sp[3][3] = S_P;
+	Sp[4][4] = S_P;
+	Sp[5][5] = S_P;
 
 	/* Create the error covariance square-root factor */
 	chol_decomp_upper(&Sp[0][0], 6);
@@ -146,10 +105,8 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	/* Cast the settings for better looking code, ex: settings->Sp[1][1] is now Sp[1][1] */
 	float (*Sp)[6] = settings->Sp;
 	float (*T1)[6] = settings->T1;
-	float (*Sq)[6] = settings->Sq;
 	float (*Ss)[3] = settings->Ss;
 	float (*T2)[3] = settings->T2;
-	float (*Sr)[3] = settings->Sr;
 	float (*T3)[6] = settings->T3;
 	float (*K)[3] = settings->K;
 
@@ -230,32 +187,30 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	Sp[5][2] += -Sp[5][5] * dt;
 
 	/* Copy the Sq values to the temporary matrix for use in the decomposition */
-	T1[0][0] = Sq[0][0];
-	T1[0][1] = Sq[0][1];
-	T1[0][2] = Sq[0][2];
-	T1[0][3] = Sq[0][3];
-	T1[0][4] = Sq[0][4];
-	T1[0][5] = Sq[0][5];
+	T1[0][0] = SQ_1;
+	T1[1][1] = SQ_1;
+	T1[2][2] = SQ_1;
 
-	T1[1][1] = Sq[1][1];
-	T1[1][2] = Sq[1][2];
-	T1[1][3] = Sq[1][3];
-	T1[1][4] = Sq[1][4];
-	T1[1][5] = Sq[1][5];
+	T1[3][3] = SQ_2;
+	T1[4][4] = SQ_2;
+	T1[5][5] = SQ_2;
 
-	T1[2][2] = Sq[2][2];
-	T1[2][3] = Sq[2][3];
-	T1[2][4] = Sq[2][4];
-	T1[2][5] = Sq[2][5];
+	T1[0][3] = SQ_3;
+	T1[1][4] = SQ_3;
+	T1[2][5] = SQ_3;
 
-	T1[3][3] = Sq[3][3];
-	T1[3][4] = Sq[3][4];
-	T1[3][5] = Sq[3][5];
-
-	T1[4][4] = Sq[4][4];
-	T1[4][5] = Sq[4][5];
-
-	T1[5][5] = Sq[5][5];
+	T1[0][1] = 0.0f;
+	T1[0][2] = 0.0f;
+	T1[0][4] = 0.0f;
+	T1[0][5] = 0.0f;
+	T1[1][2] = 0.0f;
+	T1[1][3] = 0.0f;
+	T1[1][5] = 0.0f;
+	T1[2][3] = 0.0f;
+	T1[2][4] = 0.0f;
+	T1[3][4] = 0.0f;
+	T1[3][5] = 0.0f;
+	T1[4][5] = 0.0f;
 
 	/* Perform the QR decomposition: Sp_k|k-1 = QR([F_k * Sp_k-1|k-1, Sq]^T) */
 	qr_decomp_tria(&Sp[0][0], 6);
@@ -308,17 +263,13 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 
 	/* In the lower half of the Ss matrix I put the observation covariance matrix
 	   since the QR decomposition does not distinguish on rows. */
-	T2[0][0] = Sr[0][0]; 
-	T2[0][1] = Sr[0][1];
-	T2[0][2] = Sr[0][2];
+	T2[0][0] = SR_1; 
+	T2[1][1] = SR_1;
+	T2[2][2] = SR_2;
 
-	T2[1][0] = 0.0f; 
-	T2[1][1] = Sr[1][1];
-	T2[1][2] = Sr[1][2];
-
-	T2[2][0] = 0.0f; 
-	T2[2][1] = 0.0f; 
-	T2[2][2] = Sr[2][2];
+	T2[0][1] = 0.0f;
+	T2[0][2] = 0.0f;
+	T2[1][2] = 0.0f;
 
 	/* Perform the QR decomposition : Ss_k = QR([H_k * Sp_k|k-1, Sr]^T) */
 	qr_decomp_tria(&Ss[0][0], 3);

@@ -69,9 +69,6 @@ void vTaskRunEstimation(void *pvParameters)
 }
 
 
-
-
-
 uint32_t myitoa(int16_t num, uint8_t *buf)
 {
 	int32_t i;
