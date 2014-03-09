@@ -41,7 +41,6 @@ void AttitudeEstimationInit(Attitude_Estimation_States_Type *states,
 	float (*Ss)[3] = settings->Ss;
 	float (*T2)[3] = settings->T2;
 	float (*T3)[6] = settings->T3;
-	float (*K)[3] = settings->K;
 
 	/* Zero matrices*/
 	create_zero(&Sp[0][0], 6, 6);
@@ -49,7 +48,6 @@ void AttitudeEstimationInit(Attitude_Estimation_States_Type *states,
 	create_zero(&T1[0][0], 6, 6);
 	create_zero(&T2[0][0], 3, 3);
 	create_zero(&T3[0][0], 3, 6);
-	create_zero(&K[0][0], 6, 3);
 
 	/* Set the starting error covariance matrix */
 	Sp[0][0] = S_P;
@@ -103,7 +101,6 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	float (*Ss)[3] = settings->Ss;
 	float (*T2)[3] = settings->T2;
 	float (*T3)[6] = settings->T3;
-	float (*K)[3] = settings->K;
 
 	/* Calculate w_hat */
 	w_hat.x = gyro[0] - states->wb.x;
@@ -299,76 +296,60 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 
 
 	/*
-	 * 3) Calculate the Kalman gain 
+	 * 3) Calculate the Kalman gain, 4) Calculate the updated state: 
 	 */
 
-	/* K = Sp * T3^T * Ss^-1 */
+	/* K     = Sp * T3^T * Ss^-1 
+	 * x_hat = K * y
+	 */
 	t1 = Sp[0][0] * T3[0][0];
 	t2 = Sp[0][0] * T3[1][0];
 	t3 = Sp[0][0] * T3[2][0];
 
-	K[0][0] = Ss[0][0] * t1 + Ss[0][1] * t2 + Ss[0][2] * t3;
-	K[0][1] = 				  Ss[1][1] * t2 + Ss[1][2] * t3;
-	K[0][2] = 					  			  Ss[2][2] * t3;
+	x_hat[0]  = (Ss[0][0] * t1 + Ss[0][1] * t2 + Ss[0][2] * t3) * y.x;
+	x_hat[0] += 				(Ss[1][1] * t2 + Ss[1][2] * t3) * y.y;
+	x_hat[0] += 				  				(Ss[2][2] * t3) * y.z;
 
 	t1 = Sp[0][1] * T3[0][0] + Sp[1][1] * T3[0][1];
 	t2 = Sp[0][1] * T3[1][0] + Sp[1][1] * T3[1][1];
 	t3 = Sp[0][1] * T3[2][0] + Sp[1][1] * T3[2][1];
 
-	K[1][0] = Ss[0][0] * t1 + Ss[0][1] * t2 + Ss[0][2] * t3;
-	K[1][1] = 				  Ss[1][1] * t2 + Ss[1][2] * t3;
-	K[1][2] = 					  			  Ss[2][2] * t3;
+	x_hat[1]  = (Ss[0][0] * t1 + Ss[0][1] * t2 + Ss[0][2] * t3) * y.x;
+	x_hat[1] += 				(Ss[1][1] * t2 + Ss[1][2] * t3) * y.y;
+	x_hat[1] += 				  				(Ss[2][2] * t3) * y.z;
 
 	t1 = Sp[0][2] * T3[0][0] + Sp[1][2] * T3[0][1] + Sp[2][2] * T3[0][2];
 	t2 = Sp[0][2] * T3[1][0] + Sp[1][2] * T3[1][1] + Sp[2][2] * T3[1][2];
 	t3 = Sp[0][2] * T3[2][0] + Sp[1][2] * T3[2][1] + Sp[2][2] * T3[2][2];
 
-	K[2][0] = Ss[0][0] * t1 + Ss[0][1] * t2 + Ss[0][2] * t3;
-	K[2][1] = 				  Ss[1][1] * t2 + Ss[1][2] * t3;
-	K[2][2] = 					  			  Ss[2][2] * t3;
+	x_hat[2]  = (Ss[0][0] * t1 + Ss[0][1] * t2 + Ss[0][2] * t3) * y.x;
+	x_hat[2] += 				(Ss[1][1] * t2 + Ss[1][2] * t3) * y.y;
+	x_hat[2] += 				  				(Ss[2][2] * t3) * y.z;
 
 	t1 = Sp[0][3] * T3[0][0] + Sp[1][3] * T3[0][1] + Sp[2][3] * T3[0][2];
 	t2 = Sp[0][3] * T3[1][0] + Sp[1][3] * T3[1][1] + Sp[2][3] * T3[1][2];
 	t3 = Sp[0][3] * T3[2][0] + Sp[1][3] * T3[2][1] + Sp[2][3] * T3[2][2];
 
-	K[3][0] = Ss[0][0] * t1 + Ss[0][1] * t2 + Ss[0][2] * t3;
-	K[3][1] = 				  Ss[1][1] * t2 + Ss[1][2] * t3;
-	K[3][2] = 					  			  Ss[2][2] * t3;
+	x_hat[3]  = (Ss[0][0] * t1 + Ss[0][1] * t2 + Ss[0][2] * t3) * y.x;
+	x_hat[3] += 				(Ss[1][1] * t2 + Ss[1][2] * t3) * y.y;
+	x_hat[3] += 				  				(Ss[2][2] * t3) * y.z;
 
 	t1 = Sp[0][4] * T3[0][0] + Sp[1][4] * T3[0][1] + Sp[2][4] * T3[0][2];
 	t2 = Sp[0][4] * T3[1][0] + Sp[1][4] * T3[1][1] + Sp[2][4] * T3[1][2];
 	t3 = Sp[0][4] * T3[2][0] + Sp[1][4] * T3[2][1] + Sp[2][4] * T3[2][2];
 
-	K[4][0] = Ss[0][0] * t1 + Ss[0][1] * t2 + Ss[0][2] * t3;
-	K[4][1] = 				  Ss[1][1] * t2 + Ss[1][2] * t3; 
-	K[4][2] = 					  			  Ss[2][2] * t3;
+	x_hat[4]  = (Ss[0][0] * t1 + Ss[0][1] * t2 + Ss[0][2] * t3) * y.x;
+	x_hat[4] += 				(Ss[1][1] * t2 + Ss[1][2] * t3) * y.y;
+	x_hat[4] += 				  				(Ss[2][2] * t3) * y.z;
 
 	t1 = Sp[0][5] * T3[0][0] + Sp[1][5] * T3[0][1] + Sp[2][5] * T3[0][2];
 	t2 = Sp[0][5] * T3[1][0] + Sp[1][5] * T3[1][1] + Sp[2][5] * T3[1][2];
 	t3 = Sp[0][5] * T3[2][0] + Sp[1][5] * T3[2][1] + Sp[2][5] * T3[2][2];
 
-	K[5][0] = Ss[0][0] * t1 + Ss[0][1] * t2 + Ss[0][2] * t3;
-	K[5][1] = 				  Ss[1][1] * t2 + Ss[1][2] * t3;
-	K[5][2] = 					  			  Ss[2][2] * t3;
+	x_hat[5]  = (Ss[0][0] * t1 + Ss[0][1] * t2 + Ss[0][2] * t3) * y.x;
+	x_hat[5] += 				(Ss[1][1] * t2 + Ss[1][2] * t3) * y.y;
+	x_hat[5] += 				  				(Ss[2][2] * t3) * y.z;
 
-
-	/* 
-	 * 4) Calculate the updated state: 
-	 */
-	/*
-	 K00*yx + K01*yy + K02*yz
-	 K10*yx + K11*yy + K12*yz
-	 K20*yx + K21*yy + K22*yz
-	 K30*yx + K31*yy + K32*yz
-	 K40*yx + K41*yy + K42*yz
-	 K50*yx + K51*yy + K52*yz
-	*/
- 	x_hat[0] = K[0][0] * y.x + K[0][1] * y.y + K[0][2] * y.z;
- 	x_hat[1] = K[1][0] * y.x + K[1][1] * y.y + K[1][2] * y.z;
- 	x_hat[2] = K[2][0] * y.x + K[2][1] * y.y + K[2][2] * y.z;
- 	x_hat[3] = K[3][0] * y.x + K[3][1] * y.y + K[3][2] * y.z;
- 	x_hat[4] = K[4][0] * y.x + K[4][1] * y.y + K[4][2] * y.z;
- 	x_hat[5] = K[5][0] * y.x + K[5][1] * y.y + K[5][2] * y.z;
 
 	/*
 	 * 5) Calculate the square-root factor of the corresponding error covariance matrix:

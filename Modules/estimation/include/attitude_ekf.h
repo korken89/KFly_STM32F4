@@ -54,7 +54,6 @@ typedef struct
 	float Ss[3][3];		/* Square-root innovation covariance matrix 	*/
 	float T2[3][3];		/* Temporary matrix 							*/
 	float T3[3][6];		/* Temporary matrix 							*/
-	float  K[6][3];		/* Kalman gain matrix							*/
 } Attitude_Estimation_Settings_Type;
 
 /* Global variable defines */
