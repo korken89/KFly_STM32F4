@@ -214,6 +214,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	 * 							*
 	 ****************************/
 
+
 	/*
 	 * 1) Subtract the predicted measurement from the true measurement:
 	 */
@@ -366,6 +367,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
  	/* Create the updated error covariance matrix Sp = T1 * Sp 
  	   (the chol_downdate creates an upper triangular matrix, no transpose needed)  */
  	uu_mul(&T1[0][0], &Sp[0][0], 6);
+
 
 	/*
 	 * 6) Apply the error states to the estimate
