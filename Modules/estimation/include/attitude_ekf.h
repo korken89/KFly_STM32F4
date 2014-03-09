@@ -39,6 +39,10 @@
 #define SR_1 			(sqrtf(SR_A))
 #define SR_2 			(sqrtf(SR_T))
 
+/* GRP settings */
+#define GRP_A			(1.0f)
+#define GRP_F			(2.0f * (GRP_A + 1.0f))
+
 
 /* Typedefs */
 typedef struct

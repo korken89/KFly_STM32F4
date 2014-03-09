@@ -355,10 +355,10 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	 * 5) Calculate the square-root factor of the corresponding error covariance matrix:
 	 */
 
-	/* Create an 6x6 identity matrix */
- 	create_identity(&T1[0][0], 6);
+	/* Create an 6x6  upper triangular identity matrix */
+ 	create_identity_tria(&T1[0][0], 6);
 
- 	/* Perform the Cholesky downdate with each column of T3 */
+ 	/* Perform the Cholesky downdate with each column of T3 as the downdating vector */
  	chol_downdate(&T1[0][0], &T3[0][0], 6);
  	chol_downdate(&T1[0][0], &T3[1][0], 6);
  	chol_downdate(&T1[0][0], &T3[2][0], 6);
@@ -370,14 +370,11 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	/*
 	 * 6) Apply the error states to the estimate
 	 */
-	/* TODO: Change to GRP conversion */
-	dq_int.q0 = 1;
-	dq_int.q1 = 0.5f * x_hat[0];
-	dq_int.q2 = 0.5f * x_hat[1];
-	dq_int.q3 = 0.5f * x_hat[2];
+	theta.x = x_hat[0];
+	theta.y = x_hat[1];
+	theta.z = x_hat[2];
 
-	/* Make sure the quaternion has length one */
-	qnormalize(&dq_int);
+	dq_int = grp2q(theta, GRP_A, GRP_F);
 
 	/* Use the delta quaternion to produce the current estimate of the attitude */
 	states->q = qmult(dq_int, states->q);
