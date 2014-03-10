@@ -21,28 +21,29 @@
 #define ESTIMATION_DT 	(0.005f)
 
 /* Process covariances */
-#define SQ_Q			(0.01f)
-#define SQ_B 			(0.001f * ESTIMATION_DT)
+#define SQ_Q			(0.01f)						/* Quaternion error covariance */
+#define SQ_B 			(0.001f * ESTIMATION_DT)	/* Gyro bias covariance */ 
 
 /* Observation covariances */
-#define SR_A 			(100.0f)
-#define SR_T 			(1000.0f)
+#define SR_A 			(100.0f)					/* Acceleration error covariance */
+#define SR_T 			(1000.0f)					/* Magnetometer error covariance */
 
 /* Starting error covariance */
-#define S_P 			(10.0f)
+#define S_P 			(100.0f)					/* Starting value of the diagonal of P */
 
-/* Calculate the square-root factors (generated from Matlab) */
+/* Calculate the square-root factors 
+ * Generated from Matlab, do not change */
 #define SQ_1 			(sqrtf(SQ_Q))
 #define SQ_2 			(0.5f * sqrtf(SQ_B * (4.0f * SQ_Q - SQ_B) / SQ_Q))
 #define SQ_3 			(-SQ_B / (2.0f * sqrtf(SQ_Q)))
-
 #define SR_1 			(sqrtf(SR_A))
 #define SR_2 			(sqrtf(SR_T))
+/* End of Matlab generated code */
 
 /* GRP settings */
 #define GRP_A			(1.0f)
-#define GRP_F			(2.0f * (GRP_A + 1.0f))
-
+#define GRP_F			(2.0f * (GRP_A + 1.0f)) 	/* This choice of GRP_F makes the small 
+												 	 * angle approximation equal the angle  */
 
 /* Typedefs */
 typedef struct
@@ -54,10 +55,10 @@ typedef struct
 typedef struct
 {
 	float Sp[6][6];		/* Square-root error covariance matrix 			*/
-	float T1[6][6];		/* Temporary matrix 							*/
+	float T1[6][6];		/* Temporary matrix 1							*/
 	float Ss[3][3];		/* Square-root innovation covariance matrix 	*/
-	float T2[3][3];		/* Temporary matrix 							*/
-	float T3[3][6];		/* Temporary matrix 							*/
+	float T2[3][3];		/* Temporary matrix 2							*/
+	float T3[3][6];		/* Temporary matrix 3							*/
 } Attitude_Estimation_Settings_Type;
 
 /* Global variable defines */
