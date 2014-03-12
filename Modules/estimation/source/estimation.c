@@ -19,87 +19,60 @@
 void EstimationInit(void)
 {
 	xTaskCreate(vTaskRunEstimation,
-				"Estimation",
-				2048, // 16kB
+				"Attitude Estimation",
+				2048,
 				0,
 				configMAX_PRIORITIES - 2,
 				0);
 }
 
-volatile float gyro[3] = {0.01f, 0.01f, 0.01f};
-volatile float acc[3] = {0.0f, 0.0f, 9.81f};
-volatile float mag[3] = {5.0f, 0.0f, 1.0f};
-
 void vTaskRunEstimation(void *pvParameters)
 {
-	uint32_t i = 0;
-
 	Attitude_Estimation_States_Type states;
 	Attitude_Estimation_Settings_Type settings;
+	Sensor_Data_Type *sensor_data;
 
+	uint32_t i;
 	quaternion_t q_init;
+	vector3f_t wb_init = {0.0f, 0.0f, 0.0f};
+	vector3f_t acc_init = {0.0f, 0.0f, 0.0f};
+	vector3f_t mag_init = {0.0f, 0.0f, 0.0f};
 
-	q_init.q0 = 1.0f;
-	q_init.q1 = 0.0f;
-	q_init.q2 = 0.0f;
-	q_init.q3 = 0.0f;
+	sensor_data = ptrGetSensorDataPointer();
 
-	vector3f_t wb_init;
+	vTaskDelay(5000);
 
-	wb_init.x = 0.0f;
-	wb_init.y = 0.0f;
-	wb_init.z = 0.0f;
+	/* Take 100 measurements to create a starting guess for the filter */
+	for (i = 0; i < 100; i++)
+	{
+		xSemaphoreTake(NewMeasurementAvaiable, portMAX_DELAY);
 
+		acc_init = vector_add(acc_init, sensor_data->acc);
+		mag_init = vector_add(mag_init, sensor_data->mag);
+	}
+
+	/* Scale all the measurements to get the mean value */
+	acc_init = vector_scale(acc_init, 1.0f / ((float) i));
+	mag_init = vector_scale(mag_init, 1.0f / ((float) i));
+
+	/* Generate the starting guess quaternion */
+	GenerateStartingGuess(&acc_init, &mag_init, &q_init);
+
+	/* Initialize the estimation */
 	AttitudeEstimationInit(&states, &settings, &q_init, &wb_init, 0.005f);
 
 	while(1)
 	{
-		vTaskDelay(10000);
+		xSemaphoreTake(NewMeasurementAvaiable, portMAX_DELAY);
 
 		InnovateAttitudeEKF(&states,
 							&settings, 
-							(float *)gyro,
-							(float *)acc,
-							(float *)mag,
+							(float *)&sensor_data->gyro,
+							(float *)&sensor_data->acc,
+							(float *)&sensor_data->mag,
 							0.0f,
 							0.0f,
 							0.005f);
-
 	}
-}
-
-
-uint32_t myitoa(int16_t num, uint8_t *buf)
-{
-	int32_t i;
-
-	if (num == 0)
-	{
-		buf[10] = '0';
-		return 10;
-	}
-
-	if (num < 0)
-	{
-		num = -num;
-
-		for(i = 10; (num && i); i--)
-		{
-			buf[i] = "0123456789"[num % 10];
-			num /= 10;
-		}
-
-		buf[i--] = '-';
-	}
-	else
-	{
-		for(i = 10; (num && i); i--)
-		{
-			buf[i] = "0123456789"[num % 10];
-			num /= 10;
-		}
-	}
-	
-	return (i+1);
 }
 

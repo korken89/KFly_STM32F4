@@ -3,6 +3,7 @@
 
 /* Standard includes */
 #include "stm32f4xx.h"
+#include <math.h>
 
 /* System includes */
 #include "quaternion.h"
@@ -38,6 +39,7 @@
 #define SQ_3 			(-SQ_B / (2.0f * sqrtf(SQ_Q)))
 #define SR_1 			(sqrtf(SR_A))
 #define SR_2 			(sqrtf(SR_T))
+#define SP_1			(sqrtf(S_P))
 /* End of Matlab generated code */
 
 /* GRP settings */
@@ -69,6 +71,8 @@ void AttitudeEstimationInit(Attitude_Estimation_States_Type *states,
 							quaternion_t *start_attitude,
 							vector3f_t *start_bias,
 							float dt);
+
+void GenerateStartingGuess(vector3f_t *acc, vector3f_t *mag, quaternion_t *attitude_guess);
 
 void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 							Attitude_Estimation_Settings_Type *settings, 

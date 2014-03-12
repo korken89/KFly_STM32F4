@@ -49,18 +49,37 @@ void AttitudeEstimationInit(Attitude_Estimation_States_Type *states,
 	create_zero(&T2[0][0], 3, 3);
 	create_zero(&T3[0][0], 3, 6);
 
-	/* Set the starting error covariance matrix */
-	Sp[0][0] = S_P;
-	Sp[1][1] = S_P;
-	Sp[2][2] = S_P;
-	Sp[3][3] = S_P;
-	Sp[4][4] = S_P;
-	Sp[5][5] = S_P;
+	/* Set the starting square-root error covariance matrix */
+	Sp[0][0] = SP_1;
+	Sp[1][1] = SP_1;
+	Sp[2][2] = SP_1;
+	Sp[3][3] = SP_1;
+	Sp[4][4] = SP_1;
+	Sp[5][5] = SP_1;
+}
 
-	/* Create the error covariance square-root factor */
-	chol_decomp_upper(&Sp[0][0], 6);
-	
-	
+void GenerateStartingGuess(vector3f_t *acc, vector3f_t *mag, quaternion_t *attitude_guess)
+{
+	float pitch, roll, yaw;
+
+	/* Generate pitch and roll from the accelerometer reading */
+	roll  = atan2f(-acc->y, acc->z);
+    pitch = atan2f(acc->x, sqrtf(acc->y * acc->y + acc->z * acc->z));
+
+    /* Generate yaw by compensating for the pitch and roll */
+    yaw = atan2f((-mag->y * fast_cos(roll) + mag->z * fast_sin(roll)), 
+    			 (mag->x * fast_cos(pitch) + mag->y * fast_sin(pitch) * fast_sin(roll) + mag->z * fast_sin(pitch) * fast_cos(roll)));
+
+    /* Prepare the angles for conversion to quaternions */
+    pitch *= 0.5f;
+    roll *= 0.5f;
+    yaw *= 0.5f;
+
+    /* Convert angles into quaternion */
+    attitude_guess->q0 = fast_cos(roll) * fast_cos(pitch) * fast_cos(yaw) + fast_sin(roll) * fast_sin(pitch) * fast_sin(yaw);
+    attitude_guess->q1 = fast_sin(roll) * fast_cos(pitch) * fast_cos(yaw) - fast_cos(roll) * fast_sin(pitch) * fast_sin(yaw);
+    attitude_guess->q2 = fast_cos(roll) * fast_sin(pitch) * fast_cos(yaw) + fast_sin(roll) * fast_cos(pitch) * fast_sin(yaw);
+    attitude_guess->q3 = fast_cos(roll) * fast_cos(pitch) * fast_sin(yaw) - fast_sin(roll) * fast_sin(pitch) * fast_cos(yaw);
 }
 
 /**
@@ -254,8 +273,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	Ss[2][1] = R[2][1] * Sp[2][2]; 
 	Ss[2][2] = R[2][2] * Sp[2][2];
 
-	/* In the lower half of the Ss matrix I put the observation covariance matrix
-	   since the QR decomposition does not distinguish on rows. */
+	/* In the T2 matrix I put the observation covariance matrix. */
 	T2[0][0] = SR_1; 
 	T2[1][1] = SR_1;
 	T2[2][2] = SR_2;
@@ -356,7 +374,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	 * 5) Calculate the square-root factor of the corresponding error covariance matrix:
 	 */
 
-	/* Create an 6x6  upper triangular identity matrix */
+	/* Create an 6x6 upper triangular identity matrix */
  	create_identity_tria(&T1[0][0], 6);
 
  	/* Perform the Cholesky downdate with each column of T3 as the downdating vector */

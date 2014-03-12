@@ -50,7 +50,8 @@ typedef enum
 	Cmd_GetEstimationAttitude 		= 49,
 	Cmd_GetEstimationVelocity 		= 50,
 	Cmd_GetEstimationPosition 		= 51,
-	Cmd_GetEstimationAllStates 		= 52
+	Cmd_GetEstimationAllStates 		= 52,
+	Cmd_ResetEstimation 			= 53
 } KFly_Command_Type;
 
 /* The structure to keep track of transfers through the state machine */

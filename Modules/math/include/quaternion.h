@@ -47,6 +47,28 @@ typedef struct
 /* Private function defines */
 
 /* Inline functions */
+static inline vector3f_t vector_add(vector3f_t v, vector3f_t w)
+{
+	vector3f_t r;
+
+	r.x = v.x + w.x;
+	r.y = v.y + w.y;
+	r.z = v.z + w.z;
+
+ 	return r;
+}
+
+static inline vector3f_t vector_scale(vector3f_t v, float scale)
+{
+	vector3f_t r;
+
+	r.x = v.x * scale;
+	r.y = v.y * scale;
+	r.z = v.z * scale;
+
+ 	return r;
+}
+
 static inline float vector_dot_product(vector3f_t v, vector3f_t w)
 {
 	float r;
