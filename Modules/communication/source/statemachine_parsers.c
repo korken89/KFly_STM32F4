@@ -502,8 +502,8 @@ void ParseSetSensorCalibration(Parser_Holder_Type *pHolder)
 			save_location[i] = pHolder->buffer[i];
 	}
 
-	//if (SemphrEstimationReset != NULL)
-	//	xSemaphoreGive(SemphrEstimationReset);
+	if (SemphrEstimationReset != NULL)
+		xSemaphoreGive(SemphrEstimationReset);
 }
 
 /**
@@ -578,6 +578,6 @@ void ParseGetEstimationAllStates(Parser_Holder_Type *pHolder)
 
 void ParseResetEstimation(Parser_Holder_Type *pHolder)
 {
-	//if (SemphrEstimationReset != NULL)
-	//	xSemaphoreGive(SemphrEstimationReset);
+	if (SemphrEstimationReset != NULL)
+		xSemaphoreGive(SemphrEstimationReset);
 }

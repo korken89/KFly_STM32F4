@@ -398,6 +398,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 
 	/* Use the delta quaternion to produce the current estimate of the attitude */
 	states->q = qmult(dq_int, states->q);
+	qnormalize(&states->q);
 
 	/* Update the estimation of the bias */
 	states->wb.x += x_hat[3];
