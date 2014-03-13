@@ -137,7 +137,7 @@ void main(void)
 	 * Estimation init.
 	 *
 	 * */
-	EstimationInit();
+	//EstimationInit();
 
 	/* *
 	 *

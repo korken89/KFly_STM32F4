@@ -24,13 +24,17 @@
 #include "attitude_ekf.h"
 
 /* Defines */
+#define ATTITUDE_ESTIMATION_STATES_SIZE		28
 
 /* Typedefs */
 
 /* Global variable defines */
+extern xSemaphoreHandle SemphrEstimationReset;
 
 /* Global function defines */
 void EstimationInit(void);
 void vTaskRunEstimation(void *);
+void ResetEstimation(Attitude_Estimation_States_Type *, Attitude_Estimation_Settings_Type *);
+Attitude_Estimation_States_Type *ptrGetAttitudeEstimationStates(void);
 
 #endif

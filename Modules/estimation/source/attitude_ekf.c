@@ -72,8 +72,8 @@ void GenerateStartingGuess(vector3f_t *acc, vector3f_t *mag, quaternion_t *attit
 
     /* Prepare the angles for conversion to quaternions */
     pitch *= 0.5f;
-    roll *= 0.5f;
-    yaw *= 0.5f;
+    roll  *= 0.5f;
+    yaw   *= 0.5f;
 
     /* Convert angles into quaternion */
     attitude_guess->q0 = fast_cos(roll) * fast_cos(pitch) * fast_cos(yaw) + fast_sin(roll) * fast_sin(pitch) * fast_sin(yaw);

@@ -16,6 +16,7 @@
 #include "sensor_calibration.h"
 #include "control.h"
 #include "circularbuffer.h"
+#include "estimation.h"
 
 /* Scheduler includes. */
 #include "FreeRTOS.h"

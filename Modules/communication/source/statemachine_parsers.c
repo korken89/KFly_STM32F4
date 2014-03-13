@@ -69,7 +69,7 @@ static const Parser_Type parser_lookup[128] = {
 	ParseGetEstimationVelocity,			/* 50: 	Cmd_GetEstimationVelocity 		*/
 	ParseGetEstimationPosition,			/* 51: 	Cmd_GetEstimationPosition 		*/
 	ParseGetEstimationAllStates,		/* 52: 	Cmd_GetEstimationAllStates 		*/
-	NULL,								/* 53 */
+	ParseResetEstimation,				/* 53:	Cmd_ResetEstimation				*/
 	NULL,								/* 54 */
 	NULL,								/* 55 */
 	NULL,								/* 56 */
@@ -501,6 +501,9 @@ void ParseSetSensorCalibration(Parser_Holder_Type *pHolder)
 		for (i = 0; i < SENSOR_CALIBERATION_SIZE; i++)
 			save_location[i] = pHolder->buffer[i];
 	}
+
+	//if (SemphrEstimationReset != NULL)
+	//	xSemaphoreGive(SemphrEstimationReset);
 }
 
 /**
@@ -573,3 +576,8 @@ void ParseGetEstimationAllStates(Parser_Holder_Type *pHolder)
 		GenerateAUXMessage(Cmd_GetEstimationAllStates, pHolder->Port);
 }
 
+void ParseResetEstimation(Parser_Holder_Type *pHolder)
+{
+	//if (SemphrEstimationReset != NULL)
+	//	xSemaphoreGive(SemphrEstimationReset);
+}

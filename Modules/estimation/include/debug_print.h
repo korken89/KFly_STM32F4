@@ -12,6 +12,6 @@
 void print_float(float f);
 void print_vector(vector3f_t *v);
 void print_quaternion(quaternion_t *q);
-void print_matrix(void *a, uint32_t r, uint32_t c);
+void print_matrix(float *a, uint32_t r, uint32_t c);
 
 #endif

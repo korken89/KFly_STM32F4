@@ -15,11 +15,13 @@
 #include "sensor_calibration.h"
 #include "sensor_read.h"
 #include "circularbuffer.h"
+#include "estimation.h"
 
 /* Scheduler includes. */
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
+#include "semphr.h"
 
 /* KFly includes */
 
@@ -60,5 +62,6 @@ void ParseGetEstimationAttitude(Parser_Holder_Type *pHolder);
 void ParseGetEstimationVelocity(Parser_Holder_Type *pHolder);
 void ParseGetEstimationPosition(Parser_Holder_Type *pHolder);
 void ParseGetEstimationAllStates(Parser_Holder_Type *pHolder);
+void ParseResetEstimation(Parser_Holder_Type *pHolder);
 
 #endif

@@ -33,7 +33,7 @@ void MPU6050Init(void)
 
 	/* Set internal clock source and Sleep mode */
 	send[0] = MPU6050_RA_PWR_MGMT_1; /* Power management register 1*/
-	send[1] = 0x01; /* X gyro as referance, sleep disabled */
+	send[1] = 0x01; /* X gyro as reference, sleep disabled */
 	I2C_MasterTransferData(I2C2, &Setup, I2C_TRANSFER_POLLING);
 
 	/* Set Gyro range */

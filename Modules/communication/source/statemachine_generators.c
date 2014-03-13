@@ -644,7 +644,7 @@ ErrorStatus GenerateGetEstimationRate(Circular_Buffer_Type *Cbuff)
  */
 ErrorStatus GenerateGetEstimationAttitude(Circular_Buffer_Type *Cbuff)
 {
-	return ERROR;
+	return ERROR;//GenerateGenericCommand(Cmd_GetEstimationAttitude, (uint8_t *)ptrGetAttitudeEstimationStates(), ATTITUDE_ESTIMATION_STATES_SIZE, Cbuff);
 }
 
 /**
