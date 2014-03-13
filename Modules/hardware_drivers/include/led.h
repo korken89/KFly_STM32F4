@@ -16,17 +16,17 @@
 #define LEDn				2
 
 #define LED0_PIN			GPIO_Pin_0
-#define LED0_GPIO_PORT		GPIOB
-#define LED0_GPIO_CLK		RCC_AHB1Periph_GPIOB
+#define LED0_GPIO_PORT		GPIOC
+#define LED0_GPIO_CLK		RCC_AHB1Periph_GPIOC
 
 #define LED1_PIN			GPIO_Pin_1
-#define LED1_GPIO_PORT		GPIOB
-#define LED1_GPIO_CLK		RCC_AHB1Periph_GPIOB
+#define LED1_GPIO_PORT		GPIOC
+#define LED1_GPIO_CLK		RCC_AHB1Periph_GPIOC
 
 typedef enum
 {
-	LED_GREEN = 0,
-	LED_RED = 1
+	LED_GREEN = 1,
+	LED_RED = 0
 } LED_TypeDef;
 
 void LEDInit(void);
