@@ -3,13 +3,13 @@
 
 /* Standard includes */
 #include "stm32f4xx.h"
+#include <math.h>
 
 /* System includes */
+#include "quaternion.h"
 #include "sensor_read.h"
 #include "filters.h"
 #include "comlink.h"
-#include "quaternion.h"
-#include <math.h>
 
 /* Scheduler includes */
 #include "FreeRTOS.h"
@@ -21,6 +21,11 @@
 
 /* Includes */
 #include "control.h"
+
+#ifdef __ATTITUDE_EKF_H
+	#error "already loaded"
+#endif
+
 #include "attitude_ekf.h"
 
 /* Defines */
@@ -34,6 +39,7 @@ extern xSemaphoreHandle SemphrEstimationReset;
 /* Global function defines */
 void EstimationInit(void);
 void vTaskRunEstimation(void *);
+
 void ResetEstimation(Attitude_Estimation_States_Type *, Attitude_Estimation_Settings_Type *);
 Attitude_Estimation_States_Type *ptrGetAttitudeEstimationStates(void);
 

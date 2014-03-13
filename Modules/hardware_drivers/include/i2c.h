@@ -10,9 +10,6 @@
 #include "queue.h"
 #include "semphr.h"
 
-/* Drivers */
-#include "comlink.h"
-
 /* KFly includes */
 
 /* Includes */
