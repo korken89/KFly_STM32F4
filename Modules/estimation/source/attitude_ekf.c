@@ -138,7 +138,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	dq_int.q3 = sdtheta * (w_hat.z / w_norm);
 
 	/* Use the delta quaternion to produce the current estimate of the attitude */
-	states->q = qmult(dq_int, states->q);
+	states->q = qmult(states->q, dq_int);
 
 	/* Calculate dtheta for each axis */
 	theta.x = w_hat.x * dt;
