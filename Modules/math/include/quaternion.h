@@ -113,7 +113,7 @@ static inline vector3f_t vector_rotation_transposed(float R[3][3], vector3f_t v)
 
 static inline float vector_norm(vector3f_t v)
 {
- 	return (v.x * v.x + v.y * v.y + v.z * v.z);
+ 	return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
 static inline quaternion_t grp2q(vector3f_t p, const float a, const float f)
