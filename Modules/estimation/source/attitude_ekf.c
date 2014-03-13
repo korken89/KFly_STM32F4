@@ -138,7 +138,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	dq_int.q3 = sdtheta * (w_hat.z / w_norm);
 
 	/* Use the delta quaternion to produce the current estimate of the attitude */
-	states->q = qmult(states->q, dq_int);
+	states->q = qmult(dq_int, states->q);
 
 	/* Calculate dtheta for each axis */
 	theta.x = w_hat.x * dt;
@@ -253,9 +253,9 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	/* Since the measurement prediction is based on the states and the 
 	   states are zero, then the measurement prediction is zero and the
 	   error is the measurement directly. */
-	y.x = - acc_B.y / acc_B.z;
-	y.y =   acc_B.x / acc_B.z;
-	y.z =   mag_B.y / mag_B.x;
+	y.x =   acc_B.y / acc_B.z;
+	y.y = - acc_B.x / acc_B.z;
+	y.z = - mag_B.y / mag_B.x;
 
 
 	/*
