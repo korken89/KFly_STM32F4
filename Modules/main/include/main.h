@@ -24,7 +24,7 @@
 #include "i2c.h"
 #include "uart.h"
 #include "mpu6050.h"
-#include "hmc5883l.h"
+#include "hmc5983.h"
 #include "crc.h"
 #include "pwm.h"
 #include "spi.h"

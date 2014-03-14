@@ -123,7 +123,7 @@ void main(void)
 	 *
 	 * */
 	MPU6050Init();
-	HMC5883LInit();
+	HMC5983Init();
 
 	/* *
 	 *

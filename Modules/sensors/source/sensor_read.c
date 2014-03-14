@@ -22,21 +22,21 @@ static Sensor_Raw_Data_Type Sensor_Raw_Data;	/* Holds the raw sensor data */
 
 /* Private function defines */
 static void MPU6050ParseData(void);
-static void HMC5883LParseData(void);
+static void HMC5983ParseData(void);
 static void EXTI_SensorInit(void);
 static void EXTI_MPU6050Init(void);
-static void EXTI_HMC5883LInit(void);
+static void EXTI_HMC5983Init(void);
 static void RevMPU6050Data(uint8_t *);
-static void RevHMC5883LData(uint8_t *);
+static void RevHMC5983Data(uint8_t *);
 
-xTaskHandle MPU6050Handle, HMC5883LHandle;
+xTaskHandle MPU6050Handle, HMC5983Handle;
 xSemaphoreHandle I2C_Available;
 xSemaphoreHandle NewMeasurementAvaiable;
 Sensor_Calibration_Type *sensor_calibration;
 
 /* Conversion union for sensor data */
 static MPU6050_Data_Union MPU6050_Data;
-static HMC5883L_Data_Union HMC5883L_Data;
+static HMC5983_Data_Union HMC5983_Data;
 static float MPU6050_Gyro_Gain;
 
 void SensorsInterruptReadInit(void)
@@ -91,12 +91,12 @@ void SensorsInterruptReadInit(void)
 			&MPU6050Handle);
 
 	/* Create task to retrieve Magnetometer data */
-	xTaskCreate(vTaskGetHMC5883LData,
-			"Get HMC5883L Data",
+	xTaskCreate(vTaskGetHMC5983Data,
+			"Get HMC5983 Data",
 			configMINIMAL_STACK_SIZE,
 			0,
 			configMAX_PRIORITIES - 1, // Highest priority available
-			&HMC5883LHandle);
+			&HMC5983Handle);
 }
 
 Sensor_Data_Type *ptrGetSensorDataPointer(void)
@@ -159,13 +159,13 @@ static void MPU6050ParseData(void)
 	Sensor_Raw_Data.gyro_z = MPU6050_Data.value.gyro_z;
 
 	/* Move the data to the public data holder and compensate for gains and biases from calibration */
-	Sensor_Data.acc.x = (((float)MPU6050_Data.value.acc_x) - sensor_calibration->accelerometer_bias.x) * sensor_calibration->accelerometer_gain.x;
-	Sensor_Data.acc.y = (((float)MPU6050_Data.value.acc_y) - sensor_calibration->accelerometer_bias.y) * sensor_calibration->accelerometer_gain.y;
-	Sensor_Data.acc.z = (((float)MPU6050_Data.value.acc_z) - sensor_calibration->accelerometer_bias.z) * sensor_calibration->accelerometer_gain.z;
+	Sensor_Data.acc.x = (((float)Sensor_Raw_Data.acc_x) - sensor_calibration->accelerometer_bias.x) * sensor_calibration->accelerometer_gain.x;
+	Sensor_Data.acc.y = (((float)Sensor_Raw_Data.acc_y) - sensor_calibration->accelerometer_bias.y) * sensor_calibration->accelerometer_gain.y;
+	Sensor_Data.acc.z = (((float)Sensor_Raw_Data.acc_z) - sensor_calibration->accelerometer_bias.z) * sensor_calibration->accelerometer_gain.z;
 
-	Sensor_Data.gyro.x = ((float)MPU6050_Data.value.gyro_x) * MPU6050_Gyro_Gain;
-	Sensor_Data.gyro.y = ((float)MPU6050_Data.value.gyro_y) * MPU6050_Gyro_Gain;
-	Sensor_Data.gyro.z = ((float)MPU6050_Data.value.gyro_z) * MPU6050_Gyro_Gain;
+	Sensor_Data.gyro.x = ((float)Sensor_Raw_Data.gyro_x) * MPU6050_Gyro_Gain;
+	Sensor_Data.gyro.y = ((float)Sensor_Raw_Data.gyro_y) * MPU6050_Gyro_Gain;
+	Sensor_Data.gyro.z = ((float)Sensor_Raw_Data.gyro_z) * MPU6050_Gyro_Gain;
 
 	xSemaphoreGiveFromISR(NewMeasurementAvaiable, &xHigherPriorityTaskWoken);
 	if (xHigherPriorityTaskWoken != pdFALSE)
@@ -184,18 +184,18 @@ static void MPU6050ParseData(void)
  * It will check so the I2C buss is free before starting the transfer.
  *
  * */
-void vTaskGetHMC5883LData(void *pvParameters)
+void vTaskGetHMC5983Data(void *pvParameters)
 {
-	uint8_t send = HMC5883L_RA_DATAX_H;
+	uint8_t send = HMC5983_RA_DATAX_H;
 	I2C_MASTER_SETUP_Type Setup;
 
-	Setup.Slave_Address_7bit = HMC5883L_ADDRESS;
+	Setup.Slave_Address_7bit = HMC5983_ADDRESS;
 	Setup.TX_Data = &send;
 	Setup.TX_Length = 1;
-	Setup.RX_Data = HMC5883L_Data.data;
+	Setup.RX_Data = HMC5983_Data.data;
 	Setup.RX_Length = 6;
 	Setup.Retransmissions_Max = 5;
-	Setup.Callback = HMC5883LParseData;
+	Setup.Callback = HMC5983ParseData;
 
 	while(1)
 	{
@@ -211,21 +211,21 @@ void vTaskGetHMC5883LData(void *pvParameters)
  * Notice that this is still in the interrupt.
  *
  * */
-static void HMC5883LParseData(void)
+static void HMC5983ParseData(void)
 {
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
-	RevHMC5883LData(HMC5883L_Data.data);
+	RevHMC5983Data(HMC5983_Data.data);
 
 	/* Move the raw data to the raw data structure */
-	Sensor_Raw_Data.mag_x = HMC5883L_Data.value.mag_x;
-	Sensor_Raw_Data.mag_y = HMC5883L_Data.value.mag_y;
-	Sensor_Raw_Data.mag_z = HMC5883L_Data.value.mag_z;
+	Sensor_Raw_Data.mag_x = - HMC5983_Data.value.mag_x;
+	Sensor_Raw_Data.mag_y = - HMC5983_Data.value.mag_y;
+	Sensor_Raw_Data.mag_z =   HMC5983_Data.value.mag_z;
 
 	/* Move the data to the public data holder and convert signs */
-	Sensor_Data.mag.x = (((float)HMC5883L_Data.value.mag_x) - sensor_calibration->magnetometer_bias.x) * sensor_calibration->magnetometer_gain.x;
-	Sensor_Data.mag.y = (((float)HMC5883L_Data.value.mag_y) - sensor_calibration->magnetometer_bias.y) * sensor_calibration->magnetometer_gain.y;
-	Sensor_Data.mag.z = (((float)HMC5883L_Data.value.mag_z) - sensor_calibration->magnetometer_bias.z) * sensor_calibration->magnetometer_gain.z;
+	Sensor_Data.mag.x = (((float)Sensor_Raw_Data.mag_x) - sensor_calibration->magnetometer_bias.x) * sensor_calibration->magnetometer_gain.x;
+	Sensor_Data.mag.y = (((float)Sensor_Raw_Data.mag_y) - sensor_calibration->magnetometer_bias.y) * sensor_calibration->magnetometer_gain.y;
+	Sensor_Data.mag.z = (((float)Sensor_Raw_Data.mag_z) - sensor_calibration->magnetometer_bias.z) * sensor_calibration->magnetometer_gain.z;
 
 	xSemaphoreGiveFromISR(I2C_Available, &xHigherPriorityTaskWoken);
 
@@ -236,7 +236,7 @@ static void HMC5883LParseData(void)
 static void EXTI_SensorInit(void)
 {
 	EXTI_MPU6050Init();
-	EXTI_HMC5883LInit();
+	EXTI_HMC5983Init();
 }
 
 static void EXTI_MPU6050Init(void)
@@ -274,7 +274,7 @@ static void EXTI_MPU6050Init(void)
 	NVIC_Init(&NVIC_InitStructure);
 }
 
-static void EXTI_HMC5883LInit(void)
+static void EXTI_HMC5983Init(void)
 {
 	EXTI_InitTypeDef   EXTI_InitStructure;
 	GPIO_InitTypeDef   GPIO_InitStructure;
@@ -311,7 +311,7 @@ static void EXTI_HMC5883LInit(void)
 
 /* *
  * This handler executes when the data ready from the sensors
- * fires. Line 14 is the MPU 6050 and Line 13 is the HMC5883L.
+ * fires. Line 14 is the MPU 6050 and Line 13 is the HMC5983.
  * */
 void EXTI15_10_IRQHandler(void)
 {
@@ -319,8 +319,8 @@ void EXTI15_10_IRQHandler(void)
 
 	if(EXTI_GetITStatus(EXTI_Line13) != RESET)
 	{
-		/* Data available, resume HMC5883L data receiving task */
-		xHigherPriorityTaskWoken = xTaskResumeFromISR(HMC5883LHandle);
+		/* Data available, resume HMC5983 data receiving task */
+		xHigherPriorityTaskWoken = xTaskResumeFromISR(HMC5983Handle);
 
 		if (xHigherPriorityTaskWoken != pdFALSE)
 			vPortYieldFromISR();
@@ -356,7 +356,7 @@ static void RevMPU6050Data(uint8_t *data)
 	}
 }
 
-static void RevHMC5883LData(uint8_t *data)
+static void RevHMC5983Data(uint8_t *data)
 {
 	uint8_t temp;
 

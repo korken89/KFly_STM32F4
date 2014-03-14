@@ -7,7 +7,7 @@
 /* System includes */
 #include "led.h"
 #include "mpu6050.h"
-#include "hmc5883l.h"
+#include "hmc5983.h"
 
 /* Scheduler includes */
 #include "FreeRTOS.h"
@@ -45,10 +45,10 @@ typedef union
 	struct
 	{
 		int16_t mag_x;
-		int16_t mag_z; // For some reason the HMC5883L has stored
+		int16_t mag_z; // For some reason the HMC5983 has stored
 		int16_t mag_y; // its axises in the order X, Z, Y
 	} value;
-} HMC5883L_Data_Union;
+} HMC5983_Data_Union;
 
 typedef struct
 {
@@ -88,7 +88,7 @@ void SensorsInterruptReadInit(void);
 Sensor_Data_Type *ptrGetSensorDataPointer(void);
 Sensor_Raw_Data_Type *ptrGetRawSensorDataPointer(void);
 void vTaskGetMPU6050Data(void *);
-void vTaskGetHMC5883LData(void *);
+void vTaskGetHMC5983Data(void *);
 void EXTI15_10_IRQHandler(void);
 
 #endif
