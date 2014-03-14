@@ -59,8 +59,8 @@ typedef struct {
 
 
 /* Macros */
-#define FLASH_CS_LOW()       	SPI1_CS_LOW()
-#define FLASH_CS_HIGH()      	SPI1_CS_HIGH()
+#define FLASH_CS_LOW()       	SPI1_FLASH_CS_LOW()
+#define FLASH_CS_HIGH()      	SPI1_FLASH_CS_HIGH()
 
 /* Global functions */
 void ExternalFlashInit(void);

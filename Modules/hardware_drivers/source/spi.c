@@ -22,12 +22,14 @@ void SPI1Init(void)
 
   /* Enable clock for used IO pins */
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
 
   /* Enable peripheral clock */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
 
   /* Configure pins used by SPI1
-   * PA4 = CS
+   * PA4 = RF_CS
+   * PC4 = FLASH_CS
    * PA5 = SCK
    * PA6 = MISO
    * PA7 = MOSI
@@ -44,7 +46,7 @@ void SPI1Init(void)
   GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_SPI1);
   GPIO_PinAFConfig(GPIOA, GPIO_PinSource7, GPIO_AF_SPI1);
 
-  /* Configure the chip select pin */
+  /* Configure the RF chip select pin */
   GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_4;
   GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -52,7 +54,11 @@ void SPI1Init(void)
   GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-  SPI1_CS_HIGH();
+  /* Configure the Flash chip select pin */
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+  SPI1_RF_CS_HIGH();
+  SPI1_FLASH_CS_HIGH();
 
   /* Configure the SPI as Master, Full Duplex */
   SPI_InitStructure.SPI_Direction           = SPI_Direction_2Lines_FullDuplex;
