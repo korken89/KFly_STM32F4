@@ -32,8 +32,8 @@ static const Generator_Type generator_lookup[128] = {
 	NULL,									/* 15:	Cmd_NextPackage					*/
 	NULL,									/* 16:	Cmd_ExitBootloader				*/
 	GenerateGetDeviceInfo,					/* 17:	Cmd_GetDeviceInfo				*/
-	NULL,									/* 18:	Cmd_SaveToFlash					*/
-	NULL,									/* 19 */
+	NULL,									/* 18:	Cmd_SetDeviceID					*/
+	NULL,									/* 19:  Cmd_SaveToFlash 				*/
 	NULL,									/* 20 */
 	NULL,									/* 21 */
 	NULL,									/* 22 */

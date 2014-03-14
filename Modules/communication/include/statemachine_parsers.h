@@ -38,6 +38,7 @@ Parser_Type GetParser(KFly_Command_Type command);
 void ParsePing(Parser_Holder_Type *pHolder);
 void ParseGetRunningMode(Parser_Holder_Type *pHolder);
 void ParseGetDeviceInfo(Parser_Holder_Type *pHolder);
+void ParseSetDeviceID(Parser_Holder_Type *pHolder);
 void ParseSaveToFlash(Parser_Holder_Type *pHolder);
 void ParseGetRateControllerData(Parser_Holder_Type *pHolder);
 void ParseSetRateControllerData(Parser_Holder_Type *pHolder);

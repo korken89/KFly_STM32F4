@@ -25,7 +25,8 @@ typedef enum
 	Cmd_NextPackage 				= 15,   /* Bootloader specific, shall always require ACK */
 	Cmd_ExitBootloader 				= 16,   /* Bootloader specific, shall always require ACK */
 	Cmd_GetDeviceInfo 				= 17,
-	Cmd_SaveToFlash 				= 18,
+	Cmd_SetDeviceID					= 18,
+	Cmd_SaveToFlash 				= 19,
 
 	Cmd_GetRateControllerData 		= 30,
 	Cmd_SetRateControllerData 		= 31,

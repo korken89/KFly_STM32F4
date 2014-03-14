@@ -34,8 +34,8 @@ static const Parser_Type parser_lookup[128] = {
 	NULL,								/* 15:	Cmd_NextPackage					*/
 	NULL,								/* 16:	Cmd_ExitBootloader				*/
 	ParseGetDeviceInfo,					/* 17:	Cmd_GetBootloaderVersion		*/
-	ParseSaveToFlash,					/* 18:	Cmd_SaveToFlash					*/
-	NULL,								/* 19 */
+	ParseSetDeviceID,					/* 18:	Cmd_SetDeviceID					*/
+	ParseSaveToFlash,					/* 19:	Cmd_SaveToFlash					*/
 	NULL,								/* 20 */
 	NULL,								/* 21 */
 	NULL,								/* 22 */
@@ -226,7 +226,7 @@ void ParseGetRunningMode(Parser_Holder_Type *pHolder)
 }
 
 /**
- * @brief 			Parses a GetBootloaderVersion command.
+ * @brief 			Parses a GetDeviceInfo command.
  * @details
  * 
  * @param pHolder 	Message holder containing information about the transmission. 
@@ -237,6 +237,17 @@ void ParseGetDeviceInfo(Parser_Holder_Type *pHolder)
 		GenerateUSBMessage(Cmd_GetDeviceInfo);
 	else
 		GenerateAUXMessage(Cmd_GetDeviceInfo, pHolder->Port);
+}
+
+/**
+ * @brief 			Parses a SetDeviceID command.
+ * @details
+ * 
+ * @param pHolder 	Message holder containing information about the transmission. 
+ */
+void ParseSetDeviceID(Parser_Holder_Type *pHolder)
+{
+
 }
 
 /**
