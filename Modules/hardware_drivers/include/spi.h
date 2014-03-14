@@ -23,8 +23,8 @@
 #define SPI1_RF_CS_LOW()		GPIO_ResetBits(GPIOA, GPIO_Pin_4)
 #define SPI1_RF_CS_HIGH()		GPIO_SetBits(GPIOA, GPIO_Pin_4)
 
-#define SPI1_FLASH_CS_LOW()		GPIO_ResetBits(GPIOA, GPIO_Pin_4)
-#define SPI1_FLASH_CS_HIGH()	GPIO_SetBits(GPIOA, GPIO_Pin_4)
+#define SPI1_FLASH_CS_LOW()		GPIO_ResetBits(GPIOC, GPIO_Pin_4)
+#define SPI1_FLASH_CS_HIGH()	GPIO_SetBits(GPIOC, GPIO_Pin_4)
 
 /* Typedefs */
 
