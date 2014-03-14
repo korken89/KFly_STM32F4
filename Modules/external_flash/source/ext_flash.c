@@ -37,7 +37,7 @@ static const Flash_Save_Template_Type Flash_Save_Structure[] = {
 
 void ExternalFlashInit(void)
 {
-	if (ExternalFlash_ReadID() != FLASH_OTHER_ID)
+	if (ExternalFlash_ReadID() != FLASH_M25P40_ID)
 	{
 		for (int j = 0; j < 10; j++)
 		{
