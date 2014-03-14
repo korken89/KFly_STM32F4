@@ -33,9 +33,9 @@ static const Parser_Type parser_lookup[128] = {
 	NULL,								/* 14:	Cmd_ReadLastFirmwarePackage		*/
 	NULL,								/* 15:	Cmd_NextPackage					*/
 	NULL,								/* 16:	Cmd_ExitBootloader				*/
-	ParseGetBootloaderVersion,			/* 17:	Cmd_GetBootloaderVersion		*/
-	ParseGetFirmwareVersion,			/* 18:	Cmd_GetFirmwareVersion			*/
-	ParseSaveToFlash,					/* 19:	Cmd_SaveToFlash					*/
+	ParseGetDeviceInfo,					/* 17:	Cmd_GetBootloaderVersion		*/
+	ParseSaveToFlash,					/* 18:	Cmd_SaveToFlash					*/
+	NULL,								/* 19 */
 	NULL,								/* 20 */
 	NULL,								/* 21 */
 	NULL,								/* 22 */
@@ -231,26 +231,12 @@ void ParseGetRunningMode(Parser_Holder_Type *pHolder)
  * 
  * @param pHolder 	Message holder containing information about the transmission. 
  */
-void ParseGetBootloaderVersion(Parser_Holder_Type *pHolder)
+void ParseGetDeviceInfo(Parser_Holder_Type *pHolder)
 {
 	if (pHolder->Port == PORT_USB)
-		GenerateUSBMessage(Cmd_GetBootloaderVersion);
+		GenerateUSBMessage(Cmd_GetDeviceInfo);
 	else
-		GenerateAUXMessage(Cmd_GetBootloaderVersion, pHolder->Port);
-}
-
-/**
- * @brief 			Parses a GetFirmwareVersion command.
- * @details
- * 
- * @param pHolder 	Message holder containing information about the transmission. 
- */
-void ParseGetFirmwareVersion(Parser_Holder_Type *pHolder)
-{
-	if (pHolder->Port == PORT_USB)
-		GenerateUSBMessage(Cmd_GetFirmwareVersion);
-	else
-		GenerateAUXMessage(Cmd_GetFirmwareVersion, pHolder->Port);
+		GenerateAUXMessage(Cmd_GetDeviceInfo, pHolder->Port);
 }
 
 /**

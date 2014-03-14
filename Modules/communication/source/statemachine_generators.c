@@ -31,9 +31,9 @@ static const Generator_Type generator_lookup[128] = {
 	NULL,									/* 14:	Cmd_ReadLastFirmwarePackage		*/
 	NULL,									/* 15:	Cmd_NextPackage					*/
 	NULL,									/* 16:	Cmd_ExitBootloader				*/
-	GenerateGetBootloaderVersion,			/* 17:	Cmd_GetBootloaderVersion		*/
-	GenerateGetFirmwareVersion,				/* 18:	Cmd_GetFirmwareVersion			*/
-	NULL,									/* 19:	Cmd_SaveToFlash					*/
+	GenerateGetDeviceInfo,					/* 17:	Cmd_GetDeviceInfo				*/
+	NULL,									/* 18:	Cmd_SaveToFlash					*/
+	NULL,									/* 19 */
 	NULL,									/* 20 */
 	NULL,									/* 21 */
 	NULL,									/* 22 */
@@ -432,49 +432,75 @@ ErrorStatus GenerateGetRunningMode(Circular_Buffer_Type *Cbuff)
 }
 
 /**
- * @brief 			Generates the message for the bootloader version.
+ * @brief 			Generates the message for the the ID of the system.
  * @details 
  * 
  * @param Cbuff 	Pointer to the circular buffer to put the data in.
  * 
  * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
  */
-ErrorStatus GenerateGetBootloaderVersion(Circular_Buffer_Type *Cbuff)
+ErrorStatus GenerateGetDeviceInfo(Circular_Buffer_Type *Cbuff)
 {
-	uint8_t *text;
-	uint32_t length;
+	uint8_t *device_id, *text_fw, *text_bl, *text_usr;
+	uint32_t length_fw, length_bl, length_usr, data_count;
+	uint8_t crc8;
+	uint16_t crc16;
+	int32_t i, j, count;
 
-	/* The string is at know location */
-	text = (uint8_t *)(BOOTLOADER_BASE + SW_VERSION_OFFSET);
+	/* The strings are at know location */
+	device_id = (uint8_t *)(0x1fff7a10);
+	text_bl = (uint8_t *)(BOOTLOADER_BASE + SW_VERSION_OFFSET);
+	text_fw = (uint8_t *)(FIRMWARE_BASE + SW_VERSION_OFFSET);
+	text_usr = NULL;
 
 	/* Find the length of the string */
-	length = myStrlen(text, 255);
+	length_bl = myStrlen(text_bl, 70);
+	length_fw = myStrlen(text_fw, 70);
+	length_usr = 0;
 
-	/* Send the string */
-	return GenerateGenericCommand(Cmd_GetBootloaderVersion, text, length, Cbuff);
-}
+	data_count = 12 + length_bl + length_fw + length_usr;
 
-/**
- * @brief 			Generates the message for the firmware version.
- * @details 
- * 
- * @param Cbuff 	Pointer to the circular buffer to put the data in.
- * 
- * @return 			Return ERROR if the message didn't fit or SUCCESS if it did fit.
- */
-ErrorStatus GenerateGetFirmwareVersion(Circular_Buffer_Type *Cbuff)
-{
-	uint8_t *text;
-	uint32_t length;
+	/* Check if the "best case" won't fit in the buffer */
+	if (CircularBuffer_SpaceLeft(Cbuff) < (data_count + 6))
+		return ERROR;
 
-	/* The string is at know location */
-	text = (uint8_t *)(FIRMWARE_BASE + SW_VERSION_OFFSET);
+	/* Add the header */
+	/* Write the starting SYNC (without doubling it) */
+	CircularBuffer_WriteSYNCNoIncrement(		Cbuff, &count, &crc8, &crc16); 
 
-	/* Find the length of the string */
-	length = myStrlen(text, 255);
+	/* Add all of the header to the message */
+	CircularBuffer_WriteNoIncrement(Cmd_GetDeviceInfo,	Cbuff, &count, &crc8, &crc16); 
+	CircularBuffer_WriteNoIncrement(data_count,			Cbuff, &count, &crc8, &crc16); 
+	CircularBuffer_WriteNoIncrement(crc8, 				Cbuff, &count, NULL,  &crc16);
 
-	/* Send the string */
-	return GenerateGenericCommand(Cmd_GetFirmwareVersion, text, length, Cbuff);
+	/* Get the Device ID */
+	for (i = 0; i < 12; i++) 
+		CircularBuffer_WriteNoIncrement(device_id[i], Cbuff, &count, NULL,  &crc16);
+
+	/* Get the Bootloader Version string */
+	for (i = 0; i < length_bl; i++) 
+		CircularBuffer_WriteNoIncrement(text_bl[i], Cbuff, &count, NULL,  &crc16);
+
+	CircularBuffer_WriteNoIncrement(0x00, Cbuff, &count, NULL,  &crc16);
+
+	/* Get the Firmware Version string */
+	for (i = 0; i < length_fw; i++) 
+		CircularBuffer_WriteNoIncrement(text_fw[j], Cbuff, &count, NULL,  &crc16);
+
+	CircularBuffer_WriteNoIncrement(0x00, Cbuff, &count, NULL,  &crc16);
+
+	/* Get the User string */
+	for (i = 0; i < length_usr; i++) 
+		CircularBuffer_WriteNoIncrement(text_usr[i], Cbuff, &count, NULL,  &crc16);
+
+	CircularBuffer_WriteNoIncrement(0x00, Cbuff, &count, NULL,  &crc16);
+
+	/* Add the CRC16 */
+	CircularBuffer_WriteNoIncrement((uint8_t)(crc16 >> 8), 	Cbuff, &count, NULL, NULL);
+	CircularBuffer_WriteNoIncrement((uint8_t)(crc16), 		Cbuff, &count, NULL, NULL);
+
+	/* Check if the message fit inside the buffer */
+	return CircularBuffer_Increment(count, Cbuff);
 }
 
 /**

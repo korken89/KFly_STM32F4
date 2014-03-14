@@ -49,7 +49,7 @@
 	#define GIT_VERSION 	"no version"
 #endif
 
-#define KFLY_VERSION	"KFly v" GIT_VERSION ", Build date: " DATE "\0"
+#define KFLY_VERSION	"v" GIT_VERSION ", Build date: " DATE "\0"
 
 
 void main(void);
