@@ -41,7 +41,7 @@ static float MPU6050_Gyro_Gain;
 
 void SensorsInterruptReadInit(void)
 {
-	vSemaphoreCreateBinary(I2C_Available);
+	I2C_Available = xSemaphoreCreateMutex();
 	vSemaphoreCreateBinary(NewMeasurementAvaiable);
 
 	/* If an error occurs halt the execution */

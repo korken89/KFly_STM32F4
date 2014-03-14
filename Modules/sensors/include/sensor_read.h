@@ -74,8 +74,7 @@ typedef struct
 
 typedef struct
 {
-	xSemaphoreHandle accelerometer;
-	xSemaphoreHandle gyroscope;
+	xSemaphoreHandle accelerometer_gyroscope;
 	xSemaphoreHandle magnetometer;
 	xSemaphoreHandle barometer;
 } Sensor_NewMeasurementAvailable_Type;
