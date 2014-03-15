@@ -448,17 +448,17 @@ ErrorStatus GenerateGetDeviceInfo(Circular_Buffer_Type *Cbuff)
 	int32_t i, count;
 
 	/* The strings are at know location */
-	device_id = (uint8_t *)(0x1fff7a10);
-	text_bl = (uint8_t *)(BOOTLOADER_BASE + SW_VERSION_OFFSET);
-	text_fw = (uint8_t *)(FIRMWARE_BASE + SW_VERSION_OFFSET);
-	text_usr = NULL;
+	device_id = ptrGetUniqueID();
+	text_bl = ptrGetBootloaderVersion();
+	text_fw = ptrGetFirmwareVersion();
+	text_usr = ptrGetUserIDString();
 
 	/* Find the length of the string */
-	length_bl = myStrlen(text_bl, 70);
-	length_fw = myStrlen(text_fw, 70);
-	length_usr = 0;
+	length_bl = myStrlen(text_bl, VERSION_MAX_SIZE);
+	length_fw = myStrlen(text_fw, VERSION_MAX_SIZE);
+	length_usr = myStrlen(text_fw, USER_ID_MAX_SIZE);
 
-	data_count = 12 + length_bl + length_fw + length_usr;
+	data_count = UNIQUE_ID_SIZE + length_bl + length_fw + length_usr + 3;
 
 	/* Check if the "best case" won't fit in the buffer */
 	if (CircularBuffer_SpaceLeft(Cbuff) < (data_count + 6))
@@ -475,7 +475,7 @@ ErrorStatus GenerateGetDeviceInfo(Circular_Buffer_Type *Cbuff)
 
 	/* Get the Device ID */
 	if (device_id != NULL)
-		for (i = 0; i < 12; i++) 
+		for (i = 0; i < UNIQUE_ID_SIZE; i++) 
 			CircularBuffer_WriteNoIncrement(device_id[i], Cbuff, &count, NULL,  &crc16);
 
 	/* Get the Bootloader Version string */

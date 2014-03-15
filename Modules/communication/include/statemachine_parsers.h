@@ -5,6 +5,7 @@
 #include "stm32f4xx.h"
 
 /* Driver includes */
+#include "version_information.h"
 #include "serialmanager_types.h"
 #include "statemachine_types.h"
 #include "statemachine_generators.h"

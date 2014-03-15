@@ -247,7 +247,19 @@ void ParseGetDeviceInfo(Parser_Holder_Type *pHolder)
  */
 void ParseSetDeviceID(Parser_Holder_Type *pHolder)
 {
+	uint8_t *save_location;
+	uint32_t i;
 
+	/* Get the address where to save the User ID string */
+	save_location = ptrGetUserIDString();
+
+	/* Check so the wasn't to big a string received */
+	if (pHolder->data_length > USER_ID_MAX_SIZE)
+		return;
+
+	/* Save the string */
+	for (i = 0; i < pHolder->data_length; i++) 
+			save_location[i] = pHolder->buffer[i];
 }
 
 /**
