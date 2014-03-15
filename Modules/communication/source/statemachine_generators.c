@@ -458,7 +458,7 @@ ErrorStatus GenerateGetDeviceInfo(Circular_Buffer_Type *Cbuff)
 	length_fw = myStrlen(text_fw, VERSION_MAX_SIZE);
 	length_usr = myStrlen(text_fw, USER_ID_MAX_SIZE);
 
-	data_count = UNIQUE_ID_SIZE + length_bl + length_fw + length_usr + 3;
+	data_count = UNIQUE_ID_SIZE + length_bl + length_fw + length_usr + 3; /* The 3 comes from the 3 null bytes */
 
 	/* Check if the "best case" won't fit in the buffer */
 	if (CircularBuffer_SpaceLeft(Cbuff) < (data_count + 6))
