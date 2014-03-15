@@ -9,7 +9,7 @@
 /* Global variable defines */
 
 /* Private variable defines */
-static uint8_t UserIDString[USER_ID_MAX_SIZE];
+static uint8_t UserIDString[USER_ID_MAX_SIZE + 1] = "Test ID string!";
 
 /* Private function defines */
 

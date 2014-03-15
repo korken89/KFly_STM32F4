@@ -260,6 +260,9 @@ void ParseSetDeviceID(Parser_Holder_Type *pHolder)
 	/* Save the string */
 	for (i = 0; i < pHolder->data_length; i++) 
 			save_location[i] = pHolder->buffer[i];
+
+	/* Add a trailing zero to end the string */
+	save_location[i] = 0x00;
 }
 
 /**
