@@ -154,7 +154,7 @@ static void MPU6050ParseData(void)
 		yield = TRUE;
 
 	xHigherPriorityTaskWoken = pdFALSE;
-	
+
 	RevMPU6050Data(MPU6050_Data.data);
 
 	/* Move the raw data to the raw data structure */
@@ -235,7 +235,6 @@ static void HMC5983ParseData(void)
 	Sensor_Data.mag.y = (((float)Sensor_Raw_Data.mag_y) - sensor_calibration->magnetometer_bias.y) * sensor_calibration->magnetometer_gain.y;
 	Sensor_Data.mag.z = (((float)Sensor_Raw_Data.mag_z) - sensor_calibration->magnetometer_bias.z) * sensor_calibration->magnetometer_gain.z;
 
-
 	if (xHigherPriorityTaskWoken != pdFALSE)
 		vPortYieldFromISR();
 }
@@ -263,7 +262,7 @@ static void EXTI_MPU6050Init(void)
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-	/* Connect EXTI Line15 to PC14 pin */
+	/* Connect EXTI Line14 to PC14 pin */
 	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource14);
 
 	/* Configure EXTI Line14 */
@@ -298,10 +297,10 @@ static void EXTI_HMC5983Init(void)
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-	/* Connect EXTI Line15 to PC13 pin */
+	/* Connect EXTI Line13 to PC13 pin */
 	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource13);
 
-	/* Configure EXTI Line14 */
+	/* Configure EXTI Line13 */
 	EXTI_InitStructure.EXTI_Line = EXTI_Line13;
 	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
 	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
@@ -322,6 +321,7 @@ static void EXTI_HMC5983Init(void)
  * */
 void EXTI15_10_IRQHandler(void)
 {
+	Bool yield = FALSE;
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
 	if(EXTI_GetITStatus(EXTI_Line13) != RESET)
@@ -333,7 +333,7 @@ void EXTI15_10_IRQHandler(void)
 		xHigherPriorityTaskWoken = xTaskResumeFromISR(HMC5983Handle);
 
 		if (xHigherPriorityTaskWoken != pdFALSE)
-			vPortYieldFromISR();
+			yield = TRUE;
 	}
 
 	xHigherPriorityTaskWoken = pdFALSE;
@@ -347,8 +347,11 @@ void EXTI15_10_IRQHandler(void)
 		xHigherPriorityTaskWoken = xTaskResumeFromISR(MPU6050Handle);
 
 		if (xHigherPriorityTaskWoken != pdFALSE)
-			vPortYieldFromISR();
+			yield = TRUE;
 	}
+
+	if (yield == TRUE)
+			vPortYieldFromISR();
 }
 
 static void RevMPU6050Data(uint8_t *data)
