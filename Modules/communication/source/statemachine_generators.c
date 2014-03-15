@@ -474,24 +474,28 @@ ErrorStatus GenerateGetDeviceInfo(Circular_Buffer_Type *Cbuff)
 	CircularBuffer_WriteNoIncrement(crc8, 				Cbuff, &count, NULL,  &crc16);
 
 	/* Get the Device ID */
-	for (i = 0; i < 12; i++) 
-		CircularBuffer_WriteNoIncrement(device_id[i], Cbuff, &count, NULL,  &crc16);
+	if (device_id != NULL)
+		for (i = 0; i < 12; i++) 
+			CircularBuffer_WriteNoIncrement(device_id[i], Cbuff, &count, NULL,  &crc16);
 
 	/* Get the Bootloader Version string */
-	for (i = 0; i < length_bl; i++) 
-		CircularBuffer_WriteNoIncrement(text_bl[i], Cbuff, &count, NULL,  &crc16);
+	if (text_bl != NULL)
+		for (i = 0; i < length_bl; i++) 
+			CircularBuffer_WriteNoIncrement(text_bl[i], Cbuff, &count, NULL,  &crc16);
 
 	CircularBuffer_WriteNoIncrement(0x00, Cbuff, &count, NULL,  &crc16);
 
 	/* Get the Firmware Version string */
-	for (i = 0; i < length_fw; i++) 
-		CircularBuffer_WriteNoIncrement(text_fw[i], Cbuff, &count, NULL,  &crc16);
+	if (text_fw != NULL)
+		for (i = 0; i < length_fw; i++) 
+			CircularBuffer_WriteNoIncrement(text_fw[i], Cbuff, &count, NULL,  &crc16);
 
 	CircularBuffer_WriteNoIncrement(0x00, Cbuff, &count, NULL,  &crc16);
 
 	/* Get the User string */
-	for (i = 0; i < length_usr; i++) 
-		CircularBuffer_WriteNoIncrement(text_usr[i], Cbuff, &count, NULL,  &crc16);
+	if (text_usr != NULL)
+		for (i = 0; i < length_usr; i++) 
+			CircularBuffer_WriteNoIncrement(text_usr[i], Cbuff, &count, NULL,  &crc16);
 
 	CircularBuffer_WriteNoIncrement(0x00, Cbuff, &count, NULL,  &crc16);
 
