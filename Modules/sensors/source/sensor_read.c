@@ -159,13 +159,13 @@ static void MPU6050ParseData(void)
 	Sensor_Raw_Data.gyro_z = MPU6050_Data.value.gyro_z;
 
 	/* Move the data to the public data holder and compensate for gains and biases from calibration */
-	Sensor_Data.acc.x = (((float)MPU6050_Data.value.acc_x) - sensor_calibration->accelerometer_bias.x) * sensor_calibration->accelerometer_gain.x;
-	Sensor_Data.acc.y = (((float)MPU6050_Data.value.acc_y) - sensor_calibration->accelerometer_bias.y) * sensor_calibration->accelerometer_gain.y;
-	Sensor_Data.acc.z = (((float)MPU6050_Data.value.acc_z) - sensor_calibration->accelerometer_bias.z) * sensor_calibration->accelerometer_gain.z;
+	Sensor_Data.acc.x = (((float)Sensor_Raw_Data.acc_x) - sensor_calibration->accelerometer_bias.x) * sensor_calibration->accelerometer_gain.x;
+	Sensor_Data.acc.y = (((float)Sensor_Raw_Data.acc_y) - sensor_calibration->accelerometer_bias.y) * sensor_calibration->accelerometer_gain.y;
+	Sensor_Data.acc.z = (((float)Sensor_Raw_Data.acc_z) - sensor_calibration->accelerometer_bias.z) * sensor_calibration->accelerometer_gain.z;
 
-	Sensor_Data.gyro.x = ((float)MPU6050_Data.value.gyro_x) * MPU6050_Gyro_Gain;
-	Sensor_Data.gyro.y = ((float)MPU6050_Data.value.gyro_y) * MPU6050_Gyro_Gain;
-	Sensor_Data.gyro.z = ((float)MPU6050_Data.value.gyro_z) * MPU6050_Gyro_Gain;
+	Sensor_Data.gyro.x = ((float)Sensor_Raw_Data.gyro_x) * MPU6050_Gyro_Gain;
+	Sensor_Data.gyro.y = ((float)Sensor_Raw_Data.gyro_y) * MPU6050_Gyro_Gain;
+	Sensor_Data.gyro.z = ((float)Sensor_Raw_Data.gyro_z) * MPU6050_Gyro_Gain;
 
 	xSemaphoreGiveFromISR(NewMeasurementAvaiable, &xHigherPriorityTaskWoken);
 	if (xHigherPriorityTaskWoken != pdFALSE)
@@ -226,9 +226,9 @@ static void HMC5983ParseData(void)
 	Sensor_Raw_Data.mag_z =   HMC5983_Data.value.mag_z;
 
 	/* Move the data to the public data holder and convert signs */
-	Sensor_Data.mag.x = (((float)-HMC5983_Data.value.mag_x) - sensor_calibration->magnetometer_bias.x) * sensor_calibration->magnetometer_gain.x;
-	Sensor_Data.mag.y = (((float)-HMC5983_Data.value.mag_y) - sensor_calibration->magnetometer_bias.y) * sensor_calibration->magnetometer_gain.y;
-	Sensor_Data.mag.z = (((float)HMC5983_Data.value.mag_z) - sensor_calibration->magnetometer_bias.z) * sensor_calibration->magnetometer_gain.z;
+	Sensor_Data.mag.x = (((float)Sensor_Raw_Data.mag_x) - sensor_calibration->magnetometer_bias.x) * sensor_calibration->magnetometer_gain.x;
+	Sensor_Data.mag.y = (((float)Sensor_Raw_Data.mag_y) - sensor_calibration->magnetometer_bias.y) * sensor_calibration->magnetometer_gain.y;
+	Sensor_Data.mag.z = (((float)Sensor_Raw_Data.mag_z) - sensor_calibration->magnetometer_bias.z) * sensor_calibration->magnetometer_gain.z;
 
 	xSemaphoreGiveFromISR(I2C_Available, &xHigherPriorityTaskWoken);
 
@@ -322,28 +322,28 @@ void EXTI15_10_IRQHandler(void)
 
 	if(EXTI_GetITStatus(EXTI_Line13) != RESET)
 	{
+		/* Clear the EXTI line 13 pending bit */
+		EXTI_ClearITPendingBit(EXTI_Line13);
+
 		/* Data available, resume HMC5983 data receiving task */
 		xHigherPriorityTaskWoken = xTaskResumeFromISR(HMC5983Handle);
 
 		if (xHigherPriorityTaskWoken != pdFALSE)
 			vPortYieldFromISR();
-
-		/* Clear the EXTI line 13 pending bit */
-		EXTI_ClearITPendingBit(EXTI_Line13);
 	}
 
 	xHigherPriorityTaskWoken = pdFALSE;
 
 	if(EXTI_GetITStatus(EXTI_Line14) != RESET)
 	{
+		/* Clear the EXTI line 14 pending bit */
+		EXTI_ClearITPendingBit(EXTI_Line14);
+
 		/* Data available, resume MPU6050 data receiving task */
 		xHigherPriorityTaskWoken = xTaskResumeFromISR(MPU6050Handle);
 
 		if (xHigherPriorityTaskWoken != pdFALSE)
 			vPortYieldFromISR();
-
-		/* Clear the EXTI line 14 pending bit */
-		EXTI_ClearITPendingBit(EXTI_Line14);
 	}
 }
 
