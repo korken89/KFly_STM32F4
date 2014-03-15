@@ -445,7 +445,7 @@ ErrorStatus GenerateGetDeviceInfo(Circular_Buffer_Type *Cbuff)
 	uint32_t length_fw, length_bl, length_usr, data_count;
 	uint8_t crc8;
 	uint16_t crc16;
-	int32_t i, j, count;
+	int32_t i, count;
 
 	/* The strings are at know location */
 	device_id = (uint8_t *)(0x1fff7a10);
@@ -485,7 +485,7 @@ ErrorStatus GenerateGetDeviceInfo(Circular_Buffer_Type *Cbuff)
 
 	/* Get the Firmware Version string */
 	for (i = 0; i < length_fw; i++) 
-		CircularBuffer_WriteNoIncrement(text_fw[j], Cbuff, &count, NULL,  &crc16);
+		CircularBuffer_WriteNoIncrement(text_fw[i], Cbuff, &count, NULL,  &crc16);
 
 	CircularBuffer_WriteNoIncrement(0x00, Cbuff, &count, NULL,  &crc16);
 
