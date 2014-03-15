@@ -146,12 +146,12 @@ void main(void)
 	 * */
 	vSerialManagerInit();
 
-	/*xTaskCreate(vTaskTest,
+	xTaskCreate(vTaskTest,
 				"TestTask",
 				256,
 				0,
 				tskSerialManagerPRIORITY,
-			    0);*/
+			    0);
 
 	/* *
 	 *
@@ -172,9 +172,8 @@ void vTaskTest(void *pvParameters)
 	while(1)
 	{
 
-		vTaskDelay(5000);
-		sw_version = ExternalFlash_ReadID();
-		xUSBSendData((uint8_t *)&sw_version, 4);
+		vTaskDelay(500);
+		LEDToggle(LED_RED);
 	}
 }
 
