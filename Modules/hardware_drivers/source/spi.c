@@ -28,8 +28,8 @@ void SPI1Init(void)
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
 
   /* Configure pins used by SPI1
-   * PA4 = RF_CS
    * PC4 = FLASH_CS
+   * PA4 = RF_CS
    * PA5 = SCK
    * PA6 = MISO
    * PA7 = MOSI

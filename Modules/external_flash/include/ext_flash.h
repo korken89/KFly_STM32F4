@@ -33,8 +33,7 @@
 #define FLASH_M25P128_ID        0x202018
 #define FLASH_M25P64_ID         0x202017
 #define FLASH_M25P40_ID         0x202013
-
-#define FLASH_OTHER_ID          0x373013
+#define FLASH_M25PE40_ID        0x208013
 
 #define FLASH_PAGE_SIZE			0x00000100
 
