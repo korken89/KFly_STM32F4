@@ -145,8 +145,16 @@ void vTaskGetMPU6050Data(void *pvParameters)
 
 static void MPU6050ParseData(void)
 {
+	Bool yield = FALSE;
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
+	/* Release the I2C */
+	xSemaphoreGiveFromISR(I2C_Available, &xHigherPriorityTaskWoken);
+	if (xHigherPriorityTaskWoken != pdFALSE)
+		yield = TRUE;
+
+	xHigherPriorityTaskWoken = pdFALSE;
+	
 	RevMPU6050Data(MPU6050_Data.data);
 
 	/* Move the raw data to the raw data structure */
@@ -169,15 +177,9 @@ static void MPU6050ParseData(void)
 
 	xSemaphoreGiveFromISR(NewMeasurementAvaiable, &xHigherPriorityTaskWoken);
 	if (xHigherPriorityTaskWoken != pdFALSE)
-	{
-		vPortYieldFromISR();
-		return;
-	}
-
-	xHigherPriorityTaskWoken = pdFALSE;
-
-	xSemaphoreGiveFromISR(I2C_Available, &xHigherPriorityTaskWoken);
-	if (xHigherPriorityTaskWoken != pdFALSE)
+		yield = TRUE;
+	
+	if (yield == TRUE)
 		vPortYieldFromISR();
 }
 
@@ -218,6 +220,9 @@ static void HMC5983ParseData(void)
 {
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
+	/* Release the I2C */
+	xSemaphoreGiveFromISR(I2C_Available, &xHigherPriorityTaskWoken);
+
 	RevHMC5983Data(HMC5983_Data.data);
 
 	/* Move the raw data to the raw data structure */
@@ -230,7 +235,6 @@ static void HMC5983ParseData(void)
 	Sensor_Data.mag.y = (((float)Sensor_Raw_Data.mag_y) - sensor_calibration->magnetometer_bias.y) * sensor_calibration->magnetometer_gain.y;
 	Sensor_Data.mag.z = (((float)Sensor_Raw_Data.mag_z) - sensor_calibration->magnetometer_bias.z) * sensor_calibration->magnetometer_gain.z;
 
-	xSemaphoreGiveFromISR(I2C_Available, &xHigherPriorityTaskWoken);
 
 	if (xHigherPriorityTaskWoken != pdFALSE)
 		vPortYieldFromISR();
