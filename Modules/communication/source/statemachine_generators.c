@@ -445,7 +445,7 @@ ErrorStatus GenerateGetDeviceInfo(Circular_Buffer_Type *Cbuff)
 	uint32_t length_fw, length_bl, length_usr, data_count;
 	uint8_t crc8;
 	uint16_t crc16;
-	int32_t i, count;
+	int32_t i, count = 0;
 
 	/* The strings are at know location */
 	device_id = ptrGetUniqueID();
@@ -456,7 +456,7 @@ ErrorStatus GenerateGetDeviceInfo(Circular_Buffer_Type *Cbuff)
 	/* Find the length of the string */
 	length_bl = myStrlen(text_bl, VERSION_MAX_SIZE);
 	length_fw = myStrlen(text_fw, VERSION_MAX_SIZE);
-	length_usr = myStrlen(text_fw, USER_ID_MAX_SIZE);
+	length_usr = myStrlen(text_usr, USER_ID_MAX_SIZE);
 
 	data_count = UNIQUE_ID_SIZE + length_bl + length_fw + length_usr + 3; /* The 3 comes from the 3 null bytes */
 
@@ -466,7 +466,7 @@ ErrorStatus GenerateGetDeviceInfo(Circular_Buffer_Type *Cbuff)
 
 	/* Add the header */
 	/* Write the starting SYNC (without doubling it) */
-	CircularBuffer_WriteSYNCNoIncrement(		Cbuff, &count, &crc8, &crc16); 
+	CircularBuffer_WriteSYNCNoIncrement(				Cbuff, &count, &crc8, &crc16); 
 
 	/* Add all of the header to the message */
 	CircularBuffer_WriteNoIncrement(Cmd_GetDeviceInfo,	Cbuff, &count, &crc8, &crc16); 
@@ -474,30 +474,26 @@ ErrorStatus GenerateGetDeviceInfo(Circular_Buffer_Type *Cbuff)
 	CircularBuffer_WriteNoIncrement(crc8, 				Cbuff, &count, NULL,  &crc16);
 
 	/* Get the Device ID */
-	if (device_id != NULL)
-		for (i = 0; i < UNIQUE_ID_SIZE; i++) 
-			CircularBuffer_WriteNoIncrement(device_id[i], Cbuff, &count, NULL,  &crc16);
+	for (i = 0; i < UNIQUE_ID_SIZE; i++) 
+		CircularBuffer_WriteNoIncrement(device_id[i], 	Cbuff, &count, NULL,  &crc16);
 
 	/* Get the Bootloader Version string */
-	if (text_bl != NULL)
-		for (i = 0; i < length_bl; i++) 
-			CircularBuffer_WriteNoIncrement(text_bl[i], Cbuff, &count, NULL,  &crc16);
+	for (i = 0; i < length_bl; i++) 
+		CircularBuffer_WriteNoIncrement(text_bl[i], 	Cbuff, &count, NULL,  &crc16);
 
-	CircularBuffer_WriteNoIncrement(0x00, Cbuff, &count, NULL,  &crc16);
+	CircularBuffer_WriteNoIncrement(0x00, 				Cbuff, &count, NULL,  &crc16);
 
 	/* Get the Firmware Version string */
-	if (text_fw != NULL)
-		for (i = 0; i < length_fw; i++) 
-			CircularBuffer_WriteNoIncrement(text_fw[i], Cbuff, &count, NULL,  &crc16);
+	for (i = 0; i < length_fw; i++) 
+		CircularBuffer_WriteNoIncrement(text_fw[i], 	Cbuff, &count, NULL,  &crc16);
 
-	CircularBuffer_WriteNoIncrement(0x00, Cbuff, &count, NULL,  &crc16);
+	CircularBuffer_WriteNoIncrement(0x00, 				Cbuff, &count, NULL,  &crc16);
 
 	/* Get the User string */
-	if (text_usr != NULL)
-		for (i = 0; i < length_usr; i++) 
-			CircularBuffer_WriteNoIncrement(text_usr[i], Cbuff, &count, NULL,  &crc16);
+	for (i = 0; i < length_usr; i++) 
+		CircularBuffer_WriteNoIncrement(text_usr[i], 	Cbuff, &count, NULL,  &crc16);
 
-	CircularBuffer_WriteNoIncrement(0x00, Cbuff, &count, NULL,  &crc16);
+	CircularBuffer_WriteNoIncrement(0x00, 				Cbuff, &count, NULL,  &crc16);
 
 	/* Add the CRC16 */
 	CircularBuffer_WriteNoIncrement((uint8_t)(crc16 >> 8), 	Cbuff, &count, NULL, NULL);
