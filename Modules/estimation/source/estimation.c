@@ -36,6 +36,11 @@ void vTaskRunEstimation(void *pvParameters)
 	Attitude_Estimation_Settings_Type settings;
 	Sensor_Data_Type *sensor_data;
 
+	float acc[3];
+	float gyro[3];
+	float mag[3];
+
+
 	attitude_ekf_states = &states;
 	sensor_data = ptrGetSensorDataPointer();
 	
@@ -48,11 +53,23 @@ void vTaskRunEstimation(void *pvParameters)
 
 		xSemaphoreTake(NewMeasurementAvaiable, portMAX_DELAY);
 
+		acc[0] = sensor_data->acc.x;
+		acc[1] = sensor_data->acc.y;
+		acc[2] = sensor_data->acc.z;
+
+		gyro[0] = sensor_data->gyro.x;
+		gyro[1] = sensor_data->gyro.y;
+		gyro[2] = sensor_data->gyro.z;
+
+		mag[0] = sensor_data->mag.x;
+		mag[1] = sensor_data->mag.y;
+		mag[2] = sensor_data->mag.z;
+
 		InnovateAttitudeEKF(&states,
 							&settings, 
-							(float *)&sensor_data->gyro,
-							(float *)&sensor_data->acc,
-							(float *)&sensor_data->mag,
+							gyro,
+							acc,
+							mag,
 							0.0f,
 							0.0f,
 							0.005f);
