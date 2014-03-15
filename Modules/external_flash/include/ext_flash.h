@@ -17,18 +17,21 @@
 /* Includes */
 
 /* Defines */
-#define FLASH_CMD_WRITE         0x02  /* Write to Memory instruction */
-#define FLASH_CMD_WRSR          0x01  /* Write Status Register instruction */
-#define FLASH_CMD_WREN          0x06  /* Write enable instruction */
-#define FLASH_CMD_READ          0x03  /* Read from Memory instruction */
-#define FLASH_CMD_RDSR          0x05  /* Read Status Register instruction  */
-#define FLASH_CMD_RDID          0x9F  /* Read identification */
-#define FLASH_CMD_SE            0xD8  /* Sector Erase instruction */
-#define FLASH_CMD_BE            0xC7  /* Bulk Erase instruction */
+#define FLASH_CMD_WRSR          0x01  	/* Write Status Register instruction	*/
+#define FLASH_CMD_PAGE_PROGRAM  0x02  	/* Write to Memory instruction 			*/
+#define FLASH_CMD_READ          0x03  	/* Read from Memory instruction 		*/
+#define FLASH_CMD_RDSR          0x05  	/* Read Status Register instruction  	*/
+#define FLASH_CMD_WREN          0x06  	/* Write enable instruction 			*/
+#define FLASH_CMD_PAGE_WRITE	0x0A	/* Writes a page with automatic erase 	*/
 
-#define FLASH_WIP_FLAG          0x01  /* Write In Progress (WIP) flag */
+#define FLASH_CMD_BE            0xC7  	/* Bulk Erase instruction 				*/
+#define FLASH_CMD_SE            0xD8  	/* Sector Erase instruction 			*/
+#define FLASH_CMD_PE			0xDB	/* Page erase 							*/
+#define FLASH_CMD_RDID          0x9F  	/* Read identification 					*/
 
-#define FLASH_SPI_PAGESIZE      0x100
+
+
+#define FLASH_WIP_FLAG          0x01  	/* Write In Progress (WIP) flag 		*/
 
 #define FLASH_M25P128_ID        0x202018
 #define FLASH_M25P64_ID         0x202017
@@ -36,9 +39,8 @@
 #define FLASH_M25PE40_ID        0x208013
 
 #define FLASH_PAGE_SIZE			0x00000100
-
 #define FLASH_SECTOR_SIZE		0x00010000
-
+#define M25PE40_NUM_SECTORS		7
 #define FLASH_SECTOR_0			0x00000000
 #define FLASH_SECTOR_1			0x00010000
 #define FLASH_SECTOR_2			0x00020000
@@ -63,7 +65,9 @@ typedef struct {
 
 /* Global functions */
 void ExternalFlashInit(void);
+void ExternalFlash_EraseBulk(void);
 uint32_t ExternalFlash_ReadID(void);
+ErrorStatus ExternalFlash_SaveSettings(Flash_Save_Template_Type *template, uint32_t sector);
 void ExternalFlash_WritePage(uint8_t *buffer, uint32_t address, uint16_t count);
 void ExternalFlash_ReadBuffer(uint8_t *buffer, uint32_t address, uint16_t count);
 void ExternalFlash_WriteEnable(void);

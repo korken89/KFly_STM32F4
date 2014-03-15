@@ -175,7 +175,9 @@ static void MPU6050ParseData(void)
 	Sensor_Data.gyro.y = ((float)Sensor_Raw_Data.gyro_y) * MPU6050_Gyro_Gain;
 	Sensor_Data.gyro.z = ((float)Sensor_Raw_Data.gyro_z) * MPU6050_Gyro_Gain;
 
+	/* New measurement data available */
 	xSemaphoreGiveFromISR(NewMeasurementAvaiable, &xHigherPriorityTaskWoken);
+
 	if (xHigherPriorityTaskWoken != pdFALSE)
 		yield = TRUE;
 	

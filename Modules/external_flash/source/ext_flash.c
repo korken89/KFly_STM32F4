@@ -24,13 +24,14 @@ static const Flash_Save_Template_Type Flash_Save_Structure[] = {
 		.ptr = 2,
 		.count = 6
 	},
-	{	
-		.ptr = 3,
-		.count = 12
+	{	/* To indicate the end of the save structure */
+		.ptr = 0,
+		.count = 0
 	}
 };
 
 /* Private function defines */
+static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template);
 
 /* Private external functions */
 
@@ -46,6 +47,24 @@ void ExternalFlashInit(void)
 			LEDToggle(LED_RED);
 		}
 	}
+}
+
+void ExternalFlash_EraseBulk(void)
+{
+  	/* Enable the write access to the External Flash */
+	ExternalFlash_WriteEnable();
+
+  	/* Select the External Flash: Chip Select low */
+  	FLASH_CS_LOW();
+
+	/* Send Bulk Erase instruction  */
+	SPI_SendBytePolling(FLASH_CMD_BE, EXTERNAL_FLASH_SPI);
+
+	/* Deselect the External Flash: Chip Select high */
+  	FLASH_CS_HIGH();
+
+  	/* Wait the end of Flash writing */
+  	ExternalFlash_WaitForWriteEnd();
 }
 
 /**
@@ -74,6 +93,41 @@ uint32_t ExternalFlash_ReadID(void)
 	return ((t1 << 16) | (t2 << 8) | t3);
 }
 
+
+ErrorStatus ExternalFlash_SaveSettings(Flash_Save_Template_Type *template, uint32_t sector)
+{
+	uint32_t num_bytes, num_pages, num_single;
+
+	if (sector > M25PE40_NUM_SECTORS)
+		return ERROR;
+
+	/* Get the total number of bytes to save */
+	num_bytes = SaveStructure_NumberOfBytes(template);
+
+	/* Calculate the number of pages needed */
+	num_pages = num_bytes / FLASH_PAGE_SIZE;
+	num_single = num_bytes % FLASH_PAGE_SIZE;
+
+	if (num_single > 0)
+		num_pages++;
+
+	/* Erase the selected pages */
+	
+
+	return SUCCESS;
+}
+
+static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template)
+{
+	uint32_t i = 0, num_bytes = 0;
+
+	/* While there is an valid pointer add its byte count to the total */
+	while (template[i].ptr != 0)
+		num_bytes += template[i++].count;
+
+	return num_bytes;
+}
+
 /**
  * @brief  			Writes data to a Flash page.
  * 
@@ -90,7 +144,7 @@ void ExternalFlash_WritePage(uint8_t *buffer, uint32_t address, uint16_t count)
   	FLASH_CS_LOW();
 
   	/* Send "Write to Memory" instruction */
-  	SPI_SendBytePolling(FLASH_CMD_WRITE, EXTERNAL_FLASH_SPI);
+  	SPI_SendBytePolling(FLASH_CMD_PAGE_PROGRAM, EXTERNAL_FLASH_SPI);
 
 	/* Send address nibbles for address byte to read from */
 	SPI_SendBytePolling((address & 0xFF0000) >> 16, EXTERNAL_FLASH_SPI);
