@@ -37,20 +37,6 @@
 #include "led.h"
 #include "linear_algebra.h"
 
-#ifndef DATE
-	#define DATE 			"no timestamp"
-#endif
-
-#ifndef GIT_HASH
-	#define GIT_HASH 		"no hash"
-#endif
-
-#ifndef GIT_VERSION
-	#define GIT_VERSION 	"no version"
-#endif
-
-#define KFLY_VERSION	"v" GIT_VERSION ", Build date: " DATE "\0"
-
 
 void main(void);
 

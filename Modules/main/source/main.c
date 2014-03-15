@@ -4,7 +4,6 @@
 #include "statemachine_generators.h"
 #include "led.h"
 
-__attribute__((section(".sw_version"))) __I char build_version[] = KFLY_VERSION;
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 static uint8_t DMA_buffer[32];
 static uint8_t DMA_buffer2[32];

@@ -7,6 +7,7 @@
 #include "version_information.h"
 
 /* Global variable defines */
+__attribute__((section(".sw_version"))) __I char build_version[] = KFLY_VERSION;
 
 /* Private variable defines */
 static uint8_t UserIDString[USER_ID_MAX_SIZE + 1] = "Test ID string!";
