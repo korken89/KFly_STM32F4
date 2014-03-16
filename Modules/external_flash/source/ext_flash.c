@@ -132,7 +132,9 @@ ErrorStatus ExternalFlash_SaveSettings(Flash_Save_Template_Type *template, uint3
 	num_single = num_bytes % FLASH_PAGE_SIZE;
 
 	/* Erase the selected sector */
-	
+	ExternalFlash_EraseSector(sector * FLASH_SECTOR_SIZE);
+
+	/* Start saving data to the external flash memory */
 	
 
 	return SUCCESS;
