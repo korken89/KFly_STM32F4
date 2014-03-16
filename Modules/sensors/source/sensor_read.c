@@ -158,18 +158,18 @@ static void MPU6050ParseData(void)
 	RevMPU6050Data(MPU6050_Data.data);
 
 	/* Move the raw data to the raw data structure */
-	Sensor_Raw_Data.acc_x = MPU6050_Data.value.acc_x;
-	Sensor_Raw_Data.acc_y = MPU6050_Data.value.acc_y;
-	Sensor_Raw_Data.acc_z = MPU6050_Data.value.acc_z;
+	Sensor_Raw_Data.acc_x =   MPU6050_Data.value.acc_y;
+	Sensor_Raw_Data.acc_y = - MPU6050_Data.value.acc_x;
+	Sensor_Raw_Data.acc_z =   MPU6050_Data.value.acc_z;
 
-	Sensor_Raw_Data.gyro_x = MPU6050_Data.value.gyro_x;
-	Sensor_Raw_Data.gyro_y = MPU6050_Data.value.gyro_y;
-	Sensor_Raw_Data.gyro_z = MPU6050_Data.value.gyro_z;
+	Sensor_Raw_Data.gyro_x =   MPU6050_Data.value.gyro_y;
+	Sensor_Raw_Data.gyro_y = - MPU6050_Data.value.gyro_x;
+	Sensor_Raw_Data.gyro_z =   MPU6050_Data.value.gyro_z;
 
 	/* Move the data to the public data holder and compensate for gains and biases from calibration */
-	Sensor_Data.acc.x = (((float)Sensor_Raw_Data.acc_x) - sensor_calibration->accelerometer_bias.x) * sensor_calibration->accelerometer_gain.x;
-	Sensor_Data.acc.y = (((float)Sensor_Raw_Data.acc_y) - sensor_calibration->accelerometer_bias.y) * sensor_calibration->accelerometer_gain.y;
-	Sensor_Data.acc.z = (((float)Sensor_Raw_Data.acc_z) - sensor_calibration->accelerometer_bias.z) * sensor_calibration->accelerometer_gain.z;
+	Sensor_Data.acc.x = (((float)Sensor_Raw_Data.acc_x) - sensor_calibration->accelerometer_bias.x) / sensor_calibration->accelerometer_gain.x;
+	Sensor_Data.acc.y = (((float)Sensor_Raw_Data.acc_y) - sensor_calibration->accelerometer_bias.y) / sensor_calibration->accelerometer_gain.y;
+	Sensor_Data.acc.z = (((float)Sensor_Raw_Data.acc_z) - sensor_calibration->accelerometer_bias.z) / sensor_calibration->accelerometer_gain.z;
 
 	Sensor_Data.gyro.x = ((float)Sensor_Raw_Data.gyro_x) * MPU6050_Gyro_Gain;
 	Sensor_Data.gyro.y = ((float)Sensor_Raw_Data.gyro_y) * MPU6050_Gyro_Gain;
@@ -228,14 +228,14 @@ static void HMC5983ParseData(void)
 	RevHMC5983Data(HMC5983_Data.data);
 
 	/* Move the raw data to the raw data structure */
-	Sensor_Raw_Data.mag_x = - HMC5983_Data.value.mag_x;
-	Sensor_Raw_Data.mag_y = - HMC5983_Data.value.mag_y;
+	Sensor_Raw_Data.mag_x = - HMC5983_Data.value.mag_y;
+	Sensor_Raw_Data.mag_y =   HMC5983_Data.value.mag_x;
 	Sensor_Raw_Data.mag_z =   HMC5983_Data.value.mag_z;
 
 	/* Move the data to the public data holder and convert signs */
-	Sensor_Data.mag.x = (((float)Sensor_Raw_Data.mag_x) - sensor_calibration->magnetometer_bias.x) * sensor_calibration->magnetometer_gain.x;
-	Sensor_Data.mag.y = (((float)Sensor_Raw_Data.mag_y) - sensor_calibration->magnetometer_bias.y) * sensor_calibration->magnetometer_gain.y;
-	Sensor_Data.mag.z = (((float)Sensor_Raw_Data.mag_z) - sensor_calibration->magnetometer_bias.z) * sensor_calibration->magnetometer_gain.z;
+	Sensor_Data.mag.x = (((float)Sensor_Raw_Data.mag_x) - sensor_calibration->magnetometer_bias.x) / sensor_calibration->magnetometer_gain.x;
+	Sensor_Data.mag.y = (((float)Sensor_Raw_Data.mag_y) - sensor_calibration->magnetometer_bias.y) / sensor_calibration->magnetometer_gain.y;
+	Sensor_Data.mag.z = (((float)Sensor_Raw_Data.mag_z) - sensor_calibration->magnetometer_bias.z) / sensor_calibration->magnetometer_gain.z;
 
 	if (xHigherPriorityTaskWoken != pdFALSE)
 		vPortYieldFromISR();
