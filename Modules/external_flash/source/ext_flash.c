@@ -13,25 +13,26 @@
 /* Area to hold the design of the external flash memory */
 static const Flash_Save_Template_Type Flash_Save_Structure[] = {
 	{	
-		.ptr = 0,
+		.ptr = (uint8_t *)0,
 		.count = 32
 	},
 	{	
-		.ptr = 1,
+		.ptr = (uint8_t *)1,
 		.count = 40
 	},
 	{	
-		.ptr = 2,
+		.ptr = (uint8_t *)2,
 		.count = 6
 	},
 	{	/* To indicate the end of the save structure */
-		.ptr = 0,
+		.ptr = (uint8_t *)0,
 		.count = 0
 	}
 };
 
 /* Private function defines */
 static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template);
+static uint32_t SaveStructure_WriteToMemory(Flash_Save_Template_Type *template, uint32_t sector);
 
 /* Private external functions */
 
@@ -121,6 +122,7 @@ ErrorStatus ExternalFlash_SaveSettings(Flash_Save_Template_Type *template, uint3
 {
 	uint32_t num_bytes, num_pages, num_single;
 
+	/* Check so we write to one of the sectors */
 	if (sector > M25PE40_NUM_SECTORS)
 		return ERROR;
 
@@ -135,20 +137,9 @@ ErrorStatus ExternalFlash_SaveSettings(Flash_Save_Template_Type *template, uint3
 	ExternalFlash_EraseSector(sector * FLASH_SECTOR_SIZE);
 
 	/* Start saving data to the external flash memory */
-	
+	SaveStructure_WriteToMemory(template, sector);
 
 	return SUCCESS;
-}
-
-static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template)
-{
-	uint32_t i = 0, num_bytes = 0;
-
-	/* While there is an valid pointer add its byte count to the total */
-	while (template[i].ptr != 0)
-		num_bytes += template[i++].count;
-
-	return num_bytes;
 }
 
 /**
@@ -156,7 +147,7 @@ static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template)
  * 
  * @param buffer 	Pointer to the buffer holding the data.
  * @param address 	Where in the Flash to save the data.
- * @param count 	Number of bytes to write.
+ * @param count 	Number of bytes to write (max 256 bytes).
  */
 void ExternalFlash_WritePage(uint8_t *buffer, uint32_t address, uint16_t count)
 {
@@ -169,7 +160,7 @@ void ExternalFlash_WritePage(uint8_t *buffer, uint32_t address, uint16_t count)
   	/* Send "Write to Memory" instruction */
   	SPI_SendBytePolling(FLASH_CMD_PAGE_PROGRAM, EXTERNAL_FLASH_SPI);
 
-	/* Send address nibbles for address byte to read from */
+	/* Send address nibbles for address byte to write to */
 	SPI_SendBytePolling((address & 0xFF0000) >> 16, EXTERNAL_FLASH_SPI);
   	SPI_SendBytePolling((address & 0xFF00) >> 8, EXTERNAL_FLASH_SPI);
   	SPI_SendBytePolling(address & 0xFF, EXTERNAL_FLASH_SPI);
@@ -250,3 +241,48 @@ void ExternalFlash_WaitForWriteEnd(void)
   	/* Deselect the External Flash: Chip Select high */
   	FLASH_CS_HIGH();
 }
+
+/**
+ * @brief 			Processes a Flash_Save structure to determine the
+ * 					correct way of writing it to memory.
+ * 
+ * @param template 	Pointer to the Flash_Save template.
+ * @return 			Number of bytes to save.
+ */
+static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template)
+{
+	uint32_t i = 0, num_bytes = 0;
+
+	/* While there is an valid pointer add its byte count to the total */
+	while (template[i].ptr != 0)
+		num_bytes += template[i++].count;
+
+	return num_bytes;
+}
+
+static uint32_t SaveStructure_WriteToMemory(Flash_Save_Template_Type *template, uint32_t sector)
+{
+	uint32_t i, j, num_bytes;
+
+	i = 0;
+	num_bytes = 0;
+
+	while (template[i].ptr != 0)
+	{
+		if ((num_bytes + template[i].count) > FLASH_PAGE_SIZE)
+		{
+			/* Write the bytes up to the page limit */
+			for (j = 0; j < (FLASH_PAGE_SIZE - num_bytes); j++)
+				SPI_SendBytePolling(template[i].ptr[j], EXTERNAL_FLASH_SPI);
+
+			num_bytes = 0;
+
+		}
+		else
+		{
+			for (j = 0; j < template[i].count; j++)
+				SPI_SendBytePolling(template[i].ptr[j], EXTERNAL_FLASH_SPI);
+		}
+	}
+}
+

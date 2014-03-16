@@ -260,8 +260,8 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	 * convergence, but is an added security.
 	 */
 	y.x = bound(0.1f, -0.1f, - acc_B.y / acc_B.z);
-	y.y = bound(0.1f, -0.1f, acc_B.x / acc_B.z);
-	y.z = bound(0.1f, -0.1f, mag_B.y / mag_B.x);
+	y.y = bound(0.1f, -0.1f,   acc_B.x / acc_B.z);
+	y.z = bound(0.1f, -0.1f,   mag_B.y / mag_B.x);
 
 
 	/*
