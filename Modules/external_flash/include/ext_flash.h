@@ -66,6 +66,7 @@ typedef struct {
 /* Global functions */
 void ExternalFlashInit(void);
 void ExternalFlash_EraseBulk(void);
+void ExternalFlash_EraseSector(uint32_t sector);
 uint32_t ExternalFlash_ReadID(void);
 ErrorStatus ExternalFlash_SaveSettings(Flash_Save_Template_Type *template, uint32_t sector);
 void ExternalFlash_WritePage(uint8_t *buffer, uint32_t address, uint16_t count);

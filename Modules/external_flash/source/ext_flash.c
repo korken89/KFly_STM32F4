@@ -67,6 +67,29 @@ void ExternalFlash_EraseBulk(void)
   	ExternalFlash_WaitForWriteEnd();
 }
 
+void ExternalFlash_EraseSector(uint32_t sector)
+{
+	/* Enable the write access to the External Flash */
+	ExternalFlash_WriteEnable();
+
+	/* Select the External Flash: Chip Select low */
+  	FLASH_CS_LOW();
+
+	/* Send Bulk Erase instruction  */
+  	SPI_SendBytePolling(FLASH_CMD_SE, EXTERNAL_FLASH_SPI);
+	
+	/* Send address high nibbles */
+	SPI_SendBytePolling((sector & 0xFF0000) >> 16, EXTERNAL_FLASH_SPI);
+	SPI_SendBytePolling((sector & 0xFF00) >> 8, EXTERNAL_FLASH_SPI);
+	SPI_SendBytePolling(sector & 0xFF, EXTERNAL_FLASH_SPI);
+	
+	/* Deselect the External Flash: Chip Select high */
+  	FLASH_CS_HIGH();
+
+  	/* Wait the end of Flash writing */
+  	ExternalFlash_WaitForWriteEnd();
+}
+
 /**
  * @brief 		Gets the ID of the External Flash.
  *
@@ -108,10 +131,8 @@ ErrorStatus ExternalFlash_SaveSettings(Flash_Save_Template_Type *template, uint3
 	num_pages = num_bytes / FLASH_PAGE_SIZE;
 	num_single = num_bytes % FLASH_PAGE_SIZE;
 
-	if (num_single > 0)
-		num_pages++;
-
-	/* Erase the selected pages */
+	/* Erase the selected sector */
+	
 	
 
 	return SUCCESS;
