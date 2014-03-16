@@ -23,14 +23,14 @@
 
 /* Process covariances */
 #define SQ_Q			(0.01f)						/* Quaternion error covariance */
-#define SQ_B 			(0.001f * ESTIMATION_DT)	/* Gyro bias covariance */ 
+#define SQ_B 			(0.01f * ESTIMATION_DT)		/* Gyro bias covariance */ 
 
 /* Observation covariances */
 #define SR_A 			(100.0f)					/* Acceleration error covariance */
 #define SR_T 			(1000.0f)					/* Magnetometer error covariance */
 
 /* Starting error covariance */
-#define S_P 			(100.0f)					/* Starting value of the diagonal of P */
+#define S_P 			(10.0f)						/* Starting value of the diagonal of P */
 
 /* Calculate the square-root factors 
  * Generated from Matlab, do not change */

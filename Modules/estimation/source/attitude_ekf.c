@@ -252,11 +252,16 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	mag_B = vector_rotation_transposed(R, mag_v);
 
 	/* Since the measurement prediction is based on the states and the 
-	   states are zero, then the measurement prediction is zero and the
-	   error is the measurement directly. */
-	y.x = - atan2f(acc_B.y, acc_B.z);
-	y.y =   atan2f(acc_B.x, acc_B.z);
-	y.z =   atan2f(mag_B.y, mag_B.x);
+	 * states are zero, then the measurement prediction is zero and the
+	 * error is the measurement directly.
+	 *
+	 * The errors are also bounded, in case a measurement makes the
+	 * division go towards infinity. This should not happen after
+	 * convergence, but is an added security.
+	 */
+	y.x = bound(0.1f, -0.1f, - acc_B.y / acc_B.z);
+	y.y = bound(0.1f, -0.1f, acc_B.x / acc_B.z);
+	y.z = bound(0.1f, -0.1f, mag_B.y / mag_B.x);
 
 
 	/*
