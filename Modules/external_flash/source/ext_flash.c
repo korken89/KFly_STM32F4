@@ -262,27 +262,71 @@ static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template)
 
 static uint32_t SaveStructure_WriteToMemory(Flash_Save_Template_Type *template, uint32_t sector)
 {
-	uint32_t i, j, num_bytes;
+	uint32_t i, j, num_bytes_written_to_page, page_address;
 
 	i = 0;
-	num_bytes = 0;
+	num_bytes_written_to_page = 0;
+	page_address = sector * FLASH_SECTOR_SIZE;
+
+	/* Enable the write access to the External Flash */
+	ExternalFlash_WriteEnable();
+
+	/* Select the External Flash: Chip Select low */
+	FLASH_CS_LOW();
+
+	/* Send "Write to Memory" instruction */
+	SPI_SendBytePolling(FLASH_CMD_PAGE_PROGRAM, EXTERNAL_FLASH_SPI);
+
+	/* Send address nibbles for address byte to write to */
+	SPI_SendBytePolling((page_address & 0xFF0000) >> 16, EXTERNAL_FLASH_SPI);
+	SPI_SendBytePolling((page_address & 0xFF00) >> 8, EXTERNAL_FLASH_SPI);
+	SPI_SendBytePolling(page_address & 0xFF, EXTERNAL_FLASH_SPI);
 
 	while (template[i].ptr != 0)
 	{
-		if ((num_bytes + template[i].count) > FLASH_PAGE_SIZE)
+		for (j = 0; j < template[i].count; j++)
 		{
-			/* Write the bytes up to the page limit */
-			for (j = 0; j < (FLASH_PAGE_SIZE - num_bytes); j++)
-				SPI_SendBytePolling(template[i].ptr[j], EXTERNAL_FLASH_SPI);
+			if (++num_bytes_written_to_page >= FLASH_PAGE_SIZE)
+			{
+				/* Wait for write complete and start a new write cycle */
 
-			num_bytes = 0;
+				/* Deselect the External Flash: Chip Select high */
+			  	FLASH_CS_HIGH();
 
+			  	/* Wait the end of Flash writing */
+			  	ExternalFlash_WaitForWriteEnd();
+
+			  	/* Start new write cycle and increment the address */
+			  	page_address += FLASH_PAGE_SIZE;
+
+			  	/* Enable the write access to the External Flash */
+				ExternalFlash_WriteEnable();
+
+			  	/* Select the External Flash: Chip Select low */
+			  	FLASH_CS_LOW();
+
+			  	/* Send "Write to Memory" instruction */
+			  	SPI_SendBytePolling(FLASH_CMD_PAGE_PROGRAM, EXTERNAL_FLASH_SPI);
+
+				/* Send address nibbles for address byte to write to */
+				SPI_SendBytePolling((page_address & 0xFF0000) >> 16, EXTERNAL_FLASH_SPI);
+			  	SPI_SendBytePolling((page_address & 0xFF00) >> 8, EXTERNAL_FLASH_SPI);
+			  	SPI_SendBytePolling(page_address & 0xFF, EXTERNAL_FLASH_SPI);
+
+			  	/* Set to one for the byte to be written directly after */
+				num_bytes_written_to_page = 1;
+			}
+
+			SPI_SendBytePolling(template[i].ptr[j], EXTERNAL_FLASH_SPI);
 		}
-		else
-		{
-			for (j = 0; j < template[i].count; j++)
-				SPI_SendBytePolling(template[i].ptr[j], EXTERNAL_FLASH_SPI);
-		}
+
+		i++;
 	}
+
+	/* Deselect the External Flash: Chip Select high */
+	FLASH_CS_HIGH();
+
+	/* Wait the end of Flash writing */
+	ExternalFlash_WaitForWriteEnd();
 }
 
