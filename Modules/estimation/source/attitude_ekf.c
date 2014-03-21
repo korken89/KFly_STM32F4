@@ -68,7 +68,8 @@ void GenerateStartingGuess(vector3f_t *acc, vector3f_t *mag, quaternion_t *attit
 
     /* Generate yaw by compensating for the pitch and roll */
     yaw = atan2f((-mag->y * fast_cos(roll) + mag->z * fast_sin(roll)), 
-    			 (mag->x * fast_cos(pitch) + mag->y * fast_sin(pitch) * fast_sin(roll) + mag->z * fast_sin(pitch) * fast_cos(roll)));
+    			 (mag->x * fast_cos(pitch) + mag->y * fast_sin(pitch) * fast_sin(roll) + \
+    			  mag->z * fast_sin(pitch) * fast_cos(roll)));
 
     /* Prepare the angles for conversion to quaternions */
     pitch *= 0.5f;
@@ -76,10 +77,7 @@ void GenerateStartingGuess(vector3f_t *acc, vector3f_t *mag, quaternion_t *attit
     yaw   *= 0.5f;
 
     /* Convert angles into quaternion */
-    attitude_guess->q0 = fast_cos(roll) * fast_cos(pitch) * fast_cos(yaw) + fast_sin(roll) * fast_sin(pitch) * fast_sin(yaw);
-    attitude_guess->q1 = fast_sin(roll) * fast_cos(pitch) * fast_cos(yaw) - fast_cos(roll) * fast_sin(pitch) * fast_sin(yaw);
-    attitude_guess->q2 = fast_cos(roll) * fast_sin(pitch) * fast_cos(yaw) + fast_sin(roll) * fast_cos(pitch) * fast_sin(yaw);
-    attitude_guess->q3 = fast_cos(roll) * fast_cos(pitch) * fast_sin(yaw) - fast_sin(roll) * fast_sin(pitch) * fast_cos(yaw);
+    euler2quat(roll, pitch, yaw, attitude_guess);
 }
 
 /**
@@ -245,7 +243,7 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 	acc_v.z = acc[2];
 
 	mag_v.x = mag[0];
-	mag_v.y = mag[1];
+	mag_v.y = mag[1];	
 	mag_v.z = mag[2];
 
 	acc_B = vector_rotation_transposed(R, acc_v);

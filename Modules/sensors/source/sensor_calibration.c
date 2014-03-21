@@ -21,21 +21,21 @@ static Sensor_Calibration_Type sensor_calibration;
 void vInitSensorCalibration(Sensor_Calibration_Type *cal)
 {
 	/* Set gains and biases */
-	cal->accelerometer_bias.x = 37.141f;
-	cal->accelerometer_bias.y = 10.604f;
-	cal->accelerometer_bias.z = 99.441f;
+	cal->accelerometer_bias.x = 17.141f;
+	cal->accelerometer_bias.y = -29.604f;
+	cal->accelerometer_bias.z = 148.441f;
 
 	cal->accelerometer_gain.x = 2048.294f;
 	cal->accelerometer_gain.y = 2047.527f;
 	cal->accelerometer_gain.z = 2077.573f;
 
-	cal->magnetometer_bias.x = 101.963f;
-	cal->magnetometer_bias.y = 48.558f;
-	cal->magnetometer_bias.z = -65.040f;
+	cal->magnetometer_bias.x = 107.963f;
+	cal->magnetometer_bias.y = 42.558f;
+	cal->magnetometer_bias.z = -57.040f;
 
-	cal->magnetometer_gain.x = 610.869f;
-	cal->magnetometer_gain.y = 619.546f;
-	cal->magnetometer_gain.z = 574.302f;
+	cal->magnetometer_gain.x = 683.869f;
+	cal->magnetometer_gain.y = 648.546f;
+	cal->magnetometer_gain.z = 622.302f;
 
 	/* Set the time stamp */
 	cal->timestamp = 0;

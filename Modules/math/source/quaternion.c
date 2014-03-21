@@ -48,14 +48,17 @@ void qvqc(quaternion_t *q, vector3f_t *v, vector3f_t *vr)
 
 /*
  * euler2quat - Convert Pitch, Roll and Yaw to quaternion
- * @param[in] r	    Roll [rad]
- * @param[in] p     Pitch [rad]
- * @param[in] y     Yaw [rad]
- * @param[out] q    Quaternion
+ * @param[in] roll	    Roll [rad]
+ * @param[in] pitch     Pitch [rad]
+ * @param[in] yaw		Yaw [rad]
+ * @param[out] q    	Quaternion
  */
-void euler2quat(float r, float p, float y, quaternion_t *q)
+void euler2quat(float roll, float pitch, float yaw, quaternion_t *q)
 {
-
+    q->q0 = fast_cos(roll) * fast_cos(pitch) * fast_cos(yaw) + fast_sin(roll) * fast_sin(pitch) * fast_sin(yaw);
+    q->q1 = fast_sin(roll) * fast_cos(pitch) * fast_cos(yaw) - fast_cos(roll) * fast_sin(pitch) * fast_sin(yaw);
+    q->q2 = fast_cos(roll) * fast_sin(pitch) * fast_cos(yaw) + fast_sin(roll) * fast_cos(pitch) * fast_sin(yaw);
+    q->q3 = fast_cos(roll) * fast_cos(pitch) * fast_sin(yaw) - fast_sin(roll) * fast_sin(pitch) * fast_cos(yaw);
 }
 
 

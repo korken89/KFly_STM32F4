@@ -230,7 +230,7 @@ static void HMC5983ParseData(void)
 	/* Move the raw data to the raw data structure */
 	Sensor_Raw_Data.mag_x = - HMC5983_Data.value.mag_y;
 	Sensor_Raw_Data.mag_y =   HMC5983_Data.value.mag_x;
-	Sensor_Raw_Data.mag_z =   HMC5983_Data.value.mag_z;
+	Sensor_Raw_Data.mag_z = - HMC5983_Data.value.mag_z;
 
 	/* Move the data to the public data holder and convert signs */
 	Sensor_Data.mag.x = (((float)Sensor_Raw_Data.mag_x) - sensor_calibration->magnetometer_bias.x) / sensor_calibration->magnetometer_gain.x;
