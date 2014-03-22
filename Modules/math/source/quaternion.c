@@ -55,6 +55,11 @@ void qvqc(quaternion_t *q, vector3f_t *v, vector3f_t *vr)
  */
 void euler2quat(float roll, float pitch, float yaw, quaternion_t *q)
 {
+	/* Prepare the angles for conversion to quaternions */
+    pitch *= 0.5f;
+    roll  *= 0.5f;
+    yaw   *= 0.5f;
+
     q->q0 = fast_cos(roll) * fast_cos(pitch) * fast_cos(yaw) + fast_sin(roll) * fast_sin(pitch) * fast_sin(yaw);
     q->q1 = fast_sin(roll) * fast_cos(pitch) * fast_cos(yaw) - fast_cos(roll) * fast_sin(pitch) * fast_sin(yaw);
     q->q2 = fast_cos(roll) * fast_sin(pitch) * fast_cos(yaw) + fast_sin(roll) * fast_cos(pitch) * fast_sin(yaw);
