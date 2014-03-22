@@ -67,14 +67,9 @@ void GenerateStartingGuess(vector3f_t *acc, vector3f_t *mag, quaternion_t *attit
     pitch = atan2f(acc->x, sqrtf(acc->y * acc->y + acc->z * acc->z));
 
     /* Generate yaw by compensating for the pitch and roll */
-    yaw = atan2f((-mag->y * fast_cos(roll) + mag->z * fast_sin(roll)), 
-    			 (mag->x * fast_cos(pitch) + mag->y * fast_sin(pitch) * fast_sin(roll) + \
+    yaw = atan2f((-mag->y * fast_cos(roll) - mag->z * fast_sin(roll)), 
+    			 (mag->x * fast_cos(pitch) + mag->y * fast_sin(pitch) * fast_sin(roll) - \
     			  mag->z * fast_sin(pitch) * fast_cos(roll)));
-
-    /* Prepare the angles for conversion to quaternions */
-    pitch *= 0.5f;
-    roll  *= 0.5f;
-    yaw   *= 0.5f;
 
     /* Convert angles into quaternion */
     euler2quat(roll, pitch, yaw, attitude_guess);
