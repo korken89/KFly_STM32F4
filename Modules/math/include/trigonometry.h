@@ -31,6 +31,27 @@
 /* Global variable defines */
 
 /* Inline functions */
+static inline float fastatan2(float y, float x)
+{
+	const float coeff_1 = PI * 0.25f;
+	const float coeff_2 = PI * 0.75f;
+	float abs_y = fabsf(y);
+	float angle, r;
+
+	if (x >= 0.0f)
+	{
+		r = (x - abs_y) / (x + abs_y);
+		angle = coeff_1 - coeff_1 * r;
+	}
+	else
+	{
+		r = (x + abs_y) / (abs_y - x);
+		angle = coeff_2 - coeff_1 * r;
+	}
+
+	return y < 0.0f ? -angle : angle;
+}
+
 static inline float fastpow2(float p)
 {
 	float offset = (p < 0) ? 1.0f : 0.0f;
