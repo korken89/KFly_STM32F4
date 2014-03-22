@@ -25,8 +25,8 @@ static const Flash_Save_Template_Type Flash_Save_Structure[] = {
 		.count = 6
 	},
 	{	/* To indicate the end of the save structure */
-		.ptr = (uint8_t *)0,
-		.count = 0
+		.ptr = FLASH_END,
+		.count = FLASH_END
 	}
 };
 
@@ -118,26 +118,49 @@ uint32_t ExternalFlash_ReadID(void)
 }
 
 
+ErrorStatus ExternalFlash_CheckSettingsStructure(Flash_Save_Template_Type *template, uint32_t sector)
+{
+	return ERROR;
+}
+
 ErrorStatus ExternalFlash_SaveSettings(Flash_Save_Template_Type *template, uint32_t sector)
 {
-	uint32_t num_bytes, num_pages, num_single;
-
 	/* Check so we write to one of the sectors */
 	if (sector > M25PE40_NUM_SECTORS)
 		return ERROR;
-
-	/* Get the total number of bytes to save */
-	num_bytes = SaveStructure_NumberOfBytes(template);
-
-	/* Calculate the number of pages needed */
-	num_pages = num_bytes / FLASH_PAGE_SIZE;
-	num_single = num_bytes % FLASH_PAGE_SIZE;
 
 	/* Erase the selected sector */
 	ExternalFlash_EraseSector(sector * FLASH_SECTOR_SIZE);
 
 	/* Start saving data to the external flash memory */
 	SaveStructure_WriteToMemory(template, sector);
+
+	return SUCCESS;
+}
+
+
+ErrorStatus ExternalFlash_LoadSettings(Flash_Save_Template_Type *template, uint32_t sector)
+{
+	uint32_t i, page_address;
+
+	i = 0;
+
+	/* Calculate the starting sector address */
+	page_address = sector * FLASH_SECTOR_SIZE;
+
+	/* Check so we read from one of the sectors */
+	if (sector > M25PE40_NUM_SECTORS)
+		return ERROR;
+
+	while (template[i].ptr != 0)
+	{
+		/* Read the setting from the flash */
+		ExternalFlash_ReadBuffer(template[i].ptr, page_address, template[i].count);
+
+		/* Increment Flash address and template address */
+		page_address += template[i].count + 4; /* The 4 comes from the SYNC */
+		i++;
+	}
 
 	return SUCCESS;
 }
@@ -161,7 +184,7 @@ void ExternalFlash_WritePage(uint8_t *buffer, uint32_t address, uint16_t count)
   	SPI_SendBytePolling(FLASH_CMD_PAGE_PROGRAM, EXTERNAL_FLASH_SPI);
 
 	/* Send address nibbles for address byte to write to */
-	SPI_SendBytePolling((address & 0xFF0000) >> 16, EXTERNAL_FLASH_SPI);
+	SPI_SendBytePolling((address & 0xFF0000) >> 16, EXTERNAL_FLASH_SPI);	
   	SPI_SendBytePolling((address & 0xFF00) >> 8, EXTERNAL_FLASH_SPI);
   	SPI_SendBytePolling(address & 0xFF, EXTERNAL_FLASH_SPI);
 
@@ -181,7 +204,7 @@ void ExternalFlash_WritePage(uint8_t *buffer, uint32_t address, uint16_t count)
  * 
  * @param buffer 	Pointer to the buffer saving the data.
  * @param address 	Where in the Flash to read the data.
- * @param count 	Number of bytes to write.
+ * @param count 	Number of bytes to read.
  */
 void ExternalFlash_ReadBuffer(uint8_t *buffer, uint32_t address, uint16_t count)
 {
@@ -197,10 +220,7 @@ void ExternalFlash_ReadBuffer(uint8_t *buffer, uint32_t address, uint16_t count)
   	SPI_SendBytePolling(address & 0xFF, EXTERNAL_FLASH_SPI);
 
   	while (count--)
-  	{
-    	*buffer = SPI_SendBytePolling(SPI_DUMMY_BYTE, EXTERNAL_FLASH_SPI);
-    	buffer++;
-  	}
+    	*(buffer++) = SPI_SendBytePolling(SPI_DUMMY_BYTE, EXTERNAL_FLASH_SPI);
 
   	/* Deselect the External Flash: Chip Select high */
   	FLASH_CS_HIGH();
@@ -262,7 +282,7 @@ static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template)
 
 static uint32_t SaveStructure_WriteToMemory(Flash_Save_Template_Type *template, uint32_t sector)
 {
-	uint32_t i, j, num_bytes_written_to_page, page_address;
+	uint32_t i, j, num_bytes_written_to_page, page_address, num_sync;
 
 	i = 0;
 	num_bytes_written_to_page = 0;
@@ -284,7 +304,7 @@ static uint32_t SaveStructure_WriteToMemory(Flash_Save_Template_Type *template, 
 
 	while (template[i].ptr != 0)
 	{
-		for (j = 0; j < template[i].count; j++)
+		for (j = -4; j < template[i].count; j++)
 		{
 			if (++num_bytes_written_to_page >= FLASH_PAGE_SIZE)
 			{
@@ -317,7 +337,11 @@ static uint32_t SaveStructure_WriteToMemory(Flash_Save_Template_Type *template, 
 				num_bytes_written_to_page = 1;
 			}
 
-			SPI_SendBytePolling(template[i].ptr[j], EXTERNAL_FLASH_SPI);
+			/* Send SYNC first, then the data */
+			if (j < 0)
+				SPI_SendBytePolling((uint8_t)((FLASH_SYNC_WORD >> ((j + 1) * 8)) & 0xff), EXTERNAL_FLASH_SPI);
+			else
+				SPI_SendBytePolling(template[i].ptr[j], EXTERNAL_FLASH_SPI);
 		}
 
 		i++;
