@@ -128,10 +128,10 @@ void Input_CPPM_RSSI_Config(void)
 
 
 	/* Clear interrupts before enabling the timers */
-	TIM_ClearFlag(TIM9, TIM_FLAG_CC3);
-	TIM_ClearFlag(TIM9, TIM_FLAG_CC4);
-	TIM_ClearFlag(TIM12, TIM_FLAG_CC1);
-	TIM_ClearFlag(TIM12, TIM_FLAG_CC2);
+	TIM_ClearITPendingBit(TIM9, TIM_IT_CC3);
+	TIM_ClearITPendingBit(TIM9, TIM_IT_CC4);
+	TIM_ClearITPendingBit(TIM12, TIM_IT_CC1);
+	TIM_ClearITPendingBit(TIM12, TIM_IT_CC2);
 
 
 	/* Enable Timers */
@@ -256,12 +256,12 @@ void Input_PWM_Config(void)
 
 
 	/* Clear interrupts before enabling the timers */
-	TIM_ClearFlag(TIM3, TIM_FLAG_CC3);
-	TIM_ClearFlag(TIM3, TIM_FLAG_CC4);
-	TIM_ClearFlag(TIM9, TIM_FLAG_CC3);
-	TIM_ClearFlag(TIM9, TIM_FLAG_CC4);
-	TIM_ClearFlag(TIM12, TIM_FLAG_CC1);
-	TIM_ClearFlag(TIM12, TIM_FLAG_CC2);
+	TIM_ClearITPendingBit(TIM3, TIM_ITCC3);
+	TIM_ClearITPendingBit(TIM3, TIM_IT_CC4);
+	TIM_ClearITPendingBit(TIM9, TIM_IT_CC3);
+	TIM_ClearITPendingBit(TIM9, TIM_IT_CC4);
+	TIM_ClearITPendingBit(TIM12, TIM_IT_CC1);
+	TIM_ClearITPendingBit(TIM12, TIM_IT_CC2);
 
 
 	/* Enable Timers */
@@ -270,4 +270,78 @@ void Input_PWM_Config(void)
 	TIM_Cmd(TIM12, ENABLE);
 }
 
+
+static void Process_InputCapture(Input_Capture_Channel channel, int16_t capture)
+{
+	
+}
+
+
+void TIM3_IRQHandler(void)
+{
+	/* Check which capture event that was triggered */
+	if (TIM_GetITStatus(TIM3, TIM_IT_CC3) == SET)
+	{
+		/* Clear interrupt flag */
+		TIM_ClearITPendingBit(TIM3, TIM_IT_CC3);
+
+		/* Process the interrupt */
+		Process_InputCapture(INPUT_CH5, TIM_GetCapture3(TIM3));
+	}
+
+	if (TIM_GetITStatus(TIM3, TIM_IT_CC4) == SET)
+	{
+		/* Clear interrupt flag */
+		TIM_ClearITPendingBit(TIM3, TIM_IT_CC4);
+
+		/* Process the interrupt */
+		Process_InputCapture(INPUT_CH4, TIM_GetCapture4(TIM3));
+	}
+}
+
+
+void TIM1_BRK_TIM9_IRQHandler(void)
+{
+	/* Check which capture event that was triggered */
+	if (TIM_GetITStatus(TIM9, TIM_IT_CC3) == SET)
+	{
+		/* Clear interrupt flag */
+		TIM_ClearITPendingBit(TIM9, TIM_IT_CC3);
+
+		/* Process the interrupt */
+		Process_InputCapture(INPUT_CH1, TIM_GetCapture3(TIM9));
+	}
+
+	if (TIM_GetITStatus(TIM9, TIM_IT_CC4) == SET)
+	{
+		/* Clear interrupt flag */
+		TIM_ClearITPendingBit(TIM9, TIM_IT_CC4);
+
+		/* Process the interrupt */
+		Process_InputCapture(INPUT_CH6, TIM_GetCapture4(TIM9));
+	}
+}
+
+
+void TIM8_BRK_TIM12_IRQHandler(void)
+{
+	/* Check which capture event that was triggered */
+	if (TIM_GetITStatus(TIM12, TIM_IT_CC1) == SET)
+	{
+		/* Clear interrupt flag */
+		TIM_ClearITPendingBit(TIM12, TIM_IT_CC1);
+
+		/* Process the interrupt */
+		Process_InputCapture(INPUT_CH2, TIM_GetCapture1(TIM12));
+	}
+
+	if (TIM_GetITStatus(TIM12, TIM_IT_CC2) == SET)
+	{
+		/* Clear interrupt flag */
+		TIM_ClearITPendingBit(TIM12, TIM_IT_CC2);
+
+		/* Process the interrupt */
+		Process_InputCapture(INPUT_CH1, TIM_GetCapture2(TIM12));
+	}
+}
 
