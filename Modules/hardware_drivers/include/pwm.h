@@ -32,8 +32,7 @@ typedef enum
 typedef enum
 {
 	OUTPUT_1_TO_4,
-	OUTPUT_5_TO_6,
-	OUTPUT_7_TO_8
+	OUTPUT_5_TO_8
 } Output_Group_Type;
 
 typedef enum

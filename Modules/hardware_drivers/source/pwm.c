@@ -35,8 +35,7 @@ void PWMInit(void)
 	 * Timer setup starts here!
 	 * */
 
-	/* TIM3/4/8 clock enable */
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	/* TIM4/8 clock enable */
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM8, ENABLE);
 
@@ -59,8 +58,8 @@ void PWMInit(void)
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource8, GPIO_AF_TIM4); /* Output 2 */
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource9, GPIO_AF_TIM4); /* Output 1 */
 
-	GPIO_PinAFConfig(GPIOC, GPIO_PinSource6, GPIO_AF_TIM3); /* Output 8 */
-	GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_TIM3); /* Output 7 */
+	GPIO_PinAFConfig(GPIOC, GPIO_PinSource6, GPIO_AF_TIM8); /* Output 8 */
+	GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_TIM8); /* Output 7 */
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource8, GPIO_AF_TIM8); /* Output 6 */
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource9, GPIO_AF_TIM8); /* Output 5 */
 
@@ -76,7 +75,6 @@ void PWMInit(void)
 	TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
 
 	/* Apply time base configuration */
-	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
 	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
 	PrescalerValue = ((SystemCoreClock) / TIMER_RATE) - 1; /* Runs on APB2 (84 MHz) */
 	TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
@@ -91,14 +89,14 @@ void PWMInit(void)
 	/* PWM1 Mode configuration: Channel 1 */
 	TIM_OC1Init(TIM4, &TIM_OCInitStructure);
 	TIM_OC1PreloadConfig(TIM4, TIM_OCPreload_Enable);
-	TIM_OC1Init(TIM3, &TIM_OCInitStructure);
-	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
+	TIM_OC1Init(TIM8, &TIM_OCInitStructure);
+	TIM_OC1PreloadConfig(TIM8, TIM_OCPreload_Enable);
 
 	/* PWM1 Mode configuration: Channel 2 */
 	TIM_OC2Init(TIM4, &TIM_OCInitStructure);
 	TIM_OC2PreloadConfig(TIM4, TIM_OCPreload_Enable);
-	TIM_OC2Init(TIM3, &TIM_OCInitStructure);
-	TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);
+	TIM_OC2Init(TIM8, &TIM_OCInitStructure);
+	TIM_OC2PreloadConfig(TIM8, TIM_OCPreload_Enable);
 
 	/* PWM1 Mode configuration: Channel 3 */
 	TIM_OC3Init(TIM4, &TIM_OCInitStructure);
@@ -113,13 +111,11 @@ void PWMInit(void)
 	TIM_OC4PreloadConfig(TIM8, TIM_OCPreload_Enable);
 
 	/* Enable preload */
-	TIM_ARRPreloadConfig(TIM3, ENABLE);
 	TIM_ARRPreloadConfig(TIM4, ENABLE);
 	TIM_ARRPreloadConfig(TIM8, ENABLE);
 	TIM_CtrlPWMOutputs(TIM8, ENABLE);
 
 	/* Enable timers */
-	TIM_Cmd(TIM3, ENABLE);
 	TIM_Cmd(TIM4, ENABLE);
 	TIM_Cmd(TIM8, ENABLE);
 
@@ -130,8 +126,8 @@ void PWMInit(void)
 	TIM4->CCR2 = per; /* Output 3 */
 	TIM4->CCR3 = per; /* Output 2 */
 	TIM4->CCR4 = per; /* Output 1 */
-	TIM3->CCR1 = per; /* Output 8 */
-	TIM3->CCR2 = per; /* Output 7 */
+	TIM8->CCR1 = per; /* Output 8 */
+	TIM8->CCR2 = per; /* Output 7 */
 	TIM8->CCR3 = per; /* Output 6 */
 	TIM8->CCR4 = per; /* Output 5 */
 }
@@ -148,7 +144,7 @@ void vSetRCOutput(Output_Channel_Type ch, float u)
 	static const uint32_t PWM_CH[8] = { (uint32_t)&TIM4->CCR4, (uint32_t)&TIM4->CCR3,
 										(uint32_t)&TIM4->CCR2, (uint32_t)&TIM4->CCR1,
 										(uint32_t)&TIM8->CCR4, (uint32_t)&TIM8->CCR3,
-										(uint32_t)&TIM3->CCR2, (uint32_t)&TIM3->CCR1};
+										(uint32_t)&TIM8->CCR2, (uint32_t)&TIM8->CCR1};
 
 	uint32_t period = (uint32_t)(1000.0f * bound(1.0f, 0.0f, u));
 
@@ -165,8 +161,6 @@ void vSetOutputRate(Output_Group_Type group, PWM_Rate_Type rate)
 {
 	if (group == OUTPUT_1_TO_4)
 		TIM4->ARR = rate;
-	else if (group == OUTPUT_5_TO_6)
+	else if (group == OUTPUT_5_TO_8)
 		TIM8->ARR = rate;
-	else if (group == OUTPUT_7_TO_8)
-		TIM3->ARR = rate;
 }
