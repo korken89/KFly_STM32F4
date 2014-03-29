@@ -25,14 +25,12 @@ typedef struct {
 } Raw_External_Input_Type;
 
 typedef enum {
-	INPUT_CH1 = 0,
-	INPUT_CH2 = 1,
+	INPUT_CH1_CPPM = 0,
+	INPUT_CH2_RSSI = 1,
 	INPUT_CH3 = 2,
 	INPUT_CH4 = 3,
 	INPUT_CH5 = 4,
-	INPUT_CH6 = 5,
-	INPUT_CPPM = 6,
-	INPUT_RSSI = 7
+	INPUT_CH6 = 5
 } Input_Capture_Channel;
 
 /* Global functions */

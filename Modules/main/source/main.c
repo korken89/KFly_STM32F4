@@ -3,6 +3,7 @@
 #include "circularbuffer.h"
 #include "statemachine_generators.h"
 #include "led.h"
+#include "ext_input.h"
 
 USB_OTG_CORE_HANDLE USB_OTG_dev;
 static uint8_t DMA_buffer[32];
@@ -39,6 +40,7 @@ void main(void)
 	 *
 	 * */
 	PWMInit();
+	Input_CPPM_RSSI_Config();
 
 	/* *
 	 *

@@ -5,6 +5,8 @@
  * */
 
 #include "ext_input.h"
+#include "FreeRTOSConfig.h"
+ #include "led.h"
 
 #define CAPTURE_TIMER_RATE 		1000000
 
@@ -12,6 +14,7 @@
 
 /* Private variable defines */
 Raw_External_Input_Type raw_rc_input;
+volatile Bool CPPM_Mode = FALSE;
 
 /* Private function defines */
 
@@ -20,12 +23,12 @@ Raw_External_Input_Type raw_rc_input;
 
 /*
 Input connections:
-	Control In 1: TIM9_CH3 (PA2)
-	Control In 2: TIM12_CH2 (PB15)
-	Control In 3: TIM12_CH1 (PB14)
-	Control In 4: TIM3_CH4 (PB1)
-	Control In 5: TIM3_CH3 (PB0)
-	Control In 6: TIM9_CH4 (PA3)
+	Control In 1:  TIM9_CH1   (PA2)
+	Control In 2:  TIM12_CH2  (PB15)
+	Control In 3:  TIM12_CH1  (PB14)
+	Control In 4:  TIM3_CH4   (PB1)
+	Control In 5:  TIM3_CH3   (PB0)
+	Control In 6:  TIM9_CH2   (PA3)
 */
 void Input_CPPM_RSSI_Config(void)
 {
@@ -34,23 +37,29 @@ void Input_CPPM_RSSI_Config(void)
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_ICInitTypeDef TIM_ICInitStructure;
 
+
+	/* Set input mode */
+	CPPM_Mode = TRUE;
+
+
 	/* If timers are running: Disable Timers */
 	TIM_Cmd(TIM3, DISABLE);
 	TIM_Cmd(TIM9, DISABLE);
 	TIM_Cmd(TIM12, DISABLE);
 
+
 	/* Disable interrupts */
 	TIM_ITConfig(TIM3, TIM_IT_CC3, DISABLE);
 	TIM_ITConfig(TIM3, TIM_IT_CC4, DISABLE);
-	TIM_ITConfig(TIM9, TIM_IT_CC3, DISABLE);
-	TIM_ITConfig(TIM9, TIM_IT_CC4, DISABLE);
+	TIM_ITConfig(TIM9, TIM_IT_CC1, DISABLE);
+	TIM_ITConfig(TIM9, TIM_IT_CC2, DISABLE);
 	TIM_ITConfig(TIM12, TIM_IT_CC1, DISABLE);
 	TIM_ITConfig(TIM12, TIM_IT_CC2, DISABLE);
 
 
 	/* TIM clock enable */
-	RCC_APB1PeriphClockCmd(RCC_APB2Periph_TIM9, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB1Periph_TIM12, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM9, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM12, ENABLE);
 
 
 	/* Inputs are on GPIOA and GPIOB */
@@ -79,7 +88,7 @@ void Input_CPPM_RSSI_Config(void)
 
 
 	/* Enable the TIM global Interrupt */
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority 	= 8;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority 	= configMAX_SYSCALL_INTERRUPT_PRIORITY + 2;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority 			= 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd 					= ENABLE;
 
@@ -104,33 +113,25 @@ void Input_CPPM_RSSI_Config(void)
 	
 
 	/* Setup Input Capture */
-	TIM_ICInitStructure.TIM_ICPolarity 		= TIM_ICPolarity_BothEdge;
+	TIM_ICInitStructure.TIM_ICPolarity 		= TIM_ICPolarity_Falling;
 	TIM_ICInitStructure.TIM_ICSelection 	= TIM_ICSelection_DirectTI;
 	TIM_ICInitStructure.TIM_ICPrescaler 	= TIM_ICPSC_DIV1;
 	TIM_ICInitStructure.TIM_ICFilter 		= 0x0;
 
-	TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;
-	TIM_ICInit(TIM9, &TIM_ICInitStructure);
-	TIM_ICInitStructure.TIM_Channel = TIM_Channel_4;
+	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
 	TIM_ICInit(TIM9, &TIM_ICInitStructure);
 
-	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
-	TIM_ICInit(TIM12, &TIM_ICInitStructure);
 	TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
 	TIM_ICInit(TIM12, &TIM_ICInitStructure);
 
 
 	/* Enable interrupts */
-	TIM_ITConfig(TIM9, TIM_IT_CC3, ENABLE);
-	TIM_ITConfig(TIM9, TIM_IT_CC4, ENABLE);
-	TIM_ITConfig(TIM12, TIM_IT_CC1, ENABLE);
+	TIM_ITConfig(TIM9, TIM_IT_CC1, ENABLE);
 	TIM_ITConfig(TIM12, TIM_IT_CC2, ENABLE);
 
 
 	/* Clear interrupts before enabling the timers */
-	TIM_ClearITPendingBit(TIM9, TIM_IT_CC3);
-	TIM_ClearITPendingBit(TIM9, TIM_IT_CC4);
-	TIM_ClearITPendingBit(TIM12, TIM_IT_CC1);
+	TIM_ClearITPendingBit(TIM9, TIM_IT_CC1);
 	TIM_ClearITPendingBit(TIM12, TIM_IT_CC2);
 
 
@@ -146,10 +147,16 @@ void Input_PWM_Config(void)
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_ICInitTypeDef TIM_ICInitStructure;
 
+
+	/* Set input mode */
+	CPPM_Mode = FALSE;
+
+
 	/* If timers are running: Disable Timers */
 	TIM_Cmd(TIM3, DISABLE);
 	TIM_Cmd(TIM9, DISABLE);
 	TIM_Cmd(TIM12, DISABLE);
+
 
 	/* Disable interrupts */
 	TIM_ITConfig(TIM3, TIM_IT_CC3, DISABLE);
@@ -161,9 +168,9 @@ void Input_PWM_Config(void)
 
 
 	/* TIM clock enable */
-	RCC_APB2PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-	RCC_APB1PeriphClockCmd(RCC_APB2Periph_TIM9, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB1Periph_TIM12, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM9, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM12, ENABLE);
 
 
 	/* Inputs are on GPIOA and GPIOB */
@@ -196,7 +203,7 @@ void Input_PWM_Config(void)
 
 
 	/* Enable the TIM global Interrupt */
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority 	= 8;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority 	= configMAX_SYSCALL_INTERRUPT_PRIORITY + 2;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority 			= 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd 					= ENABLE;
 
@@ -235,9 +242,9 @@ void Input_PWM_Config(void)
 	TIM_ICInitStructure.TIM_Channel = TIM_Channel_4;
 	TIM_ICInit(TIM3, &TIM_ICInitStructure);
 
-	TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;
+	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
 	TIM_ICInit(TIM9, &TIM_ICInitStructure);
-	TIM_ICInitStructure.TIM_Channel = TIM_Channel_4;
+	TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
 	TIM_ICInit(TIM9, &TIM_ICInitStructure);
 
 	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
@@ -249,17 +256,17 @@ void Input_PWM_Config(void)
 	/* Enable interrupts */
 	TIM_ITConfig(TIM3, TIM_IT_CC3, ENABLE);
 	TIM_ITConfig(TIM3, TIM_IT_CC4, ENABLE);
-	TIM_ITConfig(TIM9, TIM_IT_CC3, ENABLE);
-	TIM_ITConfig(TIM9, TIM_IT_CC4, ENABLE);
+	TIM_ITConfig(TIM9, TIM_IT_CC1, ENABLE);
+	TIM_ITConfig(TIM9, TIM_IT_CC2, ENABLE);
 	TIM_ITConfig(TIM12, TIM_IT_CC1, ENABLE);
 	TIM_ITConfig(TIM12, TIM_IT_CC2, ENABLE);
 
 
 	/* Clear interrupts before enabling the timers */
-	TIM_ClearITPendingBit(TIM3, TIM_ITCC3);
+	TIM_ClearITPendingBit(TIM3, TIM_IT_CC3);
 	TIM_ClearITPendingBit(TIM3, TIM_IT_CC4);
-	TIM_ClearITPendingBit(TIM9, TIM_IT_CC3);
-	TIM_ClearITPendingBit(TIM9, TIM_IT_CC4);
+	TIM_ClearITPendingBit(TIM9, TIM_IT_CC1);
+	TIM_ClearITPendingBit(TIM9, TIM_IT_CC2);
 	TIM_ClearITPendingBit(TIM12, TIM_IT_CC1);
 	TIM_ClearITPendingBit(TIM12, TIM_IT_CC2);
 
@@ -273,7 +280,14 @@ void Input_PWM_Config(void)
 
 static void Process_InputCapture(Input_Capture_Channel channel, int16_t capture)
 {
-	
+	if (CPPM_Mode == TRUE)
+	{
+
+	}
+	else
+	{
+
+	}
 }
 
 
@@ -303,22 +317,22 @@ void TIM3_IRQHandler(void)
 void TIM1_BRK_TIM9_IRQHandler(void)
 {
 	/* Check which capture event that was triggered */
-	if (TIM_GetITStatus(TIM9, TIM_IT_CC3) == SET)
+	if (TIM_GetITStatus(TIM9, TIM_IT_CC1) == SET)
 	{
 		/* Clear interrupt flag */
-		TIM_ClearITPendingBit(TIM9, TIM_IT_CC3);
+		TIM_ClearITPendingBit(TIM9, TIM_IT_CC1);
 
 		/* Process the interrupt */
-		Process_InputCapture(INPUT_CH1, TIM_GetCapture3(TIM9));
+		Process_InputCapture(INPUT_CH1, TIM_GetCapture1(TIM9));
 	}
 
-	if (TIM_GetITStatus(TIM9, TIM_IT_CC4) == SET)
+	if (TIM_GetITStatus(TIM9, TIM_IT_CC2) == SET)
 	{
 		/* Clear interrupt flag */
-		TIM_ClearITPendingBit(TIM9, TIM_IT_CC4);
+		TIM_ClearITPendingBit(TIM9, TIM_IT_CC2);
 
 		/* Process the interrupt */
-		Process_InputCapture(INPUT_CH6, TIM_GetCapture4(TIM9));
+		Process_InputCapture(INPUT_CH6, TIM_GetCapture2(TIM9));
 	}
 }
 
@@ -332,7 +346,7 @@ void TIM8_BRK_TIM12_IRQHandler(void)
 		TIM_ClearITPendingBit(TIM12, TIM_IT_CC1);
 
 		/* Process the interrupt */
-		Process_InputCapture(INPUT_CH2, TIM_GetCapture1(TIM12));
+		Process_InputCapture(INPUT_CH3, TIM_GetCapture1(TIM12));
 	}
 
 	if (TIM_GetITStatus(TIM12, TIM_IT_CC2) == SET)
@@ -341,7 +355,7 @@ void TIM8_BRK_TIM12_IRQHandler(void)
 		TIM_ClearITPendingBit(TIM12, TIM_IT_CC2);
 
 		/* Process the interrupt */
-		Process_InputCapture(INPUT_CH1, TIM_GetCapture2(TIM12));
+		Process_InputCapture(INPUT_CH2, TIM_GetCapture2(TIM12));
 	}
 }
 
