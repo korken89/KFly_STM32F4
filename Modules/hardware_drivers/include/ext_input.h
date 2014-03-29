@@ -15,13 +15,18 @@
 /* Includes */
 
 /* Defines */
+
+#define CAPTURE_TIMER_RATE 			1000000
 #define MAX_NUMBER_OF_INPUTS		12
+#define CPPM_SYNC_LIMIT_MIN			3000	/* 3 ms */
+#define CPPM_SYNC_LIMIT_MAX			30000	/* 30 ms */
 
 /* Typedefs */
 typedef struct {
 	Bool active_connection;
-	int16_t value[MAX_NUMBER_OF_INPUTS];
-	float rssi;
+	uint16_t value[MAX_NUMBER_OF_INPUTS];
+	uint16_t rssi;
+	uint16_t rssi_period;
 } Raw_External_Input_Type;
 
 typedef enum {
