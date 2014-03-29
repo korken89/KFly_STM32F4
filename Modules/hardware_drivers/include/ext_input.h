@@ -23,6 +23,7 @@
 
 /* Typedefs */
 typedef struct {
+	Bool CPPM_Mode;
 	Bool active_connection;
 	uint16_t value[MAX_NUMBER_OF_INPUTS];
 	uint16_t rssi;

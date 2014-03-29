@@ -11,7 +11,6 @@
 
 /* Private variable defines */
 Raw_External_Input_Type raw_rc_input;
-volatile Bool CPPM_Mode = FALSE;
 
 /* Private function defines */
 
@@ -36,7 +35,7 @@ void Input_CPPM_RSSI_Config(void)
 
 
 	/* Set input mode */
-	CPPM_Mode = TRUE;
+	raw_rc_input.CPPM_Mode = TRUE;
 
 
 	/* If timers are running: Disable Timers */
@@ -146,7 +145,7 @@ void Input_PWM_Config(void)
 
 
 	/* Set input mode */
-	CPPM_Mode = FALSE;
+	raw_rc_input.CPPM_Mode = FALSE;
 
 
 	/* If timers are running: Disable Timers */
@@ -284,25 +283,35 @@ static void Process_InputCapture(Input_Capture_Channel channel, uint32_t capture
 {
 	static uint32_t old_capture[6];	/* The last capture value */
 	static uint16_t cppm_count = 0;	/* Current CPPM channel */
+	uint16_t tmp;
 
 	/* If CPPM mode */
-	if (CPPM_Mode == TRUE)
+	if (raw_rc_input.CPPM_Mode == TRUE)
 	{
 		if (channel == INPUT_CH1_CPPM)
 		{	
 			/* 	CPPM only needs 1 old value since it comes in as a serial stream.
 		   	Plus check if the timer overflowed. */
+		   	tmp = capture;
+
+		   	old_capture[0] = capture;
 			if (capture > old_capture[0])		/* No overflow */
 				capture = capture - old_capture[0];
 			else if (capture < old_capture[0])	/* Timer overflow */
 				capture = ((0xFFFF - old_capture[0]) + capture); 
 
-			
+			old_capture[0] = tmp;
+
+			/*
+			 * Decoding of CPPM
+			 */
 			if (raw_rc_input.active_connection == TRUE)
 			{	
 				/* If the capture is larger than the time for the SYNC, reset counter */
 				if (capture > CPPM_SYNC_LIMIT_MIN)
+				{
 					cppm_count = 0;
+				}
 				else
 				{
 					/* If no sync has been detected */
