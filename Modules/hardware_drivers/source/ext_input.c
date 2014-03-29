@@ -224,7 +224,7 @@ void Input_PWM_Config(void)
 	TIM_TimeBaseInit(TIM12, &TIM_TimeBaseStructure);
 
 	TIM_TimeBaseStructure.TIM_Prescaler 		= (SystemCoreClock / CAPTURE_TIMER_RATE) - 1;
-	TIM_TimeBaseInit(TIM9, &TIM_TimeBaseStructure);	/* Run on APB2, different prescaler */
+	TIM_TimeBaseInit(TIM9, &TIM_TimeBaseStructure);	/* Runs on APB2, use different prescaler */
 	
 
 	/* Setup Input Capture */
@@ -294,7 +294,6 @@ static void Process_InputCapture(Input_Capture_Channel channel, uint32_t capture
 		   	Plus check if the timer overflowed. */
 		   	tmp = capture;
 
-		   	old_capture[0] = capture;
 			if (capture > old_capture[0])		/* No overflow */
 				capture = capture - old_capture[0];
 			else if (capture < old_capture[0])	/* Timer overflow */
@@ -417,4 +416,3 @@ void TIM8_BRK_TIM12_IRQHandler(void)
 		Process_InputCapture(INPUT_CH2_RSSI, TIM_GetCapture2(TIM12));
 	}
 }
-
