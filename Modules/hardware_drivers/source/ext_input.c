@@ -34,10 +34,6 @@ void Input_CPPM_RSSI_Config(void)
 	TIM_ICInitTypeDef TIM_ICInitStructure;
 
 
-	/* Set input mode */
-	raw_rc_input.CPPM_Mode = TRUE;
-
-
 	/* If timers are running: Disable Timers */
 	TIM_Cmd(TIM3, DISABLE);
 	TIM_Cmd(TIM9, DISABLE);
@@ -51,6 +47,10 @@ void Input_CPPM_RSSI_Config(void)
 	TIM_ITConfig(TIM9, TIM_IT_CC2, DISABLE);
 	TIM_ITConfig(TIM12, TIM_IT_CC1, DISABLE);
 	TIM_ITConfig(TIM12, TIM_IT_CC2, DISABLE);
+
+
+	/* Set input mode */
+	raw_rc_input.CPPM_Mode = TRUE;
 
 
 	/* TIM clock enable */
@@ -117,8 +117,17 @@ void Input_CPPM_RSSI_Config(void)
 	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
 	TIM_ICInit(TIM9, &TIM_ICInitStructure);
 
-	TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
-	TIM_ICInit(TIM12, &TIM_ICInitStructure);
+	/* Set up PWM Input Capture */
+	TIM_ICInitStructure.TIM_ICPolarity 	= TIM_ICPolarity_Rising;
+	TIM_ICInitStructure.TIM_Channel 	= TIM_Channel_2;
+	TIM_PWMIConfig(TIM12, &TIM_ICInitStructure);
+
+	/* Select the TIM4 Input Trigger: TI2FP2 */
+	TIM_SelectInputTrigger(TIM12, TIM_TS_TI2FP2);
+
+	/* Select the slave Mode: Reset Mode */
+	TIM_SelectSlaveMode(TIM12, TIM_SlaveMode_Reset);
+	TIM_SelectMasterSlaveMode(TIM12, TIM_MasterSlaveMode_Enable);
 
 
 	/* Enable interrupts */
@@ -144,10 +153,6 @@ void Input_PWM_Config(void)
 	TIM_ICInitTypeDef TIM_ICInitStructure;
 
 
-	/* Set input mode */
-	raw_rc_input.CPPM_Mode = FALSE;
-
-
 	/* If timers are running: Disable Timers */
 	TIM_Cmd(TIM3, DISABLE);
 	TIM_Cmd(TIM9, DISABLE);
@@ -161,6 +166,10 @@ void Input_PWM_Config(void)
 	TIM_ITConfig(TIM9, TIM_IT_CC4, DISABLE);
 	TIM_ITConfig(TIM12, TIM_IT_CC1, DISABLE);
 	TIM_ITConfig(TIM12, TIM_IT_CC2, DISABLE);
+
+
+	/* Set input mode */
+	raw_rc_input.CPPM_Mode = FALSE;
 
 
 	/* TIM clock enable */
@@ -335,9 +344,21 @@ static void Process_InputCapture(Input_Capture_Channel channel, uint32_t capture
 			}
 
 		}
-		else if (channel == INPUT_CH2_RSSI)
-		{ 	/* RSSI capture */
-			raw_rc_input.rssi = 0;
+		else if (channel == INPUT_CH2_RSSI) /* RSSI capture */
+		{ 	
+			/* Get the Input Capture value */
+			raw_rc_input.rssi_period = capture;
+
+			/* If there is valid data, save it else reset RSSI values */
+			if (capture != 0)
+			{
+				raw_rc_input.rssi = TIM_GetCapture1(TIM12);
+			}
+			else
+			{
+				raw_rc_input.rssi = 0;
+				raw_rc_input.rssi_period = 0;
+			}
 		}
 	}
 
