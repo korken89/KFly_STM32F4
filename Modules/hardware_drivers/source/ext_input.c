@@ -6,9 +6,6 @@
 
 #include "ext_input.h"
 #include "FreeRTOSConfig.h"
- #include "led.h"
-
-#define CAPTURE_TIMER_RATE 		1000000
 
 /* Global variable defines */
 
@@ -277,13 +274,66 @@ void Input_PWM_Config(void)
 	TIM_Cmd(TIM12, ENABLE);
 }
 
-
-static void Process_InputCapture(Input_Capture_Channel channel, int16_t capture)
+/**
+ * @brief 			Processing of Input Capture events for the RC Input.
+ * 
+ * @param channel 	Which capture channel that fired
+ * @param capture 	The capture value
+ */
+static void Process_InputCapture(Input_Capture_Channel channel, uint32_t capture)
 {
+	static uint32_t old_capture[6];	/* The last capture value */
+	static uint16_t cppm_count = 0;	/* Current CPPM channel */
+
+	/* If CPPM mode */
 	if (CPPM_Mode == TRUE)
 	{
+		if (channel == INPUT_CH1_CPPM)
+		{	
+			/* 	CPPM only needs 1 old value since it comes in as a serial stream.
+		   	Plus check if the timer overflowed. */
+			if (capture > old_capture[0])		/* No overflow */
+				capture = capture - old_capture[0];
+			else if (capture < old_capture[0])	/* Timer overflow */
+				capture = ((0xFFFF - old_capture[0]) + capture); 
 
+			
+			if (raw_rc_input.active_connection == TRUE)
+			{	
+				/* If the capture is larger than the time for the SYNC, reset counter */
+				if (capture > CPPM_SYNC_LIMIT_MIN)
+					cppm_count = 0;
+				else
+				{
+					/* If no sync has been detected */
+					if (cppm_count >= MAX_NUMBER_OF_INPUTS)
+					{
+						raw_rc_input.active_connection = FALSE;
+						return;
+					}
+
+					/* Write the capture value to the raw_rc_input structure */
+					raw_rc_input.value[cppm_count] = capture;
+
+					/* Increase the current CPPM channel */
+					cppm_count++;
+				}
+			}
+			else if ((capture > CPPM_SYNC_LIMIT_MIN) && (capture < CPPM_SYNC_LIMIT_MAX))
+			{
+				/* Looking for sync */
+				cppm_count = 0;
+				raw_rc_input.active_connection = TRUE;
+			}
+
+		}
+		else if (channel == INPUT_CH2_RSSI)
+		{ 	/* RSSI capture */
+			raw_rc_input.rssi = 0;
+		}
 	}
+
+	/* If PWM mode */
 	else
 	{
 
@@ -323,7 +373,7 @@ void TIM1_BRK_TIM9_IRQHandler(void)
 		TIM_ClearITPendingBit(TIM9, TIM_IT_CC1);
 
 		/* Process the interrupt */
-		Process_InputCapture(INPUT_CH1, TIM_GetCapture1(TIM9));
+		Process_InputCapture(INPUT_CH1_CPPM, TIM_GetCapture1(TIM9));
 	}
 
 	if (TIM_GetITStatus(TIM9, TIM_IT_CC2) == SET)
@@ -355,7 +405,7 @@ void TIM8_BRK_TIM12_IRQHandler(void)
 		TIM_ClearITPendingBit(TIM12, TIM_IT_CC2);
 
 		/* Process the interrupt */
-		Process_InputCapture(INPUT_CH2, TIM_GetCapture2(TIM12));
+		Process_InputCapture(INPUT_CH2_RSSI, TIM_GetCapture2(TIM12));
 	}
 }
 
