@@ -347,7 +347,7 @@ static void Process_InputCapture(Input_Capture_Channel channel, uint32_t capture
 		else if (channel == INPUT_CH2_RSSI) /* RSSI capture */
 		{ 	
 			/* Get the Input Capture value */
-			raw_rc_input.rssi_period = capture;
+			raw_rc_input.rssi_frequency = CAPTURE_TIMER_RATE / capture;
 
 			/* If there is valid data, save it else reset RSSI values */
 			if (capture != 0)
@@ -357,7 +357,7 @@ static void Process_InputCapture(Input_Capture_Channel channel, uint32_t capture
 			else
 			{
 				raw_rc_input.rssi = 0;
-				raw_rc_input.rssi_period = 0;
+				raw_rc_input.rssi_frequency = 0;
 			}
 		}
 	}

@@ -27,7 +27,7 @@ typedef struct {
 	Bool active_connection;
 	uint16_t value[MAX_NUMBER_OF_INPUTS];
 	uint16_t rssi;
-	uint16_t rssi_period;
+	uint16_t rssi_frequency;
 } Raw_External_Input_Type;
 
 typedef enum {
