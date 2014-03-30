@@ -50,7 +50,7 @@ void Input_CPPM_RSSI_Config(void)
 
 
 	/* Set input mode */
-	raw_rc_input.CPPM_Mode = TRUE;
+	raw_rc_input.cppm_mode = TRUE;
 
 
 	/* TIM clock enable */
@@ -75,8 +75,7 @@ void Input_CPPM_RSSI_Config(void)
 
 	/* GPIOB configuration */
 	GPIO_InitStructure.GPIO_Pin 	= GPIO_Pin_15;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 	/* Connect TIM pins to AF */
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_TIM9);
@@ -120,9 +119,10 @@ void Input_CPPM_RSSI_Config(void)
 	/* Set up PWM Input Capture */
 	TIM_ICInitStructure.TIM_ICPolarity 	= TIM_ICPolarity_Rising;
 	TIM_ICInitStructure.TIM_Channel 	= TIM_Channel_2;
+	TIM_ICInit(TIM12, &TIM_ICInitStructure);
 	TIM_PWMIConfig(TIM12, &TIM_ICInitStructure);
 
-	/* Select the TIM4 Input Trigger: TI2FP2 */
+	/* Select the TIM12 Input Trigger: TI2FP2 */
 	TIM_SelectInputTrigger(TIM12, TIM_TS_TI2FP2);
 
 	/* Select the slave Mode: Reset Mode */
@@ -169,7 +169,7 @@ void Input_PWM_Config(void)
 
 
 	/* Set input mode */
-	raw_rc_input.CPPM_Mode = FALSE;
+	raw_rc_input.cppm_mode = FALSE;
 
 
 	/* TIM clock enable */
@@ -195,7 +195,7 @@ void Input_PWM_Config(void)
 
 	/* GPIOB configuration */
 	GPIO_InitStructure.GPIO_Pin 	= GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_14 | GPIO_Pin_15;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 
 	/* Connect TIM pins to AF */
@@ -282,6 +282,12 @@ void Input_PWM_Config(void)
 	TIM_Cmd(TIM12, ENABLE);
 }
 
+
+Raw_External_Input_Type *ptrGetRawRCInput(void)
+{
+	return &raw_rc_input;
+}
+
 /**
  * @brief 			Processing of Input Capture events for the RC Input.
  * 
@@ -295,7 +301,7 @@ static void Process_InputCapture(Input_Capture_Channel channel, uint32_t capture
 	uint16_t tmp;
 
 	/* If CPPM mode */
-	if (raw_rc_input.CPPM_Mode == TRUE)
+	if (raw_rc_input.cppm_mode == TRUE)
 	{
 		if (channel == INPUT_CH1_CPPM)
 		{	

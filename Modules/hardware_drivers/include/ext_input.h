@@ -23,7 +23,7 @@
 
 /* Typedefs */
 typedef struct {
-	Bool CPPM_Mode;
+	Bool cppm_mode;
 	Bool active_connection;
 	uint16_t value[MAX_NUMBER_OF_INPUTS];
 	uint16_t rssi;
@@ -42,5 +42,6 @@ typedef enum {
 /* Global functions */
 void Input_CPPM_RSSI_Config(void);
 void Input_PWM_Config(void);
+Raw_External_Input_Type *ptrGetRawRCInput(void);
 
 #endif
