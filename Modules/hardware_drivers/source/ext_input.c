@@ -298,6 +298,7 @@ static void Process_InputCapture(Input_Capture_Channel channel, uint32_t capture
 {
 	static uint32_t old_capture[6];	/* The last capture value */
 	static uint16_t cppm_count = 0;	/* Current CPPM channel */
+	static uint16_t rssi_counter = 0;
 	uint16_t tmp;
 
 	/* If CPPM mode */
@@ -342,7 +343,9 @@ static void Process_InputCapture(Input_Capture_Channel channel, uint32_t capture
 					cppm_count++;
 				}
 			}
-			else if ((capture > CPPM_SYNC_LIMIT_MIN) && (capture < CPPM_SYNC_LIMIT_MAX))
+			else if ((capture > CPPM_SYNC_LIMIT_MIN) && \
+					 (capture < CPPM_SYNC_LIMIT_MAX) && \
+					 (rssi_counter <= RSSI_TIMEOUT))
 			{
 				/* Looking for sync */
 				cppm_count = 0;
@@ -352,13 +355,26 @@ static void Process_InputCapture(Input_Capture_Channel channel, uint32_t capture
 		}
 		else if (channel == INPUT_CH2_RSSI) /* RSSI capture */
 		{ 	
-			/* Get the Input Capture value */
+			/* Get the Input Capture value and calculate PWM frequency */
 			raw_rc_input.rssi_frequency = CAPTURE_TIMER_RATE / capture;
 
 			/* If there is valid data, save it else reset RSSI values */
 			if (capture != 0)
 			{
-				raw_rc_input.rssi = TIM_GetCapture1(TIM12);
+				/* Convert the PWM to percent */
+				raw_rc_input.rssi = (TIM_GetCapture1(TIM12) * 100) / capture;
+
+				/* Check so the RSSI is above the threshold */
+				if (raw_rc_input.rssi < RSSI_THRESHOLD_PERCENT)
+				{
+					/* If the RSSI is below the threshold count until timeout */
+					if (rssi_counter > RSSI_TIMEOUT)
+						raw_rc_input.active_connection = FALSE;
+					else
+						rssi_counter++;
+				}
+				else
+					rssi_counter = 0;
 			}
 			else
 			{

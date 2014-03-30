@@ -20,6 +20,9 @@
 #define MAX_NUMBER_OF_INPUTS		12
 #define CPPM_SYNC_LIMIT_MIN			3000	/* 3 ms */
 #define CPPM_SYNC_LIMIT_MAX			30000	/* 30 ms */
+#define RSSI_THRESHOLD_PERCENT		5 		/* RSSI threshold in percent */
+#define RSSI_TIMEOUT				100 	/* Number of bad RSSI measurements
+											   to reset connection */
 
 /* Typedefs */
 typedef struct {
