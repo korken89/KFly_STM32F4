@@ -6,12 +6,13 @@
 
 #include "ext_input.h"
 #include "FreeRTOSConfig.h"
+#include "trigonometry.h"
 
 /* Global variable defines */
 
 /* Private variable defines */
-Raw_External_Input_Type raw_rc_input;
-
+static Raw_External_Input_Type raw_rc_input;
+static Input_Settings_Type input_settings;
 /* Private function defines */
 
 
@@ -26,6 +27,53 @@ Input connections:
 	Control In 5:  TIM3_CH3   (PB0)
 	Control In 6:  TIM9_CH2   (PA3)
 */
+void InputInit(void)
+{
+
+}
+
+float fGetInputLevel(Input_Role_Selector role)
+{
+	uint32_t value, channel;
+	float level;
+
+	/* Get the position in the array for the requested role */
+	channel = 0;
+
+	/* Get the raw value from the raw data structure */
+	value = raw_rc_input.value[channel];
+
+	/* Check so the data and input is valid */
+	if ((value == 0) || (role == ROLE_OFF) || (raw_rc_input.active_connection == FALSE))
+		return 0.0f;
+
+	/* Remove the center offset */
+	level = (float)(value - input_settings.ch_center[channel]);
+
+	/* If it is larger than zero */
+	if (level > 0.0f)
+	{
+		/* If the settings does not allow positive output */
+		if (input_settings.ch_center[channel] == input_settings.ch_top[channel])
+			return 0.0f;
+
+		/* Use the calibration to calculate the position */
+		level = level / (float)(input_settings.ch_top[channel] - input_settings.ch_center[channel]);
+	}
+	/* If it is smaller than zero */
+	else if (level < 0.0f)
+	{
+		/* If the settings does not allow negative output */
+		if (input_settings.ch_center[channel] == input_settings.ch_bottom[channel])
+			return 0.0f;
+
+		/* Use the calibration to calculate the position */
+		level = level / (float)(input_settings.ch_center[channel] - input_settings.ch_bottom[channel]);
+	}
+
+	return bound(1.0f, -1.0f, level);
+}
+
 void Input_CPPM_RSSI_Config(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -50,7 +98,7 @@ void Input_CPPM_RSSI_Config(void)
 
 
 	/* Set input mode */
-	raw_rc_input.cppm_mode = TRUE;
+	input_settings.mode = MODE_CPPM_INPUT;
 
 
 	/* TIM clock enable */
@@ -169,7 +217,7 @@ void Input_PWM_Config(void)
 
 
 	/* Set input mode */
-	raw_rc_input.cppm_mode = FALSE;
+	input_settings.mode = MODE_PWM_INPUT;
 
 
 	/* TIM clock enable */
@@ -302,7 +350,7 @@ static void Process_InputCapture(Input_Capture_Channel channel, uint32_t capture
 	uint16_t tmp;
 
 	/* If CPPM mode */
-	if (raw_rc_input.cppm_mode == TRUE)
+	if (input_settings.mode == MODE_CPPM_INPUT)
 	{
 		if (channel == INPUT_CH1_CPPM)
 		{	
@@ -326,6 +374,9 @@ static void Process_InputCapture(Input_Capture_Channel channel, uint32_t capture
 				if (capture > CPPM_SYNC_LIMIT_MIN)
 				{
 					cppm_count = 0;
+
+					/* Save the current number of active channels */
+					raw_rc_input.number_active_connection = cppm_count + 1;
 				}
 				else
 				{
@@ -374,7 +425,9 @@ static void Process_InputCapture(Input_Capture_Channel channel, uint32_t capture
 						rssi_counter++;
 				}
 				else
+				{
 					rssi_counter = 0;
+				}
 			}
 			else
 			{
@@ -385,7 +438,7 @@ static void Process_InputCapture(Input_Capture_Channel channel, uint32_t capture
 	}
 
 	/* If PWM mode */
-	else
+	else if (input_settings.mode == MODE_PWM_INPUT)
 	{
 
 	}
