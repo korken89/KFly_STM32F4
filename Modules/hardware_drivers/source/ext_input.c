@@ -43,8 +43,8 @@ void InputInit(void)
 		input_settings.role[i] 		= ROLE_OFF;
 		input_settings.type[i] 		= TYPE_ANALOG;
 		input_settings.ch_bottom[i] = 1000;
-		input_settings.ch_top[i] 	= 1500;
-		input_settings.ch_center[i] = 2000;
+		input_settings.ch_center[i] = 1500;
+		input_settings.ch_top[i] 	= 2000;
 	}
 }
 
