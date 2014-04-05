@@ -436,7 +436,16 @@ void ParseGetRCCalibration(Parser_Holder_Type *pHolder)
  */
 void ParseSetRCCalibration(Parser_Holder_Type *pHolder)
 {
+	uint32_t i;
+	uint8_t *save_location;
 
+	if (pHolder->buffer_count == RC_INPUT_SETTINGS_SIZE)
+	{
+		save_location = (uint8_t *)ptrGetRCInputSettings();
+
+		for (i = 0; i < RC_INPUT_SETTINGS_SIZE; i++)
+			save_location[i] = pHolder->buffer[i];
+	}
 }
 
 /**

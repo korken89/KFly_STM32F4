@@ -53,7 +53,7 @@ static const Generator_Type generator_lookup[128] = {
 	GenerateGetPositionControllerData,		/* 36:	Cmd_GetPositionControllerData	*/
 	NULL,									/* 37:	Cmd_SetPositionControllerData	*/
 	NULL,									/* 38:	RESERVED						*/
-	GenerateGetChannelMix,					/* 39:	Cmd_GetChannelMix				*/
+	NULL,									/* 39:	Cmd_GetChannelMix				*/
 	NULL,									/* 40:	Cmd_SetChannelMix				*/
 	GenerateGetRCCalibration,				/* 41:	Cmd_GetRCCalibration			*/
 	NULL,									/* 42:	Cmd_SetRCCalibration			*/
@@ -594,6 +594,7 @@ ErrorStatus GenerateGetChannelMix(Circular_Buffer_Type *Cbuff)
  */
 ErrorStatus GenerateGetRCCalibration(Circular_Buffer_Type *Cbuff)
 {
+	return GenerateGenericCommand(Cmd_GetRCCalibration, (uint8_t *)ptrGetRCInputSettings(), RC_INPUT_SETTINGS_SIZE, Cbuff);
 }
 
 /**
@@ -606,6 +607,7 @@ ErrorStatus GenerateGetRCCalibration(Circular_Buffer_Type *Cbuff)
  */
 ErrorStatus GenerateGetRCValues(Circular_Buffer_Type *Cbuff)
 {
+	return GenerateGenericCommand(Cmd_GetRCCalibration, (uint8_t *)ptrGetRCRawInput(), RC_RAW_INPUT_SIZE, Cbuff);
 }
 
 /**

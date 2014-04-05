@@ -18,6 +18,7 @@
 #include "control.h"
 #include "circularbuffer.h"
 #include "estimation.h"
+#include "ext_input.h"
 
 /* Scheduler includes. */
 #include "FreeRTOS.h"
