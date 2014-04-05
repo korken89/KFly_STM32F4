@@ -41,6 +41,7 @@ void main(void)
 	 *
 	 * */
 	PWMInit();
+	InputInit();
 	Input_CPPM_RSSI_Config();
 
 	/* *
