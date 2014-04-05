@@ -208,22 +208,22 @@ void ExternalFlash_WritePage(uint8_t *buffer, uint32_t address, uint16_t count)
  */
 void ExternalFlash_ReadBuffer(uint8_t *buffer, uint32_t address, uint16_t count)
 {
-  	/* Select the External Flash: Chip Select low */
-  	FLASH_CS_LOW();
+	/* Select the External Flash: Chip Select low */
+	FLASH_CS_LOW();
 
-  	/* Send "Read from Memory" instruction */
-  	SPI_SendBytePolling(FLASH_CMD_READ, EXTERNAL_FLASH_SPI);
+	/* Send "Read from Memory" instruction */
+	SPI_SendBytePolling(FLASH_CMD_READ, EXTERNAL_FLASH_SPI);
 
-  	/* Send address nibbles for address byte to read from */
-  	SPI_SendBytePolling((address & 0xFF0000) >> 16, EXTERNAL_FLASH_SPI);
-  	SPI_SendBytePolling((address& 0xFF00) >> 8, EXTERNAL_FLASH_SPI);
-  	SPI_SendBytePolling(address & 0xFF, EXTERNAL_FLASH_SPI);
+ 	/* Send address nibbles for address byte to read from */
+	SPI_SendBytePolling((address & 0xFF0000) >> 16, EXTERNAL_FLASH_SPI);
+	SPI_SendBytePolling((address& 0xFF00) >> 8, EXTERNAL_FLASH_SPI);
+	SPI_SendBytePolling(address & 0xFF, EXTERNAL_FLASH_SPI);
 
-  	while (count--)
-    	*(buffer++) = SPI_SendBytePolling(SPI_DUMMY_BYTE, EXTERNAL_FLASH_SPI);
+	while (count--)
+		*(buffer++) = SPI_SendBytePolling(SPI_DUMMY_BYTE, EXTERNAL_FLASH_SPI);
 
-  	/* Deselect the External Flash: Chip Select high */
-  	FLASH_CS_HIGH();
+	/* Deselect the External Flash: Chip Select high */
+	FLASH_CS_HIGH();
 }
 
 /**
@@ -262,13 +262,7 @@ void ExternalFlash_WaitForWriteEnd(void)
   	FLASH_CS_HIGH();
 }
 
-/**
- * @brief 			Processes a Flash_Save structure to determine the
- * 					correct way of writing it to memory.
- * 
- * @param template 	Pointer to the Flash_Save template.
- * @return 			Number of bytes to save.
- */
+
 static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template)
 {
 	uint32_t i = 0, num_bytes = 0;
@@ -280,6 +274,13 @@ static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template)
 	return num_bytes;
 }
 
+/**
+ * @brief 			Processes a Flash_Save structure to determine the
+ * 					correct way of writing it to memory.
+ * 
+ * @param template 	Pointer to the Flash_Save template.
+ * @return 			Number of bytes to save.
+ */
 static uint32_t SaveStructure_WriteToMemory(Flash_Save_Template_Type *template, uint32_t sector)
 {
 	uint32_t i, j, num_bytes_written_to_page, page_address, num_sync;
@@ -339,7 +340,7 @@ static uint32_t SaveStructure_WriteToMemory(Flash_Save_Template_Type *template, 
 
 			/* Send SYNC first, then the data */
 			if (j < 0)
-				SPI_SendBytePolling((uint8_t)((FLASH_SYNC_WORD >> ((j + 1) * 8)) & 0xff), EXTERNAL_FLASH_SPI);
+				SPI_SendBytePolling((uint8_t)((FLASH_SYNC_WORD >> (- (j + 1) * 8)) & 0xff), EXTERNAL_FLASH_SPI);
 			else
 				SPI_SendBytePolling(template[i].ptr[j], EXTERNAL_FLASH_SPI);
 		}
