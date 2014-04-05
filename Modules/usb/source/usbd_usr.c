@@ -1,3 +1,4 @@
+
 /**
   ******************************************************************************
   * @file    usbd_usr.c
@@ -32,10 +33,8 @@ USBD_Usr_cb_TypeDef USR_cb =
   USBD_USR_DeviceConfigured,
   USBD_USR_DeviceSuspended,
   USBD_USR_DeviceResumed,
-  /*
   USBD_USR_DeviceConnected,
-  USBD_USR_DeviceDisconnected,
-  */
+  USBD_USR_DeviceDisconnected
 };
 
 
@@ -70,9 +69,6 @@ void USBD_USR_DeviceConfigured (void)
 {
 	/* USB status change, tell the system */
 	xUSBQueue.bUSBAvalible = TRUE;
-
-	// Debug LED
-	LEDOn(LED_GREEN);
 }
 
 /**
@@ -85,8 +81,6 @@ void USBD_USR_DeviceSuspended(void)
 	/* USB status change, tell the system */
 	xUSBQueue.bUSBAvalible = FALSE;
 
-	// Debug LED
-	LEDOff(LED_GREEN);
 	/* Users can do their application actions here for the USB-Reset */
 }
 
@@ -101,9 +95,17 @@ void USBD_USR_DeviceResumed(void)
 	/* USB status change, tell the system */
 	xUSBQueue.bUSBAvalible = TRUE;
 
-	// Debug LED
-	LEDOn(LED_GREEN);
     /* Users can do their application actions here for the USB-Reset */
+}
+
+void USBD_USR_DeviceConnected(void)
+{  
+  /* Initialize LEDs */
+}
+
+void USBD_USR_DeviceDisconnected(void)
+{  
+  /* Initialize LEDs */
 }
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
