@@ -11,6 +11,7 @@ static uint8_t DMA_buffer2[32];
 static uint8_t DMA_transmit[100];
 
 void vTaskTest(void *pvParameters);
+uint32_t itoa(int num, char *buf);
 
 void main(void)
 {
@@ -147,12 +148,12 @@ void main(void)
 	 * */
 	vSerialManagerInit();
 
-	/*xTaskCreate(vTaskTest,
+	xTaskCreate(vTaskTest,
 				"TestTask",
 				256,
 				0,
 				tskSerialManagerPRIORITY,
-			    0);*/
+			    0);
 
 	/* *
 	 *
@@ -168,13 +169,10 @@ void main(void)
 
 void vTaskTest(void *pvParameters)
 {
-	uint32_t  sw_version;
-
 	while(1)
 	{
-
 		vTaskDelay(500);
-		LEDToggle(LED_RED);
+		LEDToggle(LED_GREEN);
 	}
 }
 
