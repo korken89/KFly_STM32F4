@@ -24,6 +24,9 @@
 #define RSSI_TIMEOUT				100 	/* Number of bad RSSI measurements
 											   to reset connection */
 
+#define RC_RAW_INPUT_SIZE			(10 + 2 * MAX_NUMBER_OF_INPUTS)
+#define RC_INPUT_SETTINGS_SIZE		(4 + 8 * MAX_NUMBER_OF_INPUTS)
+
 /* Typedefs */
 typedef enum {
 	INPUT_CH1_CPPM = 0,
@@ -79,6 +82,7 @@ void InputInit(void);
 float fGetInputLevel(Input_Role_Selector role);
 void Input_CPPM_RSSI_Config(void);
 void Input_PWM_Config(void);
-Raw_External_Input_Type *ptrGetRawRCInput(void);
+Raw_External_Input_Type *ptrGetRCRawInput(void);
+Input_Settings_Type *ptrGetRCInputSettings(void);
 
 #endif

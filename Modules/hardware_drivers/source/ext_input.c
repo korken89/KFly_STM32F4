@@ -29,7 +29,22 @@ Input connections:
 */
 void InputInit(void)
 {
+	int32_t i;
+	raw_rc_input.active_connection = FALSE;
+	raw_rc_input.number_active_connection = 0;
+	raw_rc_input.rssi = 0;
+	raw_rc_input.rssi_frequency = 0;
 
+	input_settings.mode = MODE_CPPM_INPUT;
+
+	for (i = 0; i < MAX_NUMBER_OF_INPUTS; i++)
+	{
+		input_settings.role[i] = ROLE_OFF;
+		input_settings.type[i] = TYPE_ANALOG;
+		input_settings.ch_bottom[i] = 1000;
+		input_settings.ch_top[i] = 1500;
+		input_settings.ch_center[i] = 2000;
+	}
 }
 
 float fGetInputLevel(Input_Role_Selector role)
@@ -38,7 +53,7 @@ float fGetInputLevel(Input_Role_Selector role)
 	float level;
 
 	/* Get the position in the array for the requested role */
-	channel = 0;
+	channel = role; /* TODO: Create inverse lookup for the role */
 
 	/* Get the raw value from the raw data structure */
 	value = raw_rc_input.value[channel];
@@ -331,9 +346,14 @@ void Input_PWM_Config(void)
 }
 
 
-Raw_External_Input_Type *ptrGetRawRCInput(void)
+Raw_External_Input_Type *ptrGetRCRawInput(void)
 {
 	return &raw_rc_input;
+}
+
+Input_Settings_Type *ptrGetRCInputSettings(void)
+{
+	return &input_settings;
 }
 
 /**
