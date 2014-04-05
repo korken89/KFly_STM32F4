@@ -141,10 +141,14 @@ void PWMInit(void)
 void vSetRCOutput(Output_Channel_Type ch, float u)
 {
 	/* Constant array as lookup table for the PWM channel's CCR registers */
-	static const uint32_t PWM_CH[8] = { (uint32_t)&TIM4->CCR4, (uint32_t)&TIM4->CCR3,
-										(uint32_t)&TIM4->CCR2, (uint32_t)&TIM4->CCR1,
-										(uint32_t)&TIM8->CCR4, (uint32_t)&TIM8->CCR3,
-										(uint32_t)&TIM8->CCR2, (uint32_t)&TIM8->CCR1};
+	static const uint32_t PWM_CH[8] = { (uint32_t)&TIM4->CCR4,
+										(uint32_t)&TIM4->CCR3,
+										(uint32_t)&TIM4->CCR2,
+										(uint32_t)&TIM4->CCR1,
+										(uint32_t)&TIM8->CCR4, 
+										(uint32_t)&TIM8->CCR3,
+										(uint32_t)&TIM8->CCR2, 
+										(uint32_t)&TIM8->CCR1};
 
 	uint32_t period = (uint32_t)(1000.0f * bound(1.0f, 0.0f, u));
 
