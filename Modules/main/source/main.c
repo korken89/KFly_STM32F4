@@ -41,8 +41,14 @@ void main(void)
 	 *
 	 * */
 	PWMInit();
+
+	/* *
+	 *
+	 * RC Inputs init.
+	 * Initializes and sets up the RC Inputs.
+	 *
+	 * */
 	InputInit();
-	Input_CPPM_RSSI_Config();
 
 	/* *
 	 *
@@ -51,38 +57,14 @@ void main(void)
 	 *
 	 * */
 	SPI1Init();
+
+	/* *
+	 *
+	 * External Flash init.
+	 * Initializes and sets up the External Flash.
+	 *
+	 * */
 	ExternalFlashInit();
-
-	vInitControl();
-
-	/*static uint8_t buf1[] = "This is a short text to test the DMA transfers via USART...\r\n";
-	Circular_Buffer_Type CBuff;
-	CircularBuffer_Init(&CBuff, DMA_transmit, 100);
-
-	USART3Init(115200);
-	DMA_Receive_Configuration(DMA_buffer, DMA_buffer2, 32);
-	DMA_Transmit_Configuration();
-
-	uint8_t testbuff[5] = {0xde, 0xad, 0xbe, 0xef, 0xa6};
-
-	ErrorStatus status = GenerateGenericCommand(Cmd_Ping, testbuff, 5, &CBuff);	
-
-	if (status == SUCCESS)
-		USART_putc(USART3, 'S');
-	else
-		USART_putc(USART3, 'F');*/
-
-	//CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);
-
-	/*CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);
-
-	for (volatile uint32_t i = 0; i < 0x1FFFFF; i++);
-	CircularBuffer_WriteChunk(&CBuff, buf1, 61);
-	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);
-
-	for (volatile uint32_t i = 0; i < 0xFFFFFF; i++);
-	CircularBuffer_DMATransmit(DMA1_Stream3, &CBuff);*/
-	//DMA_Transmit_Buffer(DMA1_Stream3, buf1, 61);
 
 	/* *
 	 *
@@ -141,6 +123,13 @@ void main(void)
 	 *
 	 * */
 	EstimationInit();
+
+	/* *
+	 *
+	 * Control init.
+	 *
+	 * */
+	vInitControl();
 
 	/* *
 	 *
