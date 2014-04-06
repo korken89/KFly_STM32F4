@@ -285,7 +285,7 @@ static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template)
  */
 static uint32_t SaveStructure_WriteToMemory(Flash_Save_Template_Type *template, uint32_t sector)
 {
-	int32_t i, j, num_bytes_written_to_page, page_address, num_sync;
+	int32_t i, j, num_bytes_written_to_page, page_address;
 
 	i = 0;
 	num_bytes_written_to_page = 0;
@@ -305,9 +305,9 @@ static uint32_t SaveStructure_WriteToMemory(Flash_Save_Template_Type *template, 
 	SPI_SendBytePolling((page_address & 0xFF00) >> 8, EXTERNAL_FLASH_SPI);
 	SPI_SendBytePolling(page_address & 0xFF, EXTERNAL_FLASH_SPI);
 
-	while (template[i].ptr != 0)
+	while (template[i].ptr != FLASH_END)
 	{
-		for (j = -4; j < (int32_t)template[i].count; j++)
+		for (j = -4; j < template[i].count; j++)
 		{
 			if (++num_bytes_written_to_page >= FLASH_PAGE_SIZE)
 			{

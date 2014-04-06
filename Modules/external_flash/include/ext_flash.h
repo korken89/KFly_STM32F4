@@ -59,7 +59,7 @@
 /* Typedefs */
 typedef struct {
 	uint8_t *ptr;		/* Holds the pointer of where the data should be saved to/read from */
-	uint32_t count;		/* Holds the number of bytes to write/read */
+	int32_t count;		/* Holds the number of bytes to write/read */
 } Flash_Save_Template_Type;
 
 
