@@ -446,6 +446,8 @@ void ParseSetRCCalibration(Parser_Holder_Type *pHolder)
 		for (i = 0; i < RC_INPUT_SETTINGS_SIZE; i++)
 			save_location[i] = pHolder->buffer[i];
 	}
+
+	RoleToIndex_CreateLookup();
 }
 
 /**

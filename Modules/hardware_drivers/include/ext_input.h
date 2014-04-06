@@ -15,6 +15,9 @@
 /* Includes */
 
 /* Defines */
+#define ROLE_TO_INDEX_BITS			4
+#define ROLE_TO_INDEX_MASK			0x0f
+
 
 #define CAPTURE_TIMER_RATE 			1000000
 #define MAX_NUMBER_OF_INPUTS		12
@@ -80,6 +83,8 @@ typedef struct {
 /* Global functions */
 void InputInit(void);
 float fGetInputLevel(Input_Role_Selector role);
+uint32_t RoleToIndex_CreateLookup(void);
+uint32_t RoleToIndex(Input_Role_Selector role);
 void Input_CPPM_RSSI_Config(void);
 void Input_PWM_Config(void);
 Raw_External_Input_Type *ptrGetRCRawInput(void);

@@ -13,6 +13,8 @@
 /* Private variable defines */
 static Raw_External_Input_Type raw_rc_input;
 static Input_Settings_Type input_settings;
+static uint64_t role_lookup;
+
 /* Private function defines */
 
 
@@ -30,6 +32,9 @@ Input connections:
 void InputInit(void)
 {
 	int32_t i;
+
+	/* TODO: Get data from Flash memory */
+
 	raw_rc_input.active_connection = FALSE;
 	raw_rc_input.number_active_connection = 0;
 	raw_rc_input.rssi = 0;
@@ -46,48 +51,73 @@ void InputInit(void)
 		input_settings.ch_center[i] = 1500;
 		input_settings.ch_top[i] 	= 2000;
 	}
+
+	RoleToIndex_CreateLookup();
 }
 
 float fGetInputLevel(Input_Role_Selector role)
 {
-	uint32_t value, channel;
+	uint32_t value, index;
 	float level;
 
 	/* Get the position in the array for the requested role */
-	channel = role; /* TODO: Create inverse lookup for the role */
+	index = RoleToIndex(role);
+
+	/* Check the validity of the index */
+	if (index == ROLE_TO_INDEX_MASK)
+		return 0.0f;
 
 	/* Get the raw value from the raw data structure */
-	value = raw_rc_input.value[channel];
+	value = raw_rc_input.value[index];
 
 	/* Check so the data and input is valid */
 	if ((value == 0) || (role == ROLE_OFF) || (raw_rc_input.active_connection == FALSE))
 		return 0.0f;
 
 	/* Remove the center offset */
-	level = (float)(value - input_settings.ch_center[channel]);
+	level = (float)(value - input_settings.ch_center[index]);
 
 	/* If it is larger than zero */
 	if (level > 0.0f)
 	{
 		/* If the settings does not allow positive output */
-		if (input_settings.ch_center[channel] == input_settings.ch_top[channel])
+		if (input_settings.ch_center[index] == input_settings.ch_top[index])
 			return 0.0f;
 
 		/* Use the calibration to calculate the position */
-		level = level / (float)(input_settings.ch_top[channel] - input_settings.ch_center[channel]);
+		level = level / (float)(input_settings.ch_top[index] - input_settings.ch_center[index]);
 	}
 	/* If it is smaller than zero */
 	else if (level < 0.0f)
 	{
 		/* If the settings does not allow negative output */
-		if (input_settings.ch_center[channel] == input_settings.ch_bottom[channel])
+		if (input_settings.ch_center[index] == input_settings.ch_bottom[index])
 			return 0.0f;
 
 		/* Use the calibration to calculate the position */
-		level = level / (float)(input_settings.ch_center[channel] - input_settings.ch_bottom[channel]);
+		level = level / (float)(input_settings.ch_center[index] - input_settings.ch_bottom[index]);
 	}
 
 	return bound(1.0f, -1.0f, level);
+}
+
+uint32_t RoleToIndex_CreateLookup(void)
+{
+	role_lookup = 0;
+
+	/* For each role associated with a channel, generate the inverse lookup table */
+	for (int32_t i = 0; i < MAX_NUMBER_OF_INPUTS; i++)
+		if (input_settings.role[i] != ROLE_OFF)
+			role_lookup |= (i << ((input_settings.role[i] - 1) * ROLE_TO_INDEX_BITS));
+}
+
+uint32_t RoleToIndex(Input_Role_Selector role)
+{
+	/* Get the index of the associated role */
+	if (role != ROLE_OFF)
+		return ((role_lookup >> ((role - 1) * ROLE_TO_INDEX_BITS)) & ROLE_TO_INDEX_MASK);
+	else
+		return ROLE_TO_INDEX_MASK;
 }
 
 void Input_CPPM_RSSI_Config(void)
@@ -382,7 +412,7 @@ static void Process_InputCapture(Input_Capture_Channel channel, uint32_t capture
 			if (capture > old_capture[0])		/* No overflow */
 				capture = capture - old_capture[0];
 			else if (capture < old_capture[0])	/* Timer overflow */
-				capture = ((0xFFFF - old_capture[0]) + capture); 
+				capture = ((0xffff - old_capture[0]) + capture); 
 
 			old_capture[0] = tmp;
 
