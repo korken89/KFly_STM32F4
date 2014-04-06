@@ -11,18 +11,14 @@
 /* Private variable defines */
 
 /* Area to hold the design of the external flash memory */
-static const Flash_Save_Template_Type Flash_Save_Structure[] = {
-	{	
-		.ptr = (uint8_t *)0,
-		.count = 32
-	},
+Flash_Save_Template_Type Flash_Save_Structure[] = {
 	{	
 		.ptr = (uint8_t *)1,
-		.count = 40
+		.count = 32
 	},
-	{	
+	{
 		.ptr = (uint8_t *)2,
-		.count = 6
+		.count = 40
 	},
 	{	/* To indicate the end of the save structure */
 		.ptr = FLASH_END,
@@ -120,13 +116,13 @@ uint32_t ExternalFlash_ReadID(void)
 
 ErrorStatus ExternalFlash_CheckSettingsStructure(Flash_Save_Template_Type *template, uint32_t sector)
 {
-	return ERROR;
+	return SUCCESS;
 }
 
 ErrorStatus ExternalFlash_SaveSettings(Flash_Save_Template_Type *template, uint32_t sector)
 {
 	/* Check so we write to one of the sectors */
-	if (sector > M25PE40_NUM_SECTORS)
+	if (sector > FLASH_NUM_SECTORS)
 		return ERROR;
 
 	/* Erase the selected sector */
@@ -149,10 +145,10 @@ ErrorStatus ExternalFlash_LoadSettings(Flash_Save_Template_Type *template, uint3
 	page_address = sector * FLASH_SECTOR_SIZE;
 
 	/* Check so we read from one of the sectors */
-	if (sector > M25PE40_NUM_SECTORS)
+	if (sector > FLASH_NUM_SECTORS)
 		return ERROR;
 
-	while (template[i].ptr != 0)
+	while (template[i].ptr != FLASH_END)
 	{
 		/* Read the setting from the flash */
 		ExternalFlash_ReadBuffer(template[i].ptr, page_address, template[i].count);
@@ -263,6 +259,12 @@ void ExternalFlash_WaitForWriteEnd(void)
 }
 
 
+Flash_Save_Template_Type *ptrGetFlashSaveStructure(void)
+{
+	return Flash_Save_Structure;
+}
+
+
 static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template)
 {
 	uint32_t i = 0, num_bytes = 0;
@@ -283,7 +285,7 @@ static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template)
  */
 static uint32_t SaveStructure_WriteToMemory(Flash_Save_Template_Type *template, uint32_t sector)
 {
-	uint32_t i, j, num_bytes_written_to_page, page_address, num_sync;
+	int32_t i, j, num_bytes_written_to_page, page_address, num_sync;
 
 	i = 0;
 	num_bytes_written_to_page = 0;
@@ -305,7 +307,7 @@ static uint32_t SaveStructure_WriteToMemory(Flash_Save_Template_Type *template, 
 
 	while (template[i].ptr != 0)
 	{
-		for (j = -4; j < template[i].count; j++)
+		for (j = -4; j < (int32_t)template[i].count; j++)
 		{
 			if (++num_bytes_written_to_page >= FLASH_PAGE_SIZE)
 			{
@@ -339,8 +341,10 @@ static uint32_t SaveStructure_WriteToMemory(Flash_Save_Template_Type *template, 
 			}
 
 			/* Send SYNC first, then the data */
+
+
 			if (j < 0)
-				SPI_SendBytePolling((uint8_t)((FLASH_SYNC_WORD >> (- (j + 1) * 8)) & 0xff), EXTERNAL_FLASH_SPI);
+				SPI_SendBytePolling((FLASH_SYNC_WORD >> (-j - 1) * 8) & 0xff, EXTERNAL_FLASH_SPI);
 			else
 				SPI_SendBytePolling(template[i].ptr[j], EXTERNAL_FLASH_SPI);
 		}

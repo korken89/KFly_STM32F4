@@ -39,6 +39,7 @@
 #define FLASH_M25PE40_ID        0x208013
 
 #define M25PE40_NUM_SECTORS		7
+#define FLASH_NUM_SECTORS		M25PE40_NUM_SECTORS
 
 #define FLASH_PAGE_SIZE			0x00000100
 #define FLASH_SECTOR_SIZE		0x00010000
@@ -78,5 +79,6 @@ void ExternalFlash_WritePage(uint8_t *buffer, uint32_t address, uint16_t count);
 void ExternalFlash_ReadBuffer(uint8_t *buffer, uint32_t address, uint16_t count);
 void ExternalFlash_WriteEnable(void);
 void ExternalFlash_WaitForWriteEnd(void);
+Flash_Save_Template_Type *ptrGetFlashSaveStructure(void);
 
 #endif
