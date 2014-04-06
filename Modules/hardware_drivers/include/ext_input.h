@@ -82,8 +82,8 @@ typedef struct {
 
 /* Global functions */
 void InputInit(void);
+void InputUpdateSettings(void);
 float fGetInputLevel(Input_Role_Selector role);
-uint32_t RoleToIndex_CreateLookup(void);
 uint32_t RoleToIndex(Input_Role_Selector role);
 void Input_CPPM_RSSI_Config(void);
 void Input_PWM_Config(void);

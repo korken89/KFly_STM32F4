@@ -52,7 +52,23 @@ void InputInit(void)
 		input_settings.ch_top[i] 	= 2000;
 	}
 
-	RoleToIndex_CreateLookup();
+	InputUpdateSettings();
+}
+
+void InputUpdateSettings(void)
+{
+	/* Reinitialize the inputs */
+	if (input_settings.mode == MODE_CPPM_INPUT)
+		Input_CPPM_RSSI_Config();
+	else if (input_settings.mode == MODE_PWM_INPUT)
+		Input_PWM_Config();
+
+	/* For each role associated with a channel, generate the inverse lookup table */
+	role_lookup = 0;
+
+	for (int32_t i = 0; i < MAX_NUMBER_OF_INPUTS; i++)
+		if (input_settings.role[i] != ROLE_OFF)
+			role_lookup |= (i << ((input_settings.role[i] - 1) * ROLE_TO_INDEX_BITS));
 }
 
 float fGetInputLevel(Input_Role_Selector role)
@@ -99,16 +115,6 @@ float fGetInputLevel(Input_Role_Selector role)
 	}
 
 	return bound(1.0f, -1.0f, level);
-}
-
-uint32_t RoleToIndex_CreateLookup(void)
-{
-	role_lookup = 0;
-
-	/* For each role associated with a channel, generate the inverse lookup table */
-	for (int32_t i = 0; i < MAX_NUMBER_OF_INPUTS; i++)
-		if (input_settings.role[i] != ROLE_OFF)
-			role_lookup |= (i << ((input_settings.role[i] - 1) * ROLE_TO_INDEX_BITS));
 }
 
 uint32_t RoleToIndex(Input_Role_Selector role)
