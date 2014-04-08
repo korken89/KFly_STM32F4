@@ -72,7 +72,7 @@ typedef struct {
 } Raw_External_Input_Type;
 
 typedef struct {
-	Input_Mode_Selector mode;
+	uint32_t mode;
 	Input_Role_Selector role[MAX_NUMBER_OF_INPUTS];
 	Input_Type_Selector type[MAX_NUMBER_OF_INPUTS];
 	uint16_t ch_center[MAX_NUMBER_OF_INPUTS];
