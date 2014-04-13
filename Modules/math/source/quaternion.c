@@ -28,7 +28,7 @@ float qnorm(quaternion_t *q)
 
 void qnormalize(quaternion_t *q)
 {
-	float invNorm = invSqrt(q->q0*q->q0 + q->q1*q->q1 + q->q2*q->q2 + q->q3*q->q3);
+	float invNorm = 1.0f / sqrtf(q->q0*q->q0 + q->q1*q->q1 + q->q2*q->q2 + q->q3*q->q3);
 
 	q->q0 *= invNorm;
 	q->q1 *= invNorm;
