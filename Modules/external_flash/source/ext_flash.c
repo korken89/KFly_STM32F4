@@ -11,7 +11,7 @@
 /* Private variable defines */
 
 /* Area to hold the design of the external flash memory */
-Flash_Save_Template_Type Flash_Save_Structure[] = {
+static const Flash_Save_Template_Type Flash_Save_Structure[] = {
 	{	
 		.ptr = (uint8_t *)1,
 		.count = 32
@@ -27,8 +27,8 @@ Flash_Save_Template_Type Flash_Save_Structure[] = {
 };
 
 /* Private function defines */
-static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template);
-static uint32_t SaveStructure_WriteToMemory(Flash_Save_Template_Type *template, uint32_t sector);
+static uint32_t SaveStructure_NumberOfBytes(const Flash_Save_Template_Type *template);
+static uint32_t SaveStructure_WriteToMemory(const Flash_Save_Template_Type *template, uint32_t sector);
 
 /* Private external functions */
 
@@ -114,12 +114,44 @@ uint32_t ExternalFlash_ReadID(void)
 }
 
 
-ErrorStatus ExternalFlash_CheckSettingsStructure(Flash_Save_Template_Type *template, uint32_t sector)
+ErrorStatus ExternalFlash_CheckIntegrity(const Flash_Save_Template_Type *template, uint32_t sector)
 {
+	uint32_t i, page_address;
+	union
+	{
+		uint8_t data[4];
+		uint32_t value;
+	} sync_data;
+
+	i = 0;
+
+	/* Calculate the starting sector address */
+	page_address = sector * FLASH_SECTOR_SIZE;
+
+	/* Check so we read from one of the sectors */
+	if (sector > FLASH_NUM_SECTORS)
+		return ERROR;
+
+	while (template[i].ptr != FLASH_END)
+	{
+		/* Read the sync word from the flash */
+		ExternalFlash_ReadBuffer(sync_data.data, page_address, 4);
+
+		/* If the sync word is not correct the memory is fragmented.
+		   Return error. */
+		if (sync_data.value != FLASH_SYNC_WORD_REV)
+			return ERROR;
+
+		/* Increment Flash address and template address */
+		page_address += template[i].count + 4; /* The 4 comes from the SYNC */
+		i++;
+	}
+
 	return SUCCESS;
 }
 
-ErrorStatus ExternalFlash_SaveSettings(Flash_Save_Template_Type *template, uint32_t sector)
+
+ErrorStatus ExternalFlash_SaveSettings(const Flash_Save_Template_Type *template, uint32_t sector)
 {
 	/* Check so we write to one of the sectors */
 	if (sector > FLASH_NUM_SECTORS)
@@ -135,14 +167,14 @@ ErrorStatus ExternalFlash_SaveSettings(Flash_Save_Template_Type *template, uint3
 }
 
 
-ErrorStatus ExternalFlash_LoadSettings(Flash_Save_Template_Type *template, uint32_t sector)
+ErrorStatus ExternalFlash_LoadSettings(const Flash_Save_Template_Type *template, uint32_t sector)
 {
 	uint32_t i, page_address;
 
 	i = 0;
 
 	/* Calculate the starting sector address */
-	page_address = sector * FLASH_SECTOR_SIZE;
+	page_address = sector * FLASH_SECTOR_SIZE + 4;
 
 	/* Check so we read from one of the sectors */
 	if (sector > FLASH_NUM_SECTORS)
@@ -259,13 +291,13 @@ void ExternalFlash_WaitForWriteEnd(void)
 }
 
 
-Flash_Save_Template_Type *ptrGetFlashSaveStructure(void)
+const Flash_Save_Template_Type *ptrGetFlashSaveStructure(void)
 {
 	return Flash_Save_Structure;
 }
 
 
-static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template)
+static uint32_t SaveStructure_NumberOfBytes(const Flash_Save_Template_Type *template)
 {
 	uint32_t i = 0, num_bytes = 0;
 
@@ -283,7 +315,7 @@ static uint32_t SaveStructure_NumberOfBytes(Flash_Save_Template_Type *template)
  * @param template 	Pointer to the Flash_Save template.
  * @return 			Number of bytes to save.
  */
-static uint32_t SaveStructure_WriteToMemory(Flash_Save_Template_Type *template, uint32_t sector)
+static uint32_t SaveStructure_WriteToMemory(const Flash_Save_Template_Type *template, uint32_t sector)
 {
 	int32_t i, j, num_bytes_written_to_page, page_address;
 

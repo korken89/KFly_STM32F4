@@ -18,6 +18,7 @@
 
 /* Defines */
 #define FLASH_SYNC_WORD			0xdeadbeef	/* Sync word to detect errors in the flash structure */
+#define FLASH_SYNC_WORD_REV		0xefbeadde
 
 #define FLASH_CMD_WRSR          0x01  		/* Write Status Register instruction	*/
 #define FLASH_CMD_PAGE_PROGRAM  0x02  		/* Write to Memory instruction 			*/
@@ -72,13 +73,13 @@ void ExternalFlashInit(void);
 void ExternalFlash_EraseBulk(void);
 void ExternalFlash_EraseSector(uint32_t sector);
 uint32_t ExternalFlash_ReadID(void);
-ErrorStatus ExternalFlash_CheckSettingsStructure(Flash_Save_Template_Type *template, uint32_t sector);
-ErrorStatus ExternalFlash_SaveSettings(Flash_Save_Template_Type *template, uint32_t sector);
-ErrorStatus ExternalFlash_LoadSettings(Flash_Save_Template_Type *template, uint32_t sector);
+ErrorStatus ExternalFlash_CheckIntegrity(const Flash_Save_Template_Type *template, uint32_t sector);
+ErrorStatus ExternalFlash_SaveSettings(const Flash_Save_Template_Type *template, uint32_t sector);
+ErrorStatus ExternalFlash_LoadSettings(const Flash_Save_Template_Type *template, uint32_t sector);
 void ExternalFlash_WritePage(uint8_t *buffer, uint32_t address, uint16_t count);
 void ExternalFlash_ReadBuffer(uint8_t *buffer, uint32_t address, uint16_t count);
 void ExternalFlash_WriteEnable(void);
 void ExternalFlash_WaitForWriteEnd(void);
-Flash_Save_Template_Type *ptrGetFlashSaveStructure(void);
+const Flash_Save_Template_Type *ptrGetFlashSaveStructure(void);
 
 #endif
