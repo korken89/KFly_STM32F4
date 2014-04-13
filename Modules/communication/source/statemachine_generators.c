@@ -428,7 +428,7 @@ ErrorStatus GenerateDebugMessage(uint8_t *data, uint32_t size, Circular_Buffer_T
  */
 ErrorStatus GenerateGetRunningMode(Circular_Buffer_Type *Cbuff)
 {
-	return GenerateGenericCommand(Cmd_GetRunningMode, "P", 1, Cbuff);
+	return GenerateGenericCommand(Cmd_GetRunningMode, (uint8_t *)"P", 1, Cbuff);
 }
 
 /**
