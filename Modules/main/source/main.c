@@ -133,6 +133,14 @@ void main(void)
 
 	/* *
 	 *
+	 * Load all settings from external flash.
+	 *
+	 * */
+	if (ExternalFlash_CheckIntegrity(ptrGetFlashSaveStructure(), 0) == SUCCESS)
+		ExternalFlash_LoadSettings(ptrGetFlashSaveStructure(), 0);
+
+	/* *
+	 *
 	 * Start the serial communication manager.
 	 *
 	 * */
