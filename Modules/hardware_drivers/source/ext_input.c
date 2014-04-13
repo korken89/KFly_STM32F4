@@ -73,7 +73,7 @@ void InputUpdateSettings(void)
 
 float fGetInputLevel(Input_Role_Selector role)
 {
-	uint32_t value, index;
+	int32_t value, index;
 	float level;
 
 	/* Get the position in the array for the requested role */

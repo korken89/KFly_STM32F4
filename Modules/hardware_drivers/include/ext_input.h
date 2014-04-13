@@ -64,7 +64,7 @@ typedef enum __attribute__((__packed__)) {
 } Input_Type_Selector;
 
 typedef struct {
-	Bool active_connection;
+	uint32_t active_connection;
 	uint16_t number_active_connection;
 	uint16_t value[MAX_NUMBER_OF_INPUTS];
 	uint16_t rssi;
