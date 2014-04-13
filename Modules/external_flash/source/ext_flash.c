@@ -5,20 +5,40 @@
  * */
 
 #include "ext_flash.h"
+#include "sensor_calibration.h"
+#include "control.h"
+#include "ext_input.h"
 
 /* Global variable defines */
+extern Sensor_Calibration_Type sensor_calibration;
+extern Input_Settings_Type input_settings;
+extern Control_Data_Type Control_Data;
+extern Control_Limits_Type Control_Limits;
+extern Output_Mixer_Type Output_Mixer;
 
 /* Private variable defines */
 
 /* Area to hold the design of the external flash memory */
 static const Flash_Save_Template_Type Flash_Save_Structure[] = {
 	{	
-		.ptr = (uint8_t *)1,
-		.count = 32
+		.ptr = (uint8_t *)&sensor_calibration,
+		.count = SENSOR_CALIBERATION_SIZE
 	},
 	{
-		.ptr = (uint8_t *)2,
-		.count = 40
+		.ptr = (uint8_t *)&input_settings,
+		.count = RC_INPUT_SETTINGS_SIZE
+	},
+	{
+		.ptr = (uint8_t *)&Control_Data,
+		.count = CONTROL_DATA_SIZE
+	},
+	{
+		.ptr = (uint8_t *)&Control_Limits,
+		.count = CONTROL_LIMITS_SIZE
+	},
+	{
+		.ptr = (uint8_t *)&Output_Mixer,
+		.count = OUTPUT_MIXER_SIZE
 	},
 	{	/* To indicate the end of the save structure */
 		.ptr = FLASH_END,
