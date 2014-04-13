@@ -11,7 +11,7 @@
 /* Private Typedefs */
 
 /* Private variable defines */
-static Sensor_Calibration_Type sensor_calibration;
+Sensor_Calibration_Type sensor_calibration;
 
 /* Global variable defines */
 

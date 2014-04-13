@@ -12,7 +12,7 @@
 
 /* Private variable defines */
 static Raw_External_Input_Type raw_rc_input;
-static Input_Settings_Type input_settings;
+Input_Settings_Type input_settings;
 static uint64_t role_lookup;
 
 /* Private function defines */
