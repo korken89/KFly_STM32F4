@@ -121,18 +121,24 @@ void InnovateAttitudeEKF(	Attitude_Estimation_States_Type *states,
 
 	/* Calculate the delta quaternion */
 	w_norm = sqrtf(w_hat.x * w_hat.x + w_hat.y * w_hat.y + w_hat.z * w_hat.z);
-	dtheta = 0.5f * w_norm * dt;	
-	sdtheta = fast_sin(dtheta);
-	cdtheta = fast_cos(dtheta);
+	
+	/* Security to prevent division by very small numbers */
+	if (fabsf(w_norm) > 1.0E-4)
+	{
+		dtheta = 0.5f * w_norm * dt;
 
-	dq_int.q0 = cdtheta;
-	dq_int.q1 = sdtheta * (w_hat.x / w_norm);
-	dq_int.q2 = sdtheta * (w_hat.y / w_norm);
-	dq_int.q3 = sdtheta * (w_hat.z / w_norm);
-	//dq_int = qstep_body(states->q, w_hat, dt);
+		sdtheta = fast_sin(dtheta);
+		cdtheta = fast_cos(dtheta);
 
-	/* Use the delta quaternion to produce the current estimate of the attitude */
-	states->q = qmult(dq_int, states->q);
+		/* Calclate the integrated quaternion */
+		dq_int.q0 = cdtheta;
+		dq_int.q1 = sdtheta * (w_hat.x / w_norm);
+		dq_int.q2 = sdtheta * (w_hat.y / w_norm);
+		dq_int.q3 = sdtheta * (w_hat.z / w_norm);
+
+		/* Use the delta quaternion to produce the current estimate of the attitude */
+		states->q = qmult(dq_int, states->q);
+	}
 
 	/* Calculate dtheta for each axis */
 	theta.x = w_hat.x * dt;
