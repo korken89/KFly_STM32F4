@@ -15,6 +15,7 @@
 #include "trigonometry.h"
 
 /* Defines */
+#define PI_DATA_SIZE 		(4*4)
 
 /* Typedefs */
 typedef struct

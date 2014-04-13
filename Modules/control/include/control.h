@@ -31,6 +31,12 @@
 #define VELOCITY_LIMIT_COUNT	8
 #define POSITION_LIMIT_COUNT	0
 
+/* Sizes */
+#define OUTPUT_MIXER_SIZE		(4*8*4)
+#define CONTROL_DATA_SIZE		(12*PI_DATA_SIZE)
+#define CONTROL_LIMITS_SIZE		(10*4)
+
+
 /* Typedefs */
 typedef enum
 {

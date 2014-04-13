@@ -581,7 +581,7 @@ ErrorStatus GenerateGetPositionControllerData(Circular_Buffer_Type *Cbuff)
  */
 ErrorStatus GenerateGetChannelMix(Circular_Buffer_Type *Cbuff)
 {
-	return GenerateGenericCommand(Cmd_GetChannelMix, (uint8_t *)ptrGetOutputMixer(), (4*8*4), Cbuff);
+	return GenerateGenericCommand(Cmd_GetChannelMix, (uint8_t *)ptrGetOutputMixer(), OUTPUT_MIXER_SIZE, Cbuff);
 }
 
 /**
